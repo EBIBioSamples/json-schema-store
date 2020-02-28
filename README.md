@@ -4,10 +4,10 @@ A repository for storing versioned JSON Schema
 ## Project Description
 JSON Schema is a vocabulary to specify the structure of a JSON document. JSON Schema is widely used and well supported and sees a growing use for many GA4GH standard representation e.g. through the “SchemaBlocks” project.
 At the moment we are missing a way to manage this growing collection of schemas. This project would like to address the following concerns:
-How can we search for specific schema? 
-How can we improve reuse of schemas that already exist?
-How to create, modify schemas? Can untrained users define schemas easily? 
-What are the best practices for schema usage and how can we encourage them?
+* How can we search for specific schema? 
+* How can we improve reuse of schemas that already exist?
+* How to create, modify schemas? Can untrained users define schemas easily? 
+* What are the best practices for schema usage and how can we encourage them?
 
 To address the above concerns, we would like to develop a repository for storing versioned JSON Schema. The repository should have an intuitive user interface for searching, browsing, creating and modifying schema documents. 
 
