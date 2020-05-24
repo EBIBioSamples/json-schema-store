@@ -2,8 +2,8 @@
 spring:
   data:
     mongodb:
-      port: 27017 # for docker run 27018
-      host: localhost # for docker "schema-repo"
+      port: 27018 # for docker run 27018
+      host: schema-repo # for docker "schema-repo"
       database: SchemaRepo
       repositories:
         type: auto
