@@ -26,7 +26,7 @@ The project will be comprised of the following tasks:
 - [Software](#software)
 - [Installation](#installation)
 
-### Softwares
+### Software
 * Java OpenJdk-11
 * Apache Maven 3.6.3
 * Docker 19.03.8
