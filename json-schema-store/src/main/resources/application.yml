@@ -1,0 +1,9 @@
+# MongoDB conf
+spring:
+  data:
+    mongodb:
+      port: 27018 # for docker run 27018
+      host: schema-repo # for docker "schema-repo"
+      database: SchemaRepo
+      repositories:
+        type: auto

@@ -1,0 +1,21 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:4.2.6
+    container_name: "schema-repo"
+    command: mongod --port 27018
+  validator:
+#    build:
+#      context: https://github.com/elixir-europe/json-schema-validator.git
+    image: json-schema-validator
+    command: npm start
+    ports:
+    - 3000:3020
+  app:
+    build: .
+    image: hashan/jsonschema:latest
+    ports:
+    - 8080:8080
+    links:
+      - mongodb
+      - validator
