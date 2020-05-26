@@ -13,7 +13,7 @@ services:
     - 3000:3020
   app:
     build: .
-    image: hashan/jsonschema:latest
+    image: biosamples/json-schema-store:latest
     ports:
     - 8080:8080
     links:
