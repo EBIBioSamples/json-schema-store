@@ -11,8 +11,6 @@ import lombok.Setter;
 @EqualsAndHashCode
 @NonNull
 public class ValidateRequestDocument {
-  @NonNull
-  JsonNode schema;
-  @NonNull
-  JsonNode object;
+  @NonNull JsonNode schema;
+  @NonNull JsonNode object;
 }
