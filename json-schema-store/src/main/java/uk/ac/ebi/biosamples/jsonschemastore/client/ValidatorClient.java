@@ -4,6 +4,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidateRequestDocument;
+import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidateResponseDocument;
 
 import java.net.URI;
 

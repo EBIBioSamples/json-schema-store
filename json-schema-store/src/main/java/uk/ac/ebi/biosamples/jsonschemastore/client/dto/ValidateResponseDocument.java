@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.client;
+package uk.ac.ebi.biosamples.jsonschemastore.client.dto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
