@@ -1,11 +1,11 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.document;
+package uk.ac.ebi.biosamples.jsonschemastore.dto;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +13,14 @@ import java.util.Map;
 
 @Getter
 @Setter
-@Document(collection = "SchemaBlock")
-public class SchemaBlock {
-  @Id
+@EqualsAndHashCode
+public class SchemaBlockDocument {
+
   private String id;
+
+  @JsonProperty(value = "$schema")
   private String schema;
+
   private String title;
   private String description;
   private String type;
@@ -25,12 +28,9 @@ public class SchemaBlock {
   private List<String> required;
   private Object properties;
 
+
   // a container for all unexpected fields
   private Map<String, Object> schemalessData;
-
-  public SchemaBlock() {
-    super();
-  }
 
   @JsonAnySetter
   public void add(String key, Object value) {
