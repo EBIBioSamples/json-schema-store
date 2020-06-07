@@ -10,6 +10,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.client.ValidatorClient;
 import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidateRequestDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidateResponseDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
+import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
 import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschemastore.schema.service.SchemaBlockService;
 import uk.ac.ebi.biosamples.jsonschemastore.schema.util.JsonSchemaMappingUtil;
@@ -43,7 +44,7 @@ public class SchemaBlockController {
   }
 
   @PostMapping("/schemas")
-  public ResponseEntity<JsonNode> createSchemaBlock(@RequestBody SchemaBlockDocument schema) {
+  public ResponseEntity<JsonNode> createSchemaBlock(@RequestBody SchemaBlockDocument schema) throws JsonSchemaServiceException {
     try {
       ResponseEntity<ValidateResponseDocument[]> validateResult = this.validateSchema(schema);
       if (HttpStatus.OK.equals(validateResult.getStatusCode())
@@ -55,10 +56,10 @@ public class SchemaBlockController {
         return ResponseEntity.badRequest().body(JsonSchemaMappingUtil.convertObjectToJson(validateResult.getBody()));
       }
     } catch (Exception e) {
-      log.error("Error occurred while creating schema: ", e);
-      throw e;
+      String errorMessage = "Error occurred while creating schema ";
+      log.error(errorMessage, e);
+      throw new JsonSchemaServiceException(errorMessage, e);
     }
-
   }
 
   private ResponseEntity<ValidateResponseDocument[]> validateSchema(SchemaBlockDocument schema) {
