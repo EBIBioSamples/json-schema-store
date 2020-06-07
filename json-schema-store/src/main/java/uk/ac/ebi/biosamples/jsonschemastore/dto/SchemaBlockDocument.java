@@ -16,7 +16,7 @@ import java.util.Map;
 @EqualsAndHashCode
 public class SchemaBlockDocument {
 
-  private String id;
+  //private String id;
 
   @JsonProperty(value = "$schema")
   private String schema;
@@ -24,10 +24,9 @@ public class SchemaBlockDocument {
   private String title;
   private String description;
   private String type;
-  private Object meta;
+  private Map<String, Object> meta;
   private List<String> required;
-  private Object properties;
-
+  private Map<String, Object> properties;
 
   // a container for all unexpected fields
   private Map<String, Object> schemalessData;
