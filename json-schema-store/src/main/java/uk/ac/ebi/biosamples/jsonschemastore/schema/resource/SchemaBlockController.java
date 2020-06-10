@@ -33,6 +33,10 @@ public class SchemaBlockController {
     this.modelMapper = modelMapper;
     this.validatorClient = validatorClient;
   }
+  @GetMapping("/ping")
+  public ResponseEntity<String> ping() {
+    return ResponseEntity.ok("it's working!");
+  }
 
   @GetMapping("/schemas")
   public ResponseEntity<List<JsonNode>> getAllSchemaBlock() {
