@@ -12,13 +12,11 @@ import java.net.URI;
 @Slf4j
 public class ValidatorClient {
 
-  private static final String BASE_URL = "http://localhost:3000/validate"; // TODO: consume application properties
-
   @NonNull
-  public ResponseEntity<ValidateResponseDocument[]> validate(@NonNull ValidateRequestDocument validateRequestDocument) {
+  public ResponseEntity<ValidateResponseDocument[]> validate(@NonNull ValidateRequestDocument validateRequestDocument, @NonNull String hostURL) {
     try {
       RestTemplate restTemplate = new RestTemplate();
-      URI uri = URI.create(BASE_URL);
+      URI uri = URI.create(hostURL);
       return restTemplate.postForEntity(uri, validateRequestDocument, ValidateResponseDocument[].class);
     } catch (Exception e) {
       log.error("Error occurred while validating JSON Object!", e);

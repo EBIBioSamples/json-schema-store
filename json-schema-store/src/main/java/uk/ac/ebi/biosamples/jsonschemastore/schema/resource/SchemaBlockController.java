@@ -3,6 +3,7 @@ package uk.ac.ebi.biosamples.jsonschemastore.schema.resource;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +28,19 @@ public class SchemaBlockController {
   private final SchemaBlockService schemaBlockService;
   private final ModelMapper modelMapper;
   private final ValidatorClient validatorClient;
+  private final Environment environment;
 
-  public SchemaBlockController(SchemaBlockService schemaBlockService, ModelMapper modelMapper, ValidatorClient validatorClient) {
+  public SchemaBlockController(
+      SchemaBlockService schemaBlockService,
+      ModelMapper modelMapper,
+      ValidatorClient validatorClient,
+      Environment environment) {
     this.schemaBlockService = schemaBlockService;
     this.modelMapper = modelMapper;
     this.validatorClient = validatorClient;
+    this.environment = environment;
   }
+
   @GetMapping("/ping")
   public ResponseEntity<String> ping() {
     return ResponseEntity.ok("it's working!");
@@ -71,6 +79,6 @@ public class SchemaBlockController {
     ValidateRequestDocument validateRequestDocument = new ValidateRequestDocument();
     validateRequestDocument.setObject(jsonNode);
     validateRequestDocument.setSchema(JsonSchemaMappingUtil.getSchemaObject()); // TODO: meta schema should come from document store
-    return validatorClient.validate(validateRequestDocument);
+    return validatorClient.validate(validateRequestDocument, environment.getProperty("elixirValidator.hostUrl"));
   }
 }

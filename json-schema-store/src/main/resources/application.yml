@@ -7,3 +7,7 @@ spring:
       database: SchemaRepo
       repositories:
         type: auto
+
+# Elixir Validator
+elixirValidator:
+  hostUrl: http://localhost:3000/validate
