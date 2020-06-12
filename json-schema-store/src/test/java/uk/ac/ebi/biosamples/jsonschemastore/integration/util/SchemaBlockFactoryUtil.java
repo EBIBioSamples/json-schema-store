@@ -1,0 +1,22 @@
+package uk.ac.ebi.biosamples.jsonschemastore.integration.util;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
+import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
+import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class SchemaBlockFactoryUtil {
+  private static final String SCHEMA =
+      "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"$id\":\"https://schemablocks.org/schemas/sb-phenopackets/Disease/v1.0.0\",\"title\":\"Disease\",\"description\":\"Message to indicate a disease (diagnosis) and its recorded onset.\\n\",\"type\":\"object\",\"meta\":{\"contributors\":[{\"description\":\"GA4GH Data Working Group\"},{\"description\":\"Jules Jacobsen\",\"id\":\"orcid:0000-0002-3265-15918\"},{\"description\":\"Peter Robinson\",\"id\":\"orcid:0000-0002-0736-91998\"},{\"description\":\"Michael Baudis\",\"id\":\"orcid:0000-0002-9903-4248\"},{\"description\":\"Melanie Courtot\",\"id\":\"orcid:0000-0002-9551-6370\"},{\"description\":\"Isuru Liyanage\",\"id\":\"orcid:0000-0002-4839-5158\"}],\"provenance\":[{\"description\":\"Phenopackets\",\"id\":\"https://github.com/phenopackets/phenopacket-schema/blob/master/docs/disease.rst\"}],\"used_by\":[{\"description\":\"Phenopackets\",\"id\":\"https://github.com/phenopackets/phenopacket-schema/blob/master/docs/disease.rst\"}],\"sb_status\":\"implemented\"},\"properties\":{\"term\":{\"allof\":[{\"$ref\":\"https://schemablocks.org/schemas/sb-phenopackets/v1.0.0/OntologyClass.json\"},{\"description\":\"The identifier of this disease\\ne.g. MONDO:0007043, OMIM:101600, Orphanet:710, DOID:14705 (note these are all equivalent)\\n\",\"examples\":[{\"id\":\"MONDO:0007043\"}]}]},\"ageOfOnset\":{\"allof\":[{\"$ref\":\"https://schemablocks.org/schemas/sb-phenopackets/v1.0.0/Age.json\"},{\"description\":\"The onset of the disease. The values of this will come from the HPO onset hierarchy\\ni.e. subclasses of HP:0003674\\nFHIR mapping: Condition.onset\\n\",\"examples\":[{\"age\":\"P35Y\"}]}]},\"ageRangeOfOnset\":{\"description\":\"The onset of the disease. The values of this will come from the HPO onset hierarchy\\ni.e. subclasses of HP:0003674\\nFHIR mapping: Condition.onset\\n\",\"$ref\":\"https://schemablocks.org/schemas/sb-phenopackets/v1.0.0/AgeRange.json\",\"examples\":[{\"start\":{\"age\":\"P35Y\"}}]},\"classOfOnset\":{\"description\":\"The onset of the disease. The values of this will come from the HPO onset hierarchy\\ni.e. subclasses of HP:0003674\\nFHIR mapping: Condition.onset\\n\",\"$ref\":\"https://schemablocks.org/schemas/sb-phenopackets/v1.0.0/OntologyClass.json\",\"examples\":[{\"id\":\"HP:0003596\",\"label\":\"Middle age onset\"}]},\"diseaseStage\":{\"description\":\"Disease staging, the extent to which a disease has developed.\\nFor cancers, see https://www.cancer.gov/about-cancer/diagnosis-staging/staging\\nValid values include child terms of NCIT:C28108 (Disease Stage Qualifier)\\n\",\"type\":\"array\",\"items\":{\"$ref\":\"https://schemablocks.org/schemas/sb-phenopackets/v1.0.0/OntologyClass.json\"},\"examples\":[[{\"id\":\"NCIT:C90529\",\"label\":\"AJCC v6 Stage\"}]]},\"tnmFinding\":{\"description\":\"Cancer findings in the TNM system that is relevant to the diagnosis of cancer.\\nSee https://www.cancer.gov/about-cancer/diagnosis-staging/staging\\nValid values include child terms of NCIT:C48232 (Cancer TNM Finding)\\n\",\"type\":\"array\",\"items\":{\"$ref\":\"https://schemablocks.org/schemas/sb-phenopackets/v1.0.0/OntologyClass.json\"},\"examples\":[[{\"id\":\"NCIT:C48232\",\"label\":\"Cancer TNM Finding\"}]]}},\"required\":[\"term\"],\"oneof\":[{\"properties\":[\"ageOfOnset\"]},{\"properties\":[\"ageRangeOfOnset\"]},{\"properties\":[\"classOfOnset\"]}],\"additionalProperties\":false,\"examples\":[{\"term\":{\"id\":\"MONDO:0007043\",\"label\":\"Pfeiffer syndrome\"},\"classOfOnset\":{\"id\":\"HP:0003596\",\"label\":\"Middle age onset\"}}]}";
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+  public static SchemaBlock getSchemaBlockObject() throws JsonProcessingException {
+    SchemaBlockDocument schemaBlockDocument = OBJECT_MAPPER.readValue(SCHEMA, SchemaBlockDocument.class);
+    ModelMapper modelMapper = new ModelMapper();
+    return modelMapper.map(schemaBlockDocument, SchemaBlock.class);
+  }
+}

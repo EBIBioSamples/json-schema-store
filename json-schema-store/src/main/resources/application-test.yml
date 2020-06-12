@@ -2,8 +2,8 @@
 spring:
   data:
     mongodb:
-      port: 27018
-      host: schema-repo
+      port: 0
+      host: localhost
       database: SchemaRepo
       repositories:
         type: auto
