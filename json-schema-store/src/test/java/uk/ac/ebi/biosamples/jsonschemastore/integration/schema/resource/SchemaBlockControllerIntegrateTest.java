@@ -1,6 +1,7 @@
 package uk.ac.ebi.biosamples.jsonschemastore.integration.schema.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ class SchemaBlockControllerIntegrateTest {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private SchemaBlockRepository schemaBlockRepository;
+  @Autowired private ObjectMapper objectMapper;
   private SchemaBlock schemaBlock;
 
   @BeforeEach
@@ -37,5 +39,9 @@ class SchemaBlockControllerIntegrateTest {
     RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/schemas");
     MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
     Assertions.assertEquals(200, mvcResult.getResponse().getStatus(), "status code is not equal");
+    Assertions.assertEquals(
+        schemaBlock,
+        objectMapper
+            .readValue(mvcResult.getResponse().getContentAsString(), SchemaBlock[].class)[0]);
   }
 }

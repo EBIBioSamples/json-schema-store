@@ -41,11 +41,6 @@ public class SchemaBlockController {
     this.environment = environment;
   }
 
-  @GetMapping("/ping")
-  public ResponseEntity<String> ping() {
-    return ResponseEntity.ok("it's working!");
-  }
-
   @GetMapping("/schemas")
   public ResponseEntity<List<JsonNode>> getAllSchemaBlock() {
     List<SchemaBlock> schemaBlocks = schemaBlockService.getAllSchemaBlocks();

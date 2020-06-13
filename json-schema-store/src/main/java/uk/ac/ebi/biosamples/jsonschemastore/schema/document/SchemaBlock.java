@@ -2,6 +2,7 @@ package uk.ac.ebi.biosamples.jsonschemastore.schema.document;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @Document(collection = "SchemaBlock")
 public class SchemaBlock {
   @Id
