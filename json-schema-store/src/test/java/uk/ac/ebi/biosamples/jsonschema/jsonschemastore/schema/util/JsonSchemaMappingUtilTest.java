@@ -21,6 +21,7 @@ class JsonSchemaMappingUtilTest {
 
     Assertions.assertNotNull(jsonNode, "jsonNode cannot be null.");
     Assertions.assertFalse(jsonNode.has("schemalessData"), "schemalessData cannot exist.");
+    Assertions.assertTrue(jsonNode.has("example"), "example must exist.");
     Assertions.assertTrue(jsonNode.has("description"));
     Assertions.assertEquals(
         "test description",
