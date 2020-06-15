@@ -41,12 +41,11 @@ class JsonSchemaMappingUtilTest {
     Assertions.assertNotNull(jsonNode, "jsonNode cannot be null.");
     Assertions.assertTrue(jsonNode.has("description"));
     Assertions.assertEquals(
-            "test description",
-            jsonNode.get("description").asText(),
-            "description value did not match");
+        "test description",
+        jsonNode.get("description").asText(),
+        "description value did not match");
     Assertions.assertTrue(jsonNode.has("title"));
     Assertions.assertEquals(
-            "schema title", jsonNode.get("title").asText(), "title value did not match.");
+        "schema title", jsonNode.get("title").asText(), "title value did not match.");
   }
-
 }
