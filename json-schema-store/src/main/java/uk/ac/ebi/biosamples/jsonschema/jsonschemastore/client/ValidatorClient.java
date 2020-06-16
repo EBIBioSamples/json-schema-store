@@ -13,11 +13,11 @@ import java.net.URI;
 public class ValidatorClient {
 
   @NonNull
-  public ResponseEntity<ValidateResponseDocument[]> validate(@NonNull ValidateRequestDocument validateRequestDocument, @NonNull String hostURL) {
+  public ResponseEntity<ValidateResponseDocument> validate(@NonNull ValidateRequestDocument validateRequestDocument, @NonNull String hostURL) {
     try {
       RestTemplate restTemplate = new RestTemplate();
       URI uri = URI.create(hostURL);
-      return restTemplate.postForEntity(uri, validateRequestDocument, ValidateResponseDocument[].class);
+      return restTemplate.postForEntity(uri, validateRequestDocument, ValidateResponseDocument.class);
     } catch (Exception e) {
       log.error("Error occurred while validating JSON Object!", e);
       throw e;

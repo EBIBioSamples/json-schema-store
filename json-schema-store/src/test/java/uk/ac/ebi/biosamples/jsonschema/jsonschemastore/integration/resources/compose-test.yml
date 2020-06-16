@@ -1,0 +1,7 @@
+version: '3'
+services:
+  validator:
+    image: ebispot/elixir-jsonsschema-validator:1.3.0
+    command: npm start
+    ports:
+      - 3000:3020

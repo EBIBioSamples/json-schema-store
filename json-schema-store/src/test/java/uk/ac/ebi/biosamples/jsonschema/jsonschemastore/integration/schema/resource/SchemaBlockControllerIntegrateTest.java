@@ -2,6 +2,7 @@ package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.integration.schema.resou
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testcontainers.containers.DockerComposeContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.integration.util.SchemaBlockFactoryUtil;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.repository.SchemaBlockRepository;
+
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,6 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test")
 class SchemaBlockControllerIntegrateTest {
+
+  @ClassRule
+  private static final DockerComposeContainer environment =
+      new DockerComposeContainer(
+              new File(
+                  "src/test/java/uk/ac/ebi/biosamples/jsonschema/jsonschemastore/integration/resources/compose-test.yml"))
+          .withLocalCompose(false)
+          .waitingFor("validator_1", Wait.forHttp("/validate"));
 
   @Autowired private MockMvc mockMvc;
   @Autowired private SchemaBlockRepository schemaBlockRepository;
@@ -49,18 +62,22 @@ class SchemaBlockControllerIntegrateTest {
 
   @Test
   public void testCreateSchemaBlock() throws Exception {
-    // TODO: Elixir json schema validator docker container should be running
-    assertEquals(0L, schemaBlockRepository.count());
-    RequestBuilder requestBuilder =
-        MockMvcRequestBuilders.post("/api/v1/schemas")
-            .contentType("application/json")
-            .content(SchemaBlockFactoryUtil.SCHEMA);
-    MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
-    assertEquals(201, mvcResult.getResponse().getStatus(), "Response status was not 201.");
-    assertEquals(1L, schemaBlockRepository.count());
-    SchemaBlock resultSchemaBlock = schemaBlockRepository.findAll().get(0);
-    schemaBlock.setId(
-        resultSchemaBlock.getId()); // TODO: we we insert schema block should have an id
-    assertEquals(schemaBlock, resultSchemaBlock, "saved schemaBlock  is not equal.");
+    try {
+      environment.start();
+      assertEquals(0L, schemaBlockRepository.count());
+      RequestBuilder requestBuilder =
+          MockMvcRequestBuilders.post("/api/v1/schemas")
+              .contentType("application/json")
+              .content(SchemaBlockFactoryUtil.SCHEMA);
+      MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+      assertEquals(201, mvcResult.getResponse().getStatus(), "Response status was not 201.");
+      assertEquals(1L, schemaBlockRepository.count());
+      SchemaBlock resultSchemaBlock = schemaBlockRepository.findAll().get(0);
+      schemaBlock.setId(
+          resultSchemaBlock.getId()); // TODO: we we insert schema block should have an id
+      assertEquals(schemaBlock, resultSchemaBlock, "saved schemaBlock  is not equal.");
+    } finally {
+      environment.stop();
+    }
   }
 }

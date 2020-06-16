@@ -13,6 +13,7 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServi
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.ValidatorClient;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidateResponseDocument;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidationState;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBlockService;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.util.JsonSchemaMappingUtil;
 
@@ -53,9 +54,8 @@ public class SchemaBlockController {
   @PostMapping("/schemas")
   public ResponseEntity<JsonNode> createSchemaBlock(@RequestBody SchemaBlockDocument schema) throws JsonSchemaServiceException {
     try {
-      ResponseEntity<ValidateResponseDocument[]> validateResult = this.validateSchema(schema);
-      if (HttpStatus.OK.equals(validateResult.getStatusCode())
-              && Objects.requireNonNull(validateResult.getBody()).length == 0) {
+      ResponseEntity<ValidateResponseDocument> validateResult = this.validateSchema(schema);
+      if (HttpStatus.OK.equals(validateResult.getStatusCode()) && ValidationState.VALID.equals(Objects.requireNonNull(validateResult.getBody()).getValidationState())) {
         SchemaBlock schemaBlock = modelMapper.map(schema, SchemaBlock.class);
         SchemaBlock result = schemaBlockService.createSchemaBlock(schemaBlock);
         return new ResponseEntity<>(JsonSchemaMappingUtil.convertSchemaBlockToJson(result), HttpStatus.CREATED);
@@ -69,7 +69,7 @@ public class SchemaBlockController {
     }
   }
 
-  private ResponseEntity<ValidateResponseDocument[]> validateSchema(SchemaBlockDocument schema) {
+  private ResponseEntity<ValidateResponseDocument> validateSchema(SchemaBlockDocument schema) {
     JsonNode jsonNode = JsonSchemaMappingUtil.convertSchemaBlockToJson(schema);
     ValidateRequestDocument validateRequestDocument = new ValidateRequestDocument();
     validateRequestDocument.setObject(jsonNode);

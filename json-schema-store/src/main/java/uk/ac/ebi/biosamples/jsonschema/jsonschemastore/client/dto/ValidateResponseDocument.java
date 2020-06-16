@@ -4,20 +4,25 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 @EqualsAndHashCode
 public class ValidateResponseDocument {
-  private final List<String> errors;
-  private final String dataPath;
+  private final ValidationState validationState;
+  private final String validationJobId;
+  private final List<ValidationErrors> validationErrors;
 
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
   public ValidateResponseDocument(
-      @JsonProperty("errors") final List<String> errors,
-      @JsonProperty("dataPath") final String dataPath) {
-    this.errors = errors;
-    this.dataPath = dataPath;
+      @JsonProperty("validationState") final ValidationState validationState,
+      @JsonProperty("validationJobId") final String validationJobId,
+      @JsonProperty("validationErrors") final List<ValidationErrors> validationErrors) {
+    this.validationState = validationState;
+    this.validationJobId = validationJobId;
+    this.validationErrors = validationErrors;
   }
 }

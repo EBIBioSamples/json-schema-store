@@ -35,7 +35,8 @@ The project will be comprised of the following tasks:
 ### Installation
 Run this in terminal to run the application.
 ```sh
-$ cd json-schema-store
+$ cd json-schema-store/parent
 $ mvn clean install -DskipTest
+$ cd ../json-schema-store
 $ docker-compose up --build
 ...
