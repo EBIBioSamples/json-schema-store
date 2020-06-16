@@ -6,7 +6,7 @@
         <groupId>uk.ac.ebi.biosamples.jsonschema</groupId>
         <artifactId>parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>json-schema-store</artifactId>
     <name>json-schema-store</name>

@@ -16,7 +16,7 @@
     <description>json schema store parent module</description>
 
     <modules>
-        <module>../json-schema-store</module>
+        <module>json-schema-store</module>
     </modules>
 
     <properties>
