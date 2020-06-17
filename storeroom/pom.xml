@@ -3,13 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>uk.ac.ebi.biosamples.jsonschema</groupId>
-        <artifactId>parent</artifactId>
+        <groupId>uk.ac.ebi.biosamples</groupId>
+        <artifactId>json-schema-store</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>json-schema-store</artifactId>
-    <name>json-schema-store</name>
+    <artifactId>storeroom</artifactId>
+    <name>server</name>
     <description>
         Schema service is designed as a REST full web service and mainly
         it manages GA4GH JSON Sachems. Schema Repository is the persistence
