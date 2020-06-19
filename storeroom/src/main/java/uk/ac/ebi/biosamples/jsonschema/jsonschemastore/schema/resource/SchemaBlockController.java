@@ -70,8 +70,9 @@ public class SchemaBlockController {
   }
 
   @DeleteMapping("/schemas/{id}")
-  public void deleteSchemaBlocksById(@PathVariable("id") String id) {
+  public ResponseEntity<String> deleteSchemaBlocksById(@PathVariable("id") String id) {
     schemaBlockService.deleteSchemaBlocksById(id);
+    return ResponseEntity.noContent().build();
   }
 
   @PutMapping("/schemas")

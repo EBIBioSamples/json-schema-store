@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,9 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBloc
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SchemaBlockControllerTest {
 
@@ -43,14 +44,20 @@ class SchemaBlockControllerTest {
     SchemaBlock schemaBlock = new SchemaBlock();
     schemaBlock.setTitle("test object");
 
-    Mockito.when(schemaBlockService.getAllSchemaBlocks())
+    when(schemaBlockService.getAllSchemaBlocks())
         .thenReturn(Collections.singletonList(schemaBlock));
     ResponseEntity<List<JsonNode>> responseEntity = schemaBlockController.getAllSchemaBlock();
     Assertions.assertNotNull(responseEntity, "responseEntity cannot be null.");
-    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertNotNull(responseEntity.getBody(), "responseEntity body cannot be null.");
     ObjectNode jsonNode = objectMapper.valueToTree(schemaBlock);
     jsonNode.remove("schemalessData");
-    Assertions.assertEquals(jsonNode.toString(), responseEntity.getBody().get(0).toString());
+    assertEquals(jsonNode.toString(), responseEntity.getBody().get(0).toString());
+  }
+
+  @Test
+  public void testDeleteSchemaBlocksById() {
+    ResponseEntity<String> responseEntity = schemaBlockController.deleteSchemaBlocksById("1234");
+    assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
   }
 }

@@ -3,11 +3,13 @@ package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.integration.schema.resou
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -79,5 +81,14 @@ class SchemaBlockControllerIntegrateTest {
     } finally {
       environment.stop();
     }
+  }
+
+  @Test
+  public void testDeleteSchemaBlocksById() throws Exception {
+    SchemaBlock resultSchemaBlock = schemaBlockRepository.save(this.schemaBlock);
+    RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1/schemas/" + resultSchemaBlock.getId());
+    MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+    assertEquals(HttpStatus.NO_CONTENT.value(), mvcResult.getResponse().getStatus(), "response status not equal");
+    Assertions.assertFalse(schemaBlockRepository.findById(resultSchemaBlock.getId()).isPresent(), "with the gien ID schemaBlock cannot exist.");
   }
 }
