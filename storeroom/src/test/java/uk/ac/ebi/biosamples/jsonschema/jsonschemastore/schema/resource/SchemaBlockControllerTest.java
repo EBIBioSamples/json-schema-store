@@ -1,0 +1,56 @@
+package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.resource;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.ValidatorClient;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBlockService;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+
+class SchemaBlockControllerTest {
+
+  @MockBean private SchemaBlockService schemaBlockService;
+  @MockBean private ValidatorClient validatorClient;
+  @MockBean private Environment environment;
+  private SchemaBlockController schemaBlockController;
+  private ObjectMapper objectMapper;
+
+  @BeforeEach
+  public void init() {
+    schemaBlockService = mock(SchemaBlockService.class);
+    validatorClient = mock(ValidatorClient.class);
+    environment = mock(Environment.class);
+    schemaBlockController =
+        new SchemaBlockController(schemaBlockService, validatorClient, environment);
+    objectMapper = new ObjectMapper();
+  }
+
+  @Test
+  public void testGetAllSchemaBlock() {
+    SchemaBlock schemaBlock = new SchemaBlock();
+    schemaBlock.setTitle("test object");
+
+    Mockito.when(schemaBlockService.getAllSchemaBlocks())
+        .thenReturn(Collections.singletonList(schemaBlock));
+    ResponseEntity<List<JsonNode>> responseEntity = schemaBlockController.getAllSchemaBlock();
+    Assertions.assertNotNull(responseEntity, "responseEntity cannot be null.");
+    Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    Assertions.assertNotNull(responseEntity.getBody(), "responseEntity body cannot be null.");
+    ObjectNode jsonNode = objectMapper.valueToTree(schemaBlock);
+    jsonNode.remove("schemalessData");
+    Assertions.assertEquals(jsonNode.toString(), responseEntity.getBody().get(0).toString());
+  }
+}
