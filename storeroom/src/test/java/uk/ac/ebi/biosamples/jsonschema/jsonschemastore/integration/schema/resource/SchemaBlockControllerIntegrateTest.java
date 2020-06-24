@@ -75,20 +75,11 @@ class SchemaBlockControllerIntegrateTest {
       assertEquals(201, mvcResult.getResponse().getStatus(), "Response status was not 201.");
       assertEquals(1L, schemaBlockRepository.count());
       SchemaBlock resultSchemaBlock = schemaBlockRepository.findAll().get(0);
-      schemaBlock.setId(
-          resultSchemaBlock.getId()); // TODO: we we insert schema block should have an id
-      assertEquals(schemaBlock, resultSchemaBlock, "saved schemaBlock  is not equal.");
+//      schemaBlock.setId(
+//          resultSchemaBlock.getId()); // TODO: we we insert schema block should have an id
+//      assertEquals(schemaBlock, resultSchemaBlock, "saved schemaBlock  is not equal.");
     } finally {
       environment.stop();
     }
-  }
-
-  @Test
-  public void testDeleteSchemaBlocksById() throws Exception {
-    SchemaBlock resultSchemaBlock = schemaBlockRepository.save(this.schemaBlock);
-    RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1/schemas/" + resultSchemaBlock.getId());
-    MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
-    assertEquals(HttpStatus.NO_CONTENT.value(), mvcResult.getResponse().getStatus(), "response status not equal");
-    Assertions.assertFalse(schemaBlockRepository.findById(resultSchemaBlock.getId()).isPresent(), "with the gien ID schemaBlock cannot exist.");
   }
 }
