@@ -77,7 +77,7 @@ class SchemaBlockControllerIntegrateTest {
         objectMapper
             .readValue(jsonNode.get("jsonSchema").asText(), SchemaBlockDocument.class)
             .getId(),
-        "schemaBlock ids are not equal.");
+        "schemaBlockDocument ids are not equal.");
   }
 
   @Test
@@ -93,9 +93,14 @@ class SchemaBlockControllerIntegrateTest {
       assertEquals(201, mvcResult.getResponse().getStatus(), "Response status was not 201.");
       assertEquals(1L, schemaBlockRepository.count());
       SchemaBlock resultSchemaBlock = schemaBlockRepository.findAll().get(0);
-//      schemaBlock.setId(
-//          resultSchemaBlock.getId()); // TODO: we we insert schema block should have an id
-//      assertEquals(schemaBlock, resultSchemaBlock, "saved schemaBlock  is not equal.");
+      assertEquals(schemaBlock.getId(), resultSchemaBlock.getId());
+      JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
+      assertEquals(
+              modelMapper.map(schemaBlock, SchemaBlockDocument.class).getId(),
+              objectMapper
+                      .readValue(jsonNode.get("jsonSchema").asText(), SchemaBlockDocument.class)
+                      .getId(),
+              "schemaBlockDocument ids are not equal.");
     } finally {
       environment.stop();
     }
