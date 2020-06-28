@@ -17,8 +17,6 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlo
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBlockService;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.util.JsonSchemaMappingUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,13 +38,10 @@ public class SchemaBlockController {
     this.environment = environment;
   }
 
-  @GetMapping("/schemas/**")
-  public ResponseEntity<SchemaBlockDocument> getAllSchemaBlockById(HttpServletRequest request)
+  @GetMapping("/schemas/")
+  public ResponseEntity<SchemaBlockDocument> getAllSchemaBlockById(@RequestParam("id") String id)
       throws JsonSchemaServiceException {
     try {
-      String fullUrl = request.getRequestURL().toString();
-      String[] s = fullUrl.split("/api/v1/schemas/");
-      String id = String.join("", Arrays.copyOfRange(s, 1, s.length));
       return schemaBlockService
           .getAllSchemaBlocksById(id)
           .map(ResponseEntity::ok)

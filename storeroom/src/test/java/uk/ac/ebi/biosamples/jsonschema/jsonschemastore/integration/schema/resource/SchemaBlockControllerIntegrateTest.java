@@ -1,15 +1,15 @@
 package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.integration.schema.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.ClassRule;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.integration.util.SchemaBlockFactoryUtil;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.repository.SchemaBlockRepository;
@@ -41,6 +42,7 @@ class SchemaBlockControllerIntegrateTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private SchemaBlockRepository schemaBlockRepository;
   @Autowired private ObjectMapper objectMapper;
+  @Autowired private ModelMapper modelMapper;
   private SchemaBlock schemaBlock;
 
   @BeforeEach
@@ -60,6 +62,22 @@ class SchemaBlockControllerIntegrateTest {
         objectMapper
             .readValue(mvcResult.getResponse().getContentAsString(), SchemaBlock[].class)[0],
         "schemaBlock is not equal.");
+  }
+
+  @Test
+  public void testGetAllSchemaBlockById() throws Exception {
+    schemaBlockRepository.save(schemaBlock);
+    RequestBuilder requestBuilder =
+        MockMvcRequestBuilders.get("/api/v1/schemas/").param("id", schemaBlock.getId());
+    MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+    assertEquals(200, mvcResult.getResponse().getStatus(), "status code is not equal.");
+    JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
+    assertEquals(
+        modelMapper.map(schemaBlock, SchemaBlockDocument.class).getId(),
+        objectMapper
+            .readValue(jsonNode.get("jsonSchema").asText(), SchemaBlockDocument.class)
+            .getId(),
+        "schemaBlock ids are not equal.");
   }
 
   @Test

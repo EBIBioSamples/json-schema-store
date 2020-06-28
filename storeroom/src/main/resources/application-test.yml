@@ -2,7 +2,7 @@
 spring:
   data:
     mongodb:
-      port: 0
+      port: 27030
       host: localhost
       database: SchemaRepo
       repositories:
