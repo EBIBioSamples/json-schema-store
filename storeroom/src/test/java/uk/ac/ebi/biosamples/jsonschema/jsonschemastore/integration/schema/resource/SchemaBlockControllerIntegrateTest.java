@@ -3,6 +3,7 @@ package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.integration.schema.resou
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,7 +66,7 @@ class SchemaBlockControllerIntegrateTest {
   }
 
   @Test
-  public void testGetAllSchemaBlockById() throws Exception {
+  public void testGetSchemaBlockById() throws Exception {
     schemaBlockRepository.save(schemaBlock);
     RequestBuilder requestBuilder =
         MockMvcRequestBuilders.get("/api/v1/schemas/").param("id", schemaBlock.getId());
@@ -78,6 +79,28 @@ class SchemaBlockControllerIntegrateTest {
             .readValue(jsonNode.get("jsonSchema").asText(), SchemaBlockDocument.class)
             .getId(),
         "schemaBlockDocument ids are not equal.");
+  }
+
+  @Test
+  public void testDeleteSchemaBlocks() throws Exception {
+    schemaBlockRepository.save(schemaBlock);
+    assertEquals(1, schemaBlockRepository.count());
+    RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1/schemas")
+            .contentType("application/json")
+            .content(SchemaBlockFactoryUtil.SCHEMA);
+    MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+    assertEquals(204, mvcResult.getResponse().getStatus(), "status code is not equal.");
+    assertEquals(0, schemaBlockRepository.count(), "count should be 0 after deleting");
+  }
+
+  @Test
+  public void testDeleteSchemaBlocksById() throws Exception {
+    schemaBlockRepository.save(schemaBlock);
+    assertEquals(1, schemaBlockRepository.count());
+    RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1/schemas/").param("id", schemaBlock.getId());
+    MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+    assertEquals(204, mvcResult.getResponse().getStatus(), "status code is not equal.");
+    assertEquals(0, schemaBlockRepository.count(), "count should be 0 after deleting");
   }
 
   @Test
@@ -101,6 +124,33 @@ class SchemaBlockControllerIntegrateTest {
                       .readValue(jsonNode.get("jsonSchema").asText(), SchemaBlockDocument.class)
                       .getId(),
               "schemaBlockDocument ids are not equal.");
+    } finally {
+      environment.stop();
+    }
+  }
+
+  @Test
+  public void testUpdateSchemaBlocks() throws Exception {
+    try {
+      schemaBlockRepository.save(schemaBlock);
+      assertEquals(1, schemaBlockRepository.count());
+      environment.start();
+      SchemaBlockDocument schemaBlockDocument = objectMapper.readValue(SchemaBlockFactoryUtil.SCHEMA, SchemaBlockDocument.class);
+      ObjectNode objectNode = (ObjectNode) objectMapper.readTree(schemaBlockDocument.getJsonSchema());
+      String newTitle = "Disease new";
+      objectNode.put("title", newTitle);
+      RequestBuilder requestBuilder =
+              MockMvcRequestBuilders.put("/api/v1/schemas")
+                      .contentType("application/json")
+                      .content(objectNode.toPrettyString());
+      MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+      assertEquals(201, mvcResult.getResponse().getStatus(), "Response status was not 201.");
+      assertEquals(1L, schemaBlockRepository.count());
+      SchemaBlock resultSchemaBlock = schemaBlockRepository.findAll().get(0);
+      assertEquals(schemaBlock.getId(), resultSchemaBlock.getId());
+      JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
+      assertEquals(schemaBlock.getId(), jsonNode.get("id").asText());
+      assertEquals(newTitle, jsonNode.get("title").asText());
     } finally {
       environment.stop();
     }

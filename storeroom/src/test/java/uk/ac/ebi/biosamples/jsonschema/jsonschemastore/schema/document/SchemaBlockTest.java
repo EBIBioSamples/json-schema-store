@@ -11,7 +11,6 @@ import com.openpojo.validation.test.impl.SetterTester;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class SchemaBlockTest {
   @Test
   public void testGetterSetter() {

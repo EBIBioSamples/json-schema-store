@@ -46,7 +46,7 @@ public class JsonSchemaMappingUtil {
     }
   }
 
-  public static ObjectNode replaceRefFields(SchemaBlockDocument schemaBlockDocument) {
+ /* public static ObjectNode replaceRefFields(SchemaBlockDocument schemaBlockDocument) {
     ObjectNode objectNode = objectMapper.valueToTree(schemaBlockDocument);
     JsonSchemaMappingUtil.replaceRefFields(objectNode);
     return objectNode;
@@ -72,5 +72,5 @@ public class JsonSchemaMappingUtil {
             }
           }
         });
-  }
+  }*/
 }

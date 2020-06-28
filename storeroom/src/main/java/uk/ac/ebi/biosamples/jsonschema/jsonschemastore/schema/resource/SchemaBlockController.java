@@ -83,8 +83,8 @@ public class SchemaBlockController {
     return ResponseEntity.noContent().build();
   }
 
-  @DeleteMapping("/schemas/{id}")
-  public ResponseEntity<String> deleteSchemaBlocksById(@PathVariable("id") String id) {
+  @DeleteMapping("/schemas/")
+  public ResponseEntity<String> deleteSchemaBlocksById(@RequestParam("id") String id) {
     schemaBlockService.deleteSchemaBlocksById(id);
     return ResponseEntity.noContent().build();
   }
