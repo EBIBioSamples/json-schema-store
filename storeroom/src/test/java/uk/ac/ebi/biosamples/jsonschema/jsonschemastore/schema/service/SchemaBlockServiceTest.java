@@ -18,26 +18,29 @@ import static org.mockito.Mockito.when;
 
 class SchemaBlockServiceTest {
 
-  @Mock
-  private SchemaBlockRepository schemaBlockRepository;
-  @Mock
-  private ModelMapper modelMapper;
+  @Mock private SchemaBlockRepository schemaBlockRepository;
+  @Mock private ModelMapper modelMapper;
   private SchemaBlockService schemaBlockService;
+
+  private SchemaBlock schemaBlock;
 
   @BeforeEach
   public void init() {
     schemaBlockRepository = Mockito.mock(SchemaBlockRepository.class);
-    modelMapper = Mockito.mock(ModelMapper.class);
+    modelMapper = new ModelMapper();
     schemaBlockService = new SchemaBlockService(schemaBlockRepository, modelMapper);
-    SchemaBlock schemaBlock = new SchemaBlock();
+    this.schemaBlock = new SchemaBlock();
+
     when(schemaBlockRepository.save(any())).thenReturn(schemaBlock);
+    when(schemaBlockRepository.insert(Mockito.any(SchemaBlock.class))).thenReturn(schemaBlock);
     when(schemaBlockRepository.findAll()).thenReturn(Collections.singletonList(schemaBlock));
   }
 
   @Test
   public void testCreateSchemaBlock() {
     SchemaBlockDocument schemaBlockDocument = new SchemaBlockDocument();
-    SchemaBlock result  = schemaBlockService.createSchemaBlock(schemaBlockDocument);
+    schemaBlockDocument.setTitle("test");
+    SchemaBlock result = schemaBlockService.createSchemaBlock(schemaBlockDocument);
     Assertions.assertNotNull(result, "result cannot be null");
   }
 
@@ -51,7 +54,7 @@ class SchemaBlockServiceTest {
 
   @Test
   public void testGetAllSchemaBlocks() {
-    List<SchemaBlock> schemaBlocks = schemaBlockService.getAllSchemaBlocks();
+    List<SchemaBlockDocument> schemaBlocks = schemaBlockService.getAllSchemaBlocks();
     Assertions.assertFalse(schemaBlocks.isEmpty(), "schemaBlocks cannot be empty");
   }
 

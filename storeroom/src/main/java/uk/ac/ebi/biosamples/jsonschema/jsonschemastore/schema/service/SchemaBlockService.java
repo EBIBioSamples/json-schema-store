@@ -3,6 +3,7 @@ package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
@@ -25,13 +26,12 @@ public class SchemaBlockService {
 
   public SchemaBlock createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
-    SchemaBlock schemaBlock2 = schemaBlockRepository.insert(schemaBlock);
-    schemaBlock2.setTitle("Test");
-    return schemaBlockRepository.save(schemaBlock2);
+    return schemaBlockRepository.insert(schemaBlock);
   }
 
-  public List<SchemaBlock> getAllSchemaBlocks() {
-    return schemaBlockRepository.findAll();
+  public List<SchemaBlockDocument> getAllSchemaBlocks() {
+    return modelMapper.map(
+        schemaBlockRepository.findAll(), new TypeToken<List<SchemaBlockDocument>>() {}.getType());
   }
 
   public void deleteSchemaBlocks(@NonNull SchemaBlockDocument schemaBlockDocument) {

@@ -22,8 +22,11 @@ public class JsonSchemaMappingUtil {
   private static final String $_REF = "$ref";
   private static final String _REF = "_ref";
 
-
-  public static <T> JsonNode convertSchemaBlockToJson(T schema) {
+  public static <T> JsonNode convertSchemaBlockToJson(T schema) throws JsonProcessingException {
+    if (String.class.getName().equals(schema.getClass().getName())) {
+      String json = (String) schema;
+      return objectMapper.readTree(json);
+    }
     ObjectNode jsonNode = objectMapper.valueToTree(schema);
     jsonNode.remove("schemalessData");
     return jsonNode;

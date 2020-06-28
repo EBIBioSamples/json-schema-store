@@ -1,5 +1,6 @@
 package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -18,7 +19,6 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.util.JsonSchemaMap
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -39,12 +39,9 @@ public class SchemaBlockController {
   }
 
   @GetMapping("/schemas")
-  public ResponseEntity<List<JsonNode>> getAllSchemaBlock() {
-    List<SchemaBlock> schemaBlocks = schemaBlockService.getAllSchemaBlocks();
-    List<JsonNode> response =schemaBlocks.stream()
-            .map(JsonSchemaMappingUtil::convertSchemaBlockToJson)
-            .collect(Collectors.toList());
-    return ResponseEntity.ok(response);
+  public ResponseEntity<List<SchemaBlockDocument>> getAllSchemaBlock() {
+    schemaBlockService.getAllSchemaBlocks();
+    return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocks());
   }
 
   @PostMapping("/schemas")
@@ -80,8 +77,9 @@ public class SchemaBlockController {
     schemaBlockService.updateSchemaBlocks(schemaBlockDocument);
   }
 
-  private ResponseEntity<ValidateResponseDocument> validateSchema(SchemaBlockDocument schema) {
-    JsonNode jsonNode = JsonSchemaMappingUtil.convertSchemaBlockToJson(schema);
+  private ResponseEntity<ValidateResponseDocument> validateSchema(SchemaBlockDocument schema)
+      throws JsonProcessingException {
+    JsonNode jsonNode = JsonSchemaMappingUtil.convertSchemaBlockToJson(schema.getJsonSchema());
     ValidateRequestDocument validateRequestDocument = new ValidateRequestDocument();
     validateRequestDocument.setObject(jsonNode);
     validateRequestDocument.setSchema(JsonSchemaMappingUtil.getSchemaObject()); // TODO: meta schema should come from document store

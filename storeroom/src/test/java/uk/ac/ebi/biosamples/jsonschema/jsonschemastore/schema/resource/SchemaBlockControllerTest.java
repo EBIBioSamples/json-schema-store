@@ -1,8 +1,6 @@
 package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.resource;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.ValidatorClient;
-import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBlockService;
 
 import java.util.Collections;
@@ -41,18 +39,17 @@ class SchemaBlockControllerTest {
 
   @Test
   public void testGetAllSchemaBlock() {
-    SchemaBlock schemaBlock = new SchemaBlock();
-    schemaBlock.setTitle("test object");
+    SchemaBlockDocument schemaBlockDocument = new SchemaBlockDocument();
+    schemaBlockDocument.setTitle("test object");
 
     when(schemaBlockService.getAllSchemaBlocks())
-        .thenReturn(Collections.singletonList(schemaBlock));
-    ResponseEntity<List<JsonNode>> responseEntity = schemaBlockController.getAllSchemaBlock();
+        .thenReturn(Collections.singletonList(schemaBlockDocument));
+    ResponseEntity<List<SchemaBlockDocument>> responseEntity =
+        schemaBlockController.getAllSchemaBlock();
     Assertions.assertNotNull(responseEntity, "responseEntity cannot be null.");
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertNotNull(responseEntity.getBody(), "responseEntity body cannot be null.");
-    ObjectNode jsonNode = objectMapper.valueToTree(schemaBlock);
-    jsonNode.remove("schemalessData");
-    assertEquals(jsonNode.toString(), responseEntity.getBody().get(0).toString());
+    assertEquals(schemaBlockDocument, responseEntity.getBody().get(0));
   }
 
   @Test
