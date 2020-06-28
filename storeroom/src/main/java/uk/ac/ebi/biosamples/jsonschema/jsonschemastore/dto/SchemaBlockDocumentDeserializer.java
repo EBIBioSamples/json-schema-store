@@ -31,22 +31,22 @@ public class SchemaBlockDocumentDeserializer extends StdDeserializer<SchemaBlock
     objectMapper.readValue(
         jsonNode.required("meta").toString(), new TypeReference<Map<String, Object>>() {});
     return SchemaBlockDocument.builder()
-        .id(jsonNode.get("$id").toString())
-        .schema(jsonNode.get("$schema").toString())
-        .title(jsonNode.get("title").toString())
-        .description(jsonNode.get("description").toString())
-        .type(jsonNode.get("type").toString())
+        .id(jsonNode.get("$id").asText())
+        .schema(jsonNode.get("$schema").asText())
+        .title(jsonNode.get("title").asText())
+        .description(jsonNode.get("description").asText())
+        .type(jsonNode.get("type").asText())
         .additionalProperties(jsonNode.get("additionalProperties").booleanValue())
         .required(
             Objects.requireNonNullElse(
                 StreamSupport.stream(jsonNode.required("required").spliterator(), false)
-                    .map(JsonNode::toString)
+                    .map(JsonNode::asText)
                     .collect(Collectors.toList()),
                 new ArrayList<>()))
         .meta(
             objectMapper.readValue(
                 jsonNode.required("meta").toString(), new TypeReference<Map<String, Object>>() {}))
-        .jsonSchema(jsonNode.toPrettyString())
+        .jsonSchema(jsonNode.toString())
         .build();
   }
 }

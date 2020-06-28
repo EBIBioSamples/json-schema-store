@@ -17,6 +17,8 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlo
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBlockService;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.util.JsonSchemaMappingUtil;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,8 +40,26 @@ public class SchemaBlockController {
     this.environment = environment;
   }
 
+  @GetMapping("/schemas/**")
+  public ResponseEntity<SchemaBlockDocument> getAllSchemaBlockById(HttpServletRequest request)
+      throws JsonSchemaServiceException {
+    try {
+      String fullUrl = request.getRequestURL().toString();
+      String[] s = fullUrl.split("/api/v1/schemas/");
+      String id = String.join("", Arrays.copyOfRange(s, 1, s.length));
+      return schemaBlockService
+          .getAllSchemaBlocksById(id)
+          .map(ResponseEntity::ok)
+          .orElseGet(() -> ResponseEntity.notFound().build());
+    } catch (Exception e) {
+      String errorMessage = "Error occurred while getting schema: ";
+      log.error(errorMessage, e);
+      throw new JsonSchemaServiceException(errorMessage, e);
+    }
+  }
+
   @GetMapping("/schemas")
-  public ResponseEntity<List<SchemaBlockDocument>> getAllSchemaBlock() {
+  public ResponseEntity<List<SchemaBlockDocument>> getAllSchemaBlocks() {
     schemaBlockService.getAllSchemaBlocks();
     return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocks());
   }
@@ -62,8 +82,10 @@ public class SchemaBlockController {
   }
 
   @DeleteMapping("/schemas")
-  public void deleteSchemaBlocks(@RequestBody SchemaBlockDocument schemaBlockDocument) {
+  public ResponseEntity<String> deleteSchemaBlocks(
+      @RequestBody SchemaBlockDocument schemaBlockDocument) {
     schemaBlockService.deleteSchemaBlocks(schemaBlockDocument);
+    return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping("/schemas/{id}")
@@ -73,8 +95,26 @@ public class SchemaBlockController {
   }
 
   @PutMapping("/schemas")
-  public void updateSchemaBlocks(@RequestBody SchemaBlockDocument schemaBlockDocument) {
-    schemaBlockService.updateSchemaBlocks(schemaBlockDocument);
+  public ResponseEntity<JsonNode> updateSchemaBlocks(
+      @RequestBody SchemaBlockDocument schemaBlockDocument) throws JsonSchemaServiceException {
+    try {
+      ResponseEntity<ValidateResponseDocument> validateResult =
+          this.validateSchema(schemaBlockDocument);
+      if (HttpStatus.OK.equals(validateResult.getStatusCode())
+          && ValidationState.VALID.equals(
+              Objects.requireNonNull(validateResult.getBody()).getValidationState())) {
+        SchemaBlock result = schemaBlockService.updateSchemaBlocks(schemaBlockDocument);
+        return new ResponseEntity<>(
+            JsonSchemaMappingUtil.convertSchemaBlockToJson(result), HttpStatus.CREATED);
+      } else {
+        return ResponseEntity.badRequest()
+            .body(JsonSchemaMappingUtil.convertObjectToJson(validateResult.getBody()));
+      }
+    } catch (Exception e) {
+      String errorMessage = "Error occurred while updating schema ";
+      log.error(errorMessage, e);
+      throw new JsonSchemaServiceException(errorMessage, e);
+    }
   }
 
   private ResponseEntity<ValidateResponseDocument> validateSchema(SchemaBlockDocument schema)

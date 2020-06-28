@@ -45,7 +45,7 @@ class SchemaBlockControllerTest {
     when(schemaBlockService.getAllSchemaBlocks())
         .thenReturn(Collections.singletonList(schemaBlockDocument));
     ResponseEntity<List<SchemaBlockDocument>> responseEntity =
-        schemaBlockController.getAllSchemaBlock();
+        schemaBlockController.getAllSchemaBlocks();
     Assertions.assertNotNull(responseEntity, "responseEntity cannot be null.");
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     Assertions.assertNotNull(responseEntity.getBody(), "responseEntity body cannot be null.");

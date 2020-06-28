@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.modelmapper.config.Configuration;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.repository.SchemaBlockRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SchemaBlockService {
@@ -21,12 +23,21 @@ public class SchemaBlockService {
   public SchemaBlockService(SchemaBlockRepository schemaBlockRepository, ModelMapper modelMapper) {
     this.schemaBlockRepository = schemaBlockRepository;
     this.modelMapper = modelMapper;
+    this.modelMapper.getConfiguration()
+            .setFieldMatchingEnabled(true)
+            .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
     this.objectMapper = new ObjectMapper();
   }
 
   public SchemaBlock createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
-    return schemaBlockRepository.insert(schemaBlock);
+    return schemaBlockRepository.save(schemaBlock);
+  }
+
+  public Optional<SchemaBlockDocument> getAllSchemaBlocksById(@NonNull String id) {
+    return schemaBlockRepository.findById(id)
+            .map(schemaBlock -> Optional.of(modelMapper.map(schemaBlock, SchemaBlockDocument.class))
+                    .orElseGet(null));
   }
 
   public List<SchemaBlockDocument> getAllSchemaBlocks() {
@@ -43,8 +54,8 @@ public class SchemaBlockService {
     schemaBlockRepository.deleteById(id);
   }
 
-  public void updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument) {
+  public SchemaBlock updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument) {
     // TODO: enable versioning
-    createSchemaBlock(schemaBlockDocument);
+    return createSchemaBlock(schemaBlockDocument);
   }
 }
