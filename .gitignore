@@ -1,2 +1,6 @@
 /.idea/
 *.iml
+storefront/dist/
+storefront/node/
+storefront/node_modules/
+storefront/target/
