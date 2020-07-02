@@ -31,7 +31,7 @@ public class SchemaBlockService {
 
   public SchemaBlockDocument createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
-    return modelMapper.map(schemaBlockRepository.save(schemaBlock), SchemaBlockDocument.class);
+    return modelMapper.map(schemaBlockRepository.insert(schemaBlock), SchemaBlockDocument.class);
   }
 
   public Optional<SchemaBlockDocument> getAllSchemaBlocksById(@NonNull String id) {
