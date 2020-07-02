@@ -59,9 +59,9 @@ class SchemaBlockControllerIntegrateTest {
     MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
     assertEquals(200, mvcResult.getResponse().getStatus(), "status code is not equal.");
     assertEquals(
-        schemaBlock,
+        modelMapper.map(schemaBlock, SchemaBlockDocument.class),
         objectMapper
-            .readValue(mvcResult.getResponse().getContentAsString(), SchemaBlock[].class)[0],
+            .readValue(mvcResult.getResponse().getContentAsString(), SchemaBlockDocument[].class)[0],
         "schemaBlock is not equal.");
   }
 
@@ -74,10 +74,8 @@ class SchemaBlockControllerIntegrateTest {
     assertEquals(200, mvcResult.getResponse().getStatus(), "status code is not equal.");
     JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
     assertEquals(
-        modelMapper.map(schemaBlock, SchemaBlockDocument.class).getId(),
-        objectMapper
-            .readValue(jsonNode.get("jsonSchema").asText(), SchemaBlockDocument.class)
-            .getId(),
+        modelMapper.map(schemaBlock, SchemaBlockDocument.class),
+        objectMapper.readValue(jsonNode.toPrettyString(), SchemaBlockDocument.class),
         "schemaBlockDocument ids are not equal.");
   }
 
@@ -119,11 +117,9 @@ class SchemaBlockControllerIntegrateTest {
       assertEquals(schemaBlock.getId(), resultSchemaBlock.getId());
       JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
       assertEquals(
-              modelMapper.map(schemaBlock, SchemaBlockDocument.class).getId(),
-              objectMapper
-                      .readValue(jsonNode.get("jsonSchema").asText(), SchemaBlockDocument.class)
-                      .getId(),
-              "schemaBlockDocument ids are not equal.");
+          modelMapper.map(schemaBlock, SchemaBlockDocument.class),
+          objectMapper.readValue(jsonNode.toPrettyString(), SchemaBlockDocument.class),
+          "schemaBlockDocument ids are not equal.");
     } finally {
       environment.stop();
     }
@@ -149,7 +145,7 @@ class SchemaBlockControllerIntegrateTest {
       SchemaBlock resultSchemaBlock = schemaBlockRepository.findAll().get(0);
       assertEquals(schemaBlock.getId(), resultSchemaBlock.getId());
       JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
-      assertEquals(schemaBlock.getId(), jsonNode.get("id").asText());
+      assertEquals(schemaBlock.getId(), jsonNode.get("$id").asText());
       assertEquals(newTitle, jsonNode.get("title").asText());
     } finally {
       environment.stop();

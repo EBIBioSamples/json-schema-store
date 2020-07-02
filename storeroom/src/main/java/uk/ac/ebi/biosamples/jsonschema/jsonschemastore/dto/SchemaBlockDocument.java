@@ -1,6 +1,7 @@
 package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
 import java.util.List;
@@ -13,7 +14,9 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonDeserialize(using = SchemaBlockDocumentDeserializer.class)
+@JsonSerialize(using = SchemaBlockDocumentSerializer.class)
 public class SchemaBlockDocument {
+  @NonNull
   private String id;
   private String schema;
   private String title;
@@ -22,5 +25,6 @@ public class SchemaBlockDocument {
   private Map<String, Object> meta;
   private List<String> required;
   private Boolean additionalProperties;
+  @NonNull
   private String jsonSchema;
 }

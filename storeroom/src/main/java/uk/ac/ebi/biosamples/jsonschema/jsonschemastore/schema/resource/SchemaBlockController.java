@@ -13,7 +13,6 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidateRespon
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidationState;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
-import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBlockService;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.util.JsonSchemaMappingUtil;
 
@@ -55,7 +54,6 @@ public class SchemaBlockController {
 
   @GetMapping("/schemas")
   public ResponseEntity<List<SchemaBlockDocument>> getAllSchemaBlocks() {
-    schemaBlockService.getAllSchemaBlocks();
     return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocks());
   }
 
@@ -64,8 +62,10 @@ public class SchemaBlockController {
     try {
       ResponseEntity<ValidateResponseDocument> validateResult = this.validateSchema(schemaBlockDocument);
       if (HttpStatus.OK.equals(validateResult.getStatusCode()) && ValidationState.VALID.equals(Objects.requireNonNull(validateResult.getBody()).getValidationState())) {
-        SchemaBlock result = schemaBlockService.createSchemaBlock(schemaBlockDocument);
-        return new ResponseEntity<>(JsonSchemaMappingUtil.convertSchemaBlockToJson(result), HttpStatus.CREATED);
+        SchemaBlockDocument result = schemaBlockService.createSchemaBlock(schemaBlockDocument);
+        return new ResponseEntity<>(
+            JsonSchemaMappingUtil.convertSchemaBlockToJson(result.getJsonSchema()),
+            HttpStatus.CREATED);
       } else {
         return ResponseEntity.badRequest().body(JsonSchemaMappingUtil.convertObjectToJson(validateResult.getBody()));
       }
@@ -98,9 +98,10 @@ public class SchemaBlockController {
       if (HttpStatus.OK.equals(validateResult.getStatusCode())
           && ValidationState.VALID.equals(
               Objects.requireNonNull(validateResult.getBody()).getValidationState())) {
-        SchemaBlock result = schemaBlockService.updateSchemaBlocks(schemaBlockDocument);
+        SchemaBlockDocument result = schemaBlockService.updateSchemaBlocks(schemaBlockDocument);
         return new ResponseEntity<>(
-            JsonSchemaMappingUtil.convertSchemaBlockToJson(result), HttpStatus.CREATED);
+            JsonSchemaMappingUtil.convertSchemaBlockToJson(result.getJsonSchema()),
+            HttpStatus.CREATED);
       } else {
         return ResponseEntity.badRequest()
             .body(JsonSchemaMappingUtil.convertObjectToJson(validateResult.getBody()));

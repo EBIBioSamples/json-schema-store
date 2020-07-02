@@ -29,9 +29,9 @@ public class SchemaBlockService {
     this.objectMapper = new ObjectMapper();
   }
 
-  public SchemaBlock createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
+  public SchemaBlockDocument createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
-    return schemaBlockRepository.save(schemaBlock);
+    return modelMapper.map(schemaBlockRepository.save(schemaBlock), SchemaBlockDocument.class);
   }
 
   public Optional<SchemaBlockDocument> getAllSchemaBlocksById(@NonNull String id) {
@@ -54,7 +54,7 @@ public class SchemaBlockService {
     schemaBlockRepository.deleteById(id);
   }
 
-  public SchemaBlock updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument) {
+  public SchemaBlockDocument updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument) {
     // TODO: enable versioning
     return createSchemaBlock(schemaBlockDocument);
   }
