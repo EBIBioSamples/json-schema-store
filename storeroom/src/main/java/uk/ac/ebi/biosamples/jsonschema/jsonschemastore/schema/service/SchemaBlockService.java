@@ -1,24 +1,25 @@
 package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.config.Configuration;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.repository.SchemaBlockRepository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class SchemaBlockService {
 
   private final SchemaBlockRepository schemaBlockRepository;
   private final ModelMapper modelMapper;
-  private final ObjectMapper objectMapper;
 
   public SchemaBlockService(SchemaBlockRepository schemaBlockRepository, ModelMapper modelMapper) {
     this.schemaBlockRepository = schemaBlockRepository;
@@ -26,7 +27,6 @@ public class SchemaBlockService {
     this.modelMapper.getConfiguration()
             .setFieldMatchingEnabled(true)
             .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
-    this.objectMapper = new ObjectMapper();
   }
 
   public SchemaBlockDocument createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
@@ -54,8 +54,16 @@ public class SchemaBlockService {
     schemaBlockRepository.deleteById(id);
   }
 
-  public SchemaBlockDocument updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument) {
+  public SchemaBlockDocument updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument)
+      throws JsonSchemaServiceException {
     // TODO: enable versioning
-    return createSchemaBlock(schemaBlockDocument);
+    if (schemaBlockRepository.existsById(schemaBlockDocument.getId())) {
+      SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
+      return modelMapper.map(schemaBlockRepository.save(schemaBlock), SchemaBlockDocument.class);
+    } else {
+      String errorMessage = "Provided schemaBlockDocument does not exists!";
+      log.error(errorMessage);
+      throw new JsonSchemaServiceException(errorMessage);
+    }
   }
 }
