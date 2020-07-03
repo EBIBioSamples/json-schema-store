@@ -1,0 +1,19 @@
+# MongoDB conf
+spring:
+  data:
+    mongodb:
+      port: 27030
+      host: SchemaRepo
+      database: SchemaRepo
+      repositories:
+        type: auto
+# spring actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+# Elixir Validator
+elixirValidator:
+  hostUrl: http://validator:3020/validate
