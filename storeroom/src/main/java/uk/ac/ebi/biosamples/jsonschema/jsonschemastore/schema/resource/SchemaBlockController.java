@@ -1,25 +1,23 @@
 package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidateRequestDocument;
-import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
-import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
-import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.ValidatorClient;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidateRequestDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidateResponseDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidationState;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
+import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBlockService;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.util.JsonSchemaMappingUtil;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -27,38 +25,47 @@ import java.util.stream.Collectors;
 public class SchemaBlockController {
 
   private final SchemaBlockService schemaBlockService;
-  private final ModelMapper modelMapper;
   private final ValidatorClient validatorClient;
   private final Environment environment;
 
   public SchemaBlockController(
       SchemaBlockService schemaBlockService,
-      ModelMapper modelMapper,
       ValidatorClient validatorClient,
       Environment environment) {
     this.schemaBlockService = schemaBlockService;
-    this.modelMapper = modelMapper;
     this.validatorClient = validatorClient;
     this.environment = environment;
   }
 
+  @GetMapping("/schemas/")
+  public ResponseEntity<SchemaBlockDocument> getAllSchemaBlockById(@RequestParam("id") String id)
+      throws JsonSchemaServiceException {
+    try {
+      return schemaBlockService
+          .getAllSchemaBlocksById(id)
+          .map(ResponseEntity::ok)
+          .orElseGet(() -> ResponseEntity.notFound().build());
+    } catch (Exception e) {
+      String errorMessage = "Error occurred while getting schema: ";
+      log.error(errorMessage, e);
+      throw new JsonSchemaServiceException(errorMessage, e);
+    }
+  }
+
   @GetMapping("/schemas")
-  public ResponseEntity<List<JsonNode>> getAllSchemaBlock() {
-    List<SchemaBlock> schemaBlocks = schemaBlockService.getAllSchemaBlocks();
-    List<JsonNode> response =schemaBlocks.stream()
-            .map(JsonSchemaMappingUtil::convertSchemaBlockToJson)
-            .collect(Collectors.toList());
-    return ResponseEntity.ok(response);
+  public ResponseEntity<List<SchemaBlockDocument>> getAllSchemaBlocks() {
+    return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocks());
   }
 
   @PostMapping("/schemas")
-  public ResponseEntity<JsonNode> createSchemaBlock(@RequestBody SchemaBlockDocument schema) throws JsonSchemaServiceException {
+  public ResponseEntity<JsonNode> createSchemaBlock(@RequestBody SchemaBlockDocument schemaBlockDocument) throws JsonSchemaServiceException {
     try {
-      ResponseEntity<ValidateResponseDocument> validateResult = this.validateSchema(schema);
+      ResponseEntity<ValidateResponseDocument> validateResult = this.validateSchema(schemaBlockDocument);
       if (HttpStatus.OK.equals(validateResult.getStatusCode()) && ValidationState.VALID.equals(Objects.requireNonNull(validateResult.getBody()).getValidationState())) {
-        SchemaBlock schemaBlock = modelMapper.map(schema, SchemaBlock.class);
-        SchemaBlock result = schemaBlockService.createSchemaBlock(schemaBlock);
-        return new ResponseEntity<>(JsonSchemaMappingUtil.convertSchemaBlockToJson(result), HttpStatus.CREATED);
+        SchemaBlockDocument result = schemaBlockService.createSchemaBlock(schemaBlockDocument);
+        return new ResponseEntity<>(
+            JsonSchemaMappingUtil.convertSchemaBlockToJson(result.getJsonSchema()),
+            HttpStatus.CREATED);
       } else {
         return ResponseEntity.badRequest().body(JsonSchemaMappingUtil.convertObjectToJson(validateResult.getBody()));
       }
@@ -69,8 +76,46 @@ public class SchemaBlockController {
     }
   }
 
-  private ResponseEntity<ValidateResponseDocument> validateSchema(SchemaBlockDocument schema) {
-    JsonNode jsonNode = JsonSchemaMappingUtil.convertSchemaBlockToJson(schema);
+  @DeleteMapping("/schemas")
+  public ResponseEntity<String> deleteSchemaBlocks(
+      @RequestBody SchemaBlockDocument schemaBlockDocument) {
+    schemaBlockService.deleteSchemaBlocks(schemaBlockDocument);
+    return ResponseEntity.noContent().build();
+  }
+
+  @DeleteMapping("/schemas/")
+  public ResponseEntity<String> deleteSchemaBlocksById(@RequestParam("id") String id) {
+    schemaBlockService.deleteSchemaBlocksById(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PutMapping("/schemas")
+  public ResponseEntity<JsonNode> updateSchemaBlocks(
+      @RequestBody SchemaBlockDocument schemaBlockDocument) throws JsonSchemaServiceException {
+    try {
+      ResponseEntity<ValidateResponseDocument> validateResult =
+          this.validateSchema(schemaBlockDocument);
+      if (HttpStatus.OK.equals(validateResult.getStatusCode())
+          && ValidationState.VALID.equals(
+              Objects.requireNonNull(validateResult.getBody()).getValidationState())) {
+        SchemaBlockDocument result = schemaBlockService.updateSchemaBlocks(schemaBlockDocument);
+        return new ResponseEntity<>(
+            JsonSchemaMappingUtil.convertSchemaBlockToJson(result.getJsonSchema()),
+            HttpStatus.CREATED);
+      } else {
+        return ResponseEntity.badRequest()
+            .body(JsonSchemaMappingUtil.convertObjectToJson(validateResult.getBody()));
+      }
+    } catch (Exception e) {
+      String errorMessage = "Error occurred while updating schema ";
+      log.error(errorMessage, e);
+      throw new JsonSchemaServiceException(errorMessage, e);
+    }
+  }
+
+  private ResponseEntity<ValidateResponseDocument> validateSchema(SchemaBlockDocument schema)
+      throws JsonProcessingException {
+    JsonNode jsonNode = JsonSchemaMappingUtil.convertSchemaBlockToJson(schema.getJsonSchema());
     ValidateRequestDocument validateRequestDocument = new ValidateRequestDocument();
     validateRequestDocument.setObject(jsonNode);
     validateRequestDocument.setSchema(JsonSchemaMappingUtil.getSchemaObject()); // TODO: meta schema should come from document store

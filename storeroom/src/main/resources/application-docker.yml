@@ -3,10 +3,17 @@ spring:
   data:
     mongodb:
       port: 27030
-      host: localhost
+      host: SchemaRepo
       database: SchemaRepo
       repositories:
         type: auto
+# spring actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 # Elixir Validator
 elixirValidator:
-  hostUrl: http://localhost:3000/validate
+  hostUrl: http://validator:3020/validate
