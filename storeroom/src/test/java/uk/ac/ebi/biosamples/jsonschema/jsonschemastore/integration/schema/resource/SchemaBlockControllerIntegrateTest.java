@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -49,6 +50,11 @@ class SchemaBlockControllerIntegrateTest {
   @Autowired private ModelMapper modelMapper;
   private SchemaBlock schemaBlock;
 
+  @BeforeAll
+  public static void setup() {
+    environment.start();
+  }
+
   @BeforeEach
   public void init() throws JsonProcessingException {
     schemaBlockRepository.deleteAll();
@@ -57,8 +63,6 @@ class SchemaBlockControllerIntegrateTest {
 
   @Test
   public void testCreateSchemaBlock() throws Exception {
-    try {
-      environment.start();
       assertEquals(0L, schemaBlockRepository.count());
       RequestBuilder requestBuilder =
           MockMvcRequestBuilders.post("/api/v1/schemas")
@@ -75,17 +79,12 @@ class SchemaBlockControllerIntegrateTest {
           modelMapper.map(schemaBlock, SchemaBlockDocument.class),
           objectMapper.readValue(jsonNode.toPrettyString(), SchemaBlockDocument.class),
           "schemaBlockDocument ids are not equal.");
-    } finally {
-      environment.stop();
-    }
   }
 
   @Test
   public void testUpdateSchemaBlocks() throws Exception {
-    try {
       schemaBlockRepository.save(schemaBlock);
       assertEquals(1, schemaBlockRepository.count());
-      environment.start();
       SchemaBlockDocument schemaBlockDocument =
           objectMapper.readValue(SchemaBlockFactoryUtil.SCHEMA, SchemaBlockDocument.class);
       ObjectNode objectNode =
@@ -105,8 +104,5 @@ class SchemaBlockControllerIntegrateTest {
       JsonNode jsonNode = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
       assertEquals(schemaBlock.getId(), jsonNode.get("$id").asText());
       assertEquals(newTitle, jsonNode.get("title").asText());
-    } finally {
-      environment.stop();
-    }
   }
 }
