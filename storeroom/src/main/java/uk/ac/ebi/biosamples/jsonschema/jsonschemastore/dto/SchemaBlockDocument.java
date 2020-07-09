@@ -1,46 +1,30 @@
 package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonDeserialize(using = SchemaBlockDocumentDeserializer.class)
+@JsonSerialize(using = SchemaBlockDocumentSerializer.class)
 public class SchemaBlockDocument {
-
-  //private String id;
-
-  @JsonProperty(value = "$schema")
+  @NonNull
+  private String id;
   private String schema;
-
   private String title;
   private String description;
   private String type;
   private Map<String, Object> meta;
   private List<String> required;
-  private Map<String, Object> properties;
-
-  // a container for all unexpected fields
-  private Map<String, Object> schemalessData;
-
-  @JsonAnySetter
-  public void add(String key, Object value) {
-    if (null == schemalessData) {
-      schemalessData = new HashMap<>();
-    }
-    schemalessData.put(key, value);
-  }
-
-  @JsonAnyGetter
-  public Map<String, Object> get() {
-    return schemalessData;
-  }
+  private Boolean additionalProperties;
+  @NonNull
+  private String jsonSchema;
 }

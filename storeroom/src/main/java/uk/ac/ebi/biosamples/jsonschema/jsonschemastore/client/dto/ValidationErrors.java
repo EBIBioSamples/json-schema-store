@@ -6,20 +6,26 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 public class ValidationErrors {
-  private final List<String> errors;
-  private final String dataPath;
+  private final Map<String, Object> ajvError;
+  private final String message;
+  private final String absoluteDataPath;
+  private final String userFriendlyMessage;
 
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
   public ValidationErrors(
-          @JsonProperty("errors") final List<String> errors,
-          @JsonProperty("dataPath") final String dataPath) {
-    this.errors = errors;
-    this.dataPath = dataPath;
+      @JsonProperty("ajvError") final Map<String, Object> ajvError,
+      @JsonProperty("message") final String message,
+      @JsonProperty("absoluteDataPath") final String absoluteDataPath,
+      @JsonProperty("userFriendlyMessage") final String userFriendlyMessage) {
+    this.ajvError = ajvError;
+    this.message = message;
+    this.absoluteDataPath = absoluteDataPath;
+    this.userFriendlyMessage = userFriendlyMessage;
   }
 }
