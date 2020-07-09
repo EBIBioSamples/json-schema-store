@@ -20,6 +20,9 @@ elixirValidator:
 
 # BioSample AAP Conf
 aap:
-  url: https://api.aai.ebi.ac.uk
+  url: https://explore.api.aai.ebi.ac.uk
 jwt:
   certificate: https://explore.api.aai.ebi.ac.uk/meta/public.der
+aap-client:
+  cors:
+    enabled: true
