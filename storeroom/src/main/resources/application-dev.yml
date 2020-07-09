@@ -17,3 +17,9 @@ management:
 # Elixir Validator
 elixirValidator:
   hostUrl: http://localhost:3000/validate
+
+# BioSample AAP Conf
+aap:
+  url: https://api.aai.ebi.ac.uk
+jwt:
+  certificate: https://explore.api.aai.ebi.ac.uk/meta/public.der
