@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>storefront</artifactId>
-    <name>client</name>
+    <name>storefront</name>
     <description>
         Frontend angular component for JSON Schema store
     </description>
@@ -20,6 +20,45 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.7.6</version>
+                <configuration>
+                    <workingDirectory>./</workingDirectory>
+                    <nodeVersion>v12.16.2</nodeVersion>
+                    <npmVersion>6.14.4</npmVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm run build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+<!--        <resources>-->
+<!--            <resource>-->
+<!--                <directory>./dist/storefront</directory>-->
+<!--                <targetPath>static</targetPath>-->
+<!--            </resource>-->
+<!--        </resources>-->
     </build>
 </project>
