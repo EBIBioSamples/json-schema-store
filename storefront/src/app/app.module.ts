@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { SchemaBrowserComponent } from './schema-browser/schema-browser.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EditorComponent } from './editor/editor.component';
+import {NgJsonEditorModule} from 'ang-jsoneditor';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { EditorComponent } from './editor/editor.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgJsonEditorModule
   ],
   providers: [],
   bootstrap: [AppComponent]
