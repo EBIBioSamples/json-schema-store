@@ -54,11 +54,11 @@
                 </executions>
             </plugin>
         </plugins>
-<!--        <resources>-->
-<!--            <resource>-->
-<!--                <directory>./dist/storefront</directory>-->
-<!--                <targetPath>static</targetPath>-->
-<!--            </resource>-->
-<!--        </resources>-->
+        <resources>
+            <resource>
+                <directory>./dist/storefront</directory>
+                <targetPath>static</targetPath>
+            </resource>
+        </resources>
     </build>
 </project>
