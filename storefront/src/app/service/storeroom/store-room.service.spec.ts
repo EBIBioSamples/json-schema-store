@@ -1,12 +1,12 @@
 import {TestBed} from '@angular/core/testing';
 
-import {SchemaService} from './schema.service';
+import {StoreRoomService} from './store-room.service';
 
-describe('SchemaService', () => {
+describe('StoreRoomService', () => {
     beforeEach(() => TestBed.configureTestingModule({}));
 
     it('should be created', () => {
-        const service: SchemaService = TestBed.get(SchemaService);
+        const service: StoreRoomService = TestBed.get(StoreRoomService);
         expect(service).toBeTruthy();
     });
 });

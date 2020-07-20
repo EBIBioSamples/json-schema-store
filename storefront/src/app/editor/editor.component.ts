@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {JsonEditorComponent, JsonEditorOptions} from 'ang-jsoneditor';
+import {StoreRoomService} from '../service/storeroom/store-room.service';
 
 @Component({
     selector: 'app-editor',
@@ -11,20 +12,21 @@ export class EditorComponent implements OnInit {
     public data: any;
     @ViewChild(JsonEditorComponent, {static: false}) editor: JsonEditorComponent;
 
-    constructor() {
+    constructor(private storeroomClient: StoreRoomService) {
         this.editorOptions = new JsonEditorOptions();
         this.editorOptions.modes = ['code', 'text', 'tree', 'view'];
-        this.data =  {
+        this.editorOptions.onChange = () => console.log(this.editor.get());
+        this.data = {
             products: [{
                 name: 'car',
                 product: [{
                     name: 'honda',
                     model: [
-                        { id: 'civic', name: 'civic' },
-                        { id: 'accord', name: 'accord' },
-                        { id: 'crv', name: 'crv' },
-                        { id: 'pilot', name: 'pilot' },
-                        { id: 'odyssey', name: 'odyssey' }
+                        {id: 'civic', name: 'civic'},
+                        {id: 'accord', name: 'accord'},
+                        {id: 'crv', name: 'crv'},
+                        {id: 'pilot', name: 'pilot'},
+                        {id: 'odyssey', name: 'odyssey'}
                     ]
                 }]
             }]
@@ -34,4 +36,8 @@ export class EditorComponent implements OnInit {
     ngOnInit() {
     }
 
+    createJsonSchema() {
+        console.log(this.editor.get());
+        this.storeroomClient.createJsonSchema(this.editor.get());
+    }
 }

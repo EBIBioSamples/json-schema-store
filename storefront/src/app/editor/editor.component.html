@@ -1,2 +1,5 @@
 <p>editor works!</p>
-<json-editor [options]="editorOptions" [data]="data" ></json-editor>
+<div>
+    <json-editor [data]="data" [options]="editorOptions"></json-editor>
+    <button (click)="createJsonSchema()">Create</button>
+</div>
