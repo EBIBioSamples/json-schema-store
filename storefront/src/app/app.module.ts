@@ -9,6 +9,7 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {EditorComponent} from './editor/editor.component';
 import {NgJsonEditorModule} from 'ang-jsoneditor';
 import {StoreRoomService} from './service/storeroom/store-room.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [
@@ -19,6 +20,7 @@ import {StoreRoomService} from './service/storeroom/store-room.service';
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         AppRoutingModule,
         NgJsonEditorModule,
         HttpClientModule
