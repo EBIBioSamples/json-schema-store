@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +57,10 @@ public class SchemaBlockController {
   public ResponseEntity<List<SchemaBlockDocument>> getAllSchemaBlocks() {
     return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocks());
   }
-
+  @GetMapping("/schemas/page/{page}")
+  public ResponseEntity<Page<SchemaBlockDocument>> getAllSchemaBlocksPage(@PathVariable("page") Integer page) {
+    return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocksPage(Objects.requireNonNullElse(page, 0)));
+  }
   @PostMapping("/schemas")
   public ResponseEntity<JsonNode> createSchemaBlock(@RequestBody SchemaBlockDocument schemaBlockDocument) throws JsonSchemaServiceException {
     try {
