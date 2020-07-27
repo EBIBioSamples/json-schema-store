@@ -12,7 +12,7 @@ export class SchemaBrowserComponent implements OnInit {
     constructor(private schemaService: SchemaService) {
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
       this.schema = this.schemaService.getSchema();
     }
 

@@ -33,10 +33,10 @@ export class EditorComponent implements OnInit {
         };
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
     }
 
-    createJsonSchema() {
+    createJsonSchema(): void {
         console.log(this.editor.get());
         this.storeroomClient.createJsonSchema(this.editor.get());
     }
