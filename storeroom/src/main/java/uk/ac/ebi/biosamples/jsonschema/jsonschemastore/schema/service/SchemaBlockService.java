@@ -47,9 +47,9 @@ public class SchemaBlockService {
         schemaBlockRepository.findAll(), new TypeToken<List<SchemaBlockDocument>>() {}.getType());
   }
 
-  public Page<SchemaBlockDocument> getAllSchemaBlocksPage(Integer page) {
+  public Page<SchemaBlockDocument> getAllSchemaBlocksPage(Integer page, Integer size) {
     return modelMapper.map(
-        schemaBlockRepository.findAll(PageRequest.of(page, 2)),
+        schemaBlockRepository.findAll(PageRequest.of(page, size)),
         new TypeToken<Page<SchemaBlockDocument>>() {}.getType());
   }
 

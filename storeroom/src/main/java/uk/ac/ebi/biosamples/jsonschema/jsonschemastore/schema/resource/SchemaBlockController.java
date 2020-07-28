@@ -57,10 +57,17 @@ public class SchemaBlockController {
   public ResponseEntity<List<SchemaBlockDocument>> getAllSchemaBlocks() {
     return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocks());
   }
-  @GetMapping("/schemas/page/{page}")
-  public ResponseEntity<Page<SchemaBlockDocument>> getAllSchemaBlocksPage(@PathVariable("page") Integer page) {
-    return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocksPage(Objects.requireNonNullElse(page, 0)));
+
+  @GetMapping("/schemas/page")
+  public ResponseEntity<Page<SchemaBlockDocument>> getAllSchemaBlocksPage(
+      @RequestParam(value = "page", required = false) Integer page,
+      @RequestParam(value = "size", required = false) Integer size) {
+
+    return ResponseEntity.ok(
+        schemaBlockService.getAllSchemaBlocksPage(
+            Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 3)));
   }
+
   @PostMapping("/schemas")
   public ResponseEntity<JsonNode> createSchemaBlock(@RequestBody SchemaBlockDocument schemaBlockDocument) throws JsonSchemaServiceException {
     try {
