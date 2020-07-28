@@ -16,6 +16,7 @@ import {StoreRoomService} from './service/storeroom/store-room.service';
 import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { ContentComponent } from './layout/content/content.component';
+import { SchemaListComponent } from './schema-list/schema-list.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +26,8 @@ import { ContentComponent } from './layout/content/content.component';
         EditorComponent,
         LayoutComponent,
         HeaderComponent,
-        ContentComponent
+        ContentComponent,
+        SchemaListComponent
     ],
     imports: [
         BrowserModule,
