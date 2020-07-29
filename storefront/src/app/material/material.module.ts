@@ -9,6 +9,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import {MatPaginatorModule} from '@angular/material/paginator';
+
+import {JsonSchemaCardComponent} from './json-schema-card/json-schema-card.component';
 
 const material = [
     MatSidenavModule,
@@ -20,12 +23,15 @@ const material = [
     MatFormFieldModule,
     MatInputModule,
     MatCardModule,
-    MatListModule
+    MatListModule,
+    MatPaginatorModule
 ];
 
 @NgModule({
     imports: [material],
-    exports: [material]
+    declarations: [
+        JsonSchemaCardComponent
+    ],
+    exports: [material, JsonSchemaCardComponent]
 })
-export class MaterialModule {
-}
+export class MaterialModule {}

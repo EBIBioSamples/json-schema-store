@@ -1,1 +1,10 @@
-<p>schema-list works!</p>
+<mat-drawer-content>
+    <mat-paginator [length]="cardItems.length"
+                   [pageSize]="3"
+                   [pageSizeOptions]="[3, 6, 9]"
+                   (page)="onPageChange($event)">
+    </mat-paginator>
+    <div class="example-sidenav-content" fxLayout="row wrap" fxLayout.xs="column" fxLayoutAlign="space-evenly center">
+        <app-json-schema-card *ngFor="let card of pageSlice"></app-json-schema-card>
+    </div>
+</mat-drawer-content>

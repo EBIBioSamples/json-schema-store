@@ -14,4 +14,15 @@ export class StoreRoomService {
                 console.log(response);
             });
     }
+
+    public getJsonSchemas(pageNumber: number, pageSize: number): void {
+        let url = 'http://localhost:8080/api/v1//schemas/page';
+        url = pageNumber ? url + '?page=' + pageNumber : url;
+        url = pageSize ? url + '?size=' + pageSize : url;
+
+        this.http.get(url)
+            .subscribe((response) => {
+                console.log(response);
+            });
+    }
 }
