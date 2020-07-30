@@ -12,16 +12,9 @@ import {async} from 'rxjs/internal/scheduler/async';
 })
 export class SchemaListComponent implements OnInit {
 
-    public cardItems = [
-        {cardItem: 1}, {cardItem: 2}, {cardItem: 3},
-        {cardItem: 4}, {cardItem: 5}, {cardItem: 6},
-        {cardItem: 7}, {cardItem: 8}, {cardItem: 9}
-    ];
-    public pageSlice = this.cardItems.slice(0, 3);
-
-    public schemaBlocksPages: Observable<Page>;
-    public schemaBlocks: any[];
-    public totalElements: number;
+    private schemaBlocksPages: Observable<Page>;
+    private schemaBlocks: any[];
+    private totalElements: number;
 
     constructor(private storeroomClient: StoreRoomService) {
     }
