@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {PageEvent} from '@angular/material/paginator';
 import {StoreRoomService} from '../service/storeroom/store-room.service';
 import {Page} from '../dto/dto.module';
+import {Observable} from 'rxjs';
+import {async} from 'rxjs/internal/scheduler/async';
 
 @Component({
     selector: 'app-schema-list',
@@ -17,23 +19,25 @@ export class SchemaListComponent implements OnInit {
     ];
     public pageSlice = this.cardItems.slice(0, 3);
 
-    public schemaBlocksPages: Page ;
+    public schemaBlocksPages: Observable<Page>;
     public pageSliceSchema: any[];
+    public totalElements: number;
 
     constructor(private storeroomClient: StoreRoomService) {
     }
 
     ngOnInit(): void {
         this.getSchemaBlockPages();
-        this.pageSliceSchema = this.schemaBlocksPages.content.slice(0, 3);
+        this.schemaBlocksPages.subscribe(page => {
+            this.pageSliceSchema = page.content.slice(0, 3);
+            this.totalElements = page.totalElements;
+        });
     }
 
     getSchemaBlockPages(): void {
-        this.schemaBlocksPages = new Page();
-        this.storeroomClient.getSchemaBlockPages(this.schemaBlocksPages);
+        this.schemaBlocksPages = this.storeroomClient.getSchemaBlockPages2();
         console.log('page object: ');
         console.log(this.schemaBlocksPages);
-        // this.schemaBlocksPages;
     }
 
     onPageChange(event: PageEvent): void {
@@ -50,10 +54,13 @@ export class SchemaListComponent implements OnInit {
         console.log(event);
         const startIndex = event.pageIndex * event.pageSize;
         let endIndex = startIndex + event.pageSize;
-        if (endIndex > this.schemaBlocksPages.totalElements) {
-            endIndex = this.schemaBlocksPages.totalElements;
-        }
-        this.pageSliceSchema = this.schemaBlocksPages.content.slice(startIndex, endIndex);
+        this.schemaBlocksPages = this.storeroomClient.getSchemaBlockPages2(event.pageIndex, event.pageSize);
+        this.schemaBlocksPages.subscribe((page) => {
+            if (endIndex > page.totalElements) {
+                endIndex = page.totalElements;
+            }
+            this.pageSliceSchema = page.content.slice(startIndex, endIndex);
+        });
     }
 
 }

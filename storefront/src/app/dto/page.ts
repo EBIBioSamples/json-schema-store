@@ -1,4 +1,4 @@
-export class Page {
+export interface Page {
     content: any[];
     pageable: object;
     totalPages: number;

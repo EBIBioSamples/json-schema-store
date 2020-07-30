@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Page} from '../../dto/dto.module';
+import {Observable} from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -28,5 +29,12 @@ export class StoreRoomService {
                     schemaBlocksPages = response.body;
                 }
             });
+    }
+
+    public getSchemaBlockPages2(pageNumber?: number, pageSize?: number): Observable<Page> {
+        let url = 'http://localhost:8080/api/v1/schemas/page';
+        url = pageNumber ? url + '?page=' + pageNumber : url;
+        url = pageSize ? url + '&size=' + pageSize : url;
+        return this.http.get<Page>(url);
     }
 }
