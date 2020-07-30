@@ -25,6 +25,7 @@ The project will be comprised of the following tasks:
 ## Table of Content
 - [Software](#software)
 - [Installation](#installation)
+- [Schema UI (storefront)](#schema-ui-storefront)
 
 ### Software
 * Java OpenJdk-11
