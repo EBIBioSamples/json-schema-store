@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-json-schema-card',
@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class JsonSchemaCardComponent implements OnInit {
 
+  @Input() cardNumber: number;
+  @Input() schemaBlock: object;
   constructor() { }
 
   ngOnInit(): void {
