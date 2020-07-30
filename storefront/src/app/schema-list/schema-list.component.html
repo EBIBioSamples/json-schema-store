@@ -1,22 +1,13 @@
 <mat-drawer-content>
-<!--    <mat-paginator [length]="cardItems.length"
-                   [pageSize]="3"
-                   [pageSizeOptions]="[3, 6, 9]"
-                   (page)="onPageChange($event)">
-    </mat-paginator>
-
-    <div class="example-sidenav-content" fxLayout="row wrap" fxLayout.xs="column" fxLayoutAlign="space-evenly center">
-        <app-json-schema-card [cardNumber]="card.cardItem" *ngFor="let card of pageSlice"></app-json-schema-card>
-    </div>-->
-
     <div>
-        <mat-paginator [length]="totalElements"
-                       [pageSize]="3"
+        <mat-paginator (page)="onPageChange($event)"
+                       [length]="totalElements"
                        [pageSizeOptions]="[3, 6, 9]"
-                       (page)="onPageChange($event)">
+                       [pageSize]="3">
         </mat-paginator>
-        <div class="example-sidenav-content" fxLayout="row wrap" fxLayout.xs="column" fxLayoutAlign="space-evenly center">
-            <app-json-schema-card [schemaBlock]="schemaBlock" *ngFor="let schemaBlock of schemaBlocks"></app-json-schema-card>
+        <div class="example-sidenav-content" fxLayout="row wrap" fxLayout.xs="column"
+             fxLayoutAlign="space-evenly center">
+            <app-json-schema-card *ngFor="let schemaBlock of schemaBlocks" [schemaBlock]="schemaBlock"></app-json-schema-card>
         </div>
     </div>
 </mat-drawer-content>
