@@ -13,10 +13,10 @@
         <mat-paginator [length]="totalElements"
                        [pageSize]="3"
                        [pageSizeOptions]="[3, 6, 9]"
-                       (page)="onPageChangeSchema($event)">
+                       (page)="onPageChange($event)">
         </mat-paginator>
         <div class="example-sidenav-content" fxLayout="row wrap" fxLayout.xs="column" fxLayoutAlign="space-evenly center">
-            <app-json-schema-card [schemaBlock]="schemaBlock1" *ngFor="let schemaBlock1 of pageSliceSchema"></app-json-schema-card>
+            <app-json-schema-card [schemaBlock]="schemaBlock" *ngFor="let schemaBlock of schemaBlocks"></app-json-schema-card>
         </div>
     </div>
 </mat-drawer-content>

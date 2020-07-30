@@ -18,23 +18,8 @@ export class StoreRoomService {
             });
     }
 
-    public getSchemaBlockPages(schemaBlocksPages: Page, pageNumber?: number, pageSize?: number): void {
-        let url = 'http://localhost:8080/api/v1/schemas/page';
-        url = pageNumber ? url + '?page=' + pageNumber : url;
-        url = pageSize ? url + '?size=' + pageSize : url;
-
-        this.http.get<any>(url)
-            .subscribe((response: HttpResponse<Page>) => {
-                if (200 === response.status) {
-                    schemaBlocksPages = response.body;
-                }
-            });
-    }
-
-    public getSchemaBlockPages2(pageNumber?: number, pageSize?: number): Observable<Page> {
-        let url = 'http://localhost:8080/api/v1/schemas/page';
-        url = pageNumber ? url + '?page=' + pageNumber : url;
-        url = pageSize ? url + '&size=' + pageSize : url;
+    public getSchemaBlockPages(pageNumber= 0, pageSize= 3): Observable<Page> {
+        const url = 'http://localhost:8080/api/v1/schemas/page?page=' + pageNumber + '&size=' + pageSize;
         return this.http.get<Page>(url);
     }
 }

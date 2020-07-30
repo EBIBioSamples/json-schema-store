@@ -20,7 +20,7 @@ export class SchemaListComponent implements OnInit {
     public pageSlice = this.cardItems.slice(0, 3);
 
     public schemaBlocksPages: Observable<Page>;
-    public pageSliceSchema: any[];
+    public schemaBlocks: any[];
     public totalElements: number;
 
     constructor(private storeroomClient: StoreRoomService) {
@@ -29,37 +29,20 @@ export class SchemaListComponent implements OnInit {
     ngOnInit(): void {
         this.getSchemaBlockPages();
         this.schemaBlocksPages.subscribe(page => {
-            this.pageSliceSchema = page.content.slice(0, 3);
+            this.schemaBlocks = page.content;
             this.totalElements = page.totalElements;
         });
     }
 
     getSchemaBlockPages(): void {
-        this.schemaBlocksPages = this.storeroomClient.getSchemaBlockPages2();
-        console.log('page object: ');
-        console.log(this.schemaBlocksPages);
+        this.schemaBlocksPages = this.storeroomClient.getSchemaBlockPages();
     }
 
     onPageChange(event: PageEvent): void {
-        console.log(event);
-        const startIndex = event.pageIndex * event.pageSize;
-        let endIndex = startIndex + event.pageSize;
-        if (endIndex > this.cardItems.length) {
-            endIndex = this.cardItems.length;
-        }
-        this.pageSlice = this.cardItems.slice(startIndex, endIndex);
-    }
-
-    onPageChangeSchema(event: PageEvent): void {
-        console.log(event);
-        const startIndex = event.pageIndex * event.pageSize;
-        let endIndex = startIndex + event.pageSize;
-        this.schemaBlocksPages = this.storeroomClient.getSchemaBlockPages2(event.pageIndex, event.pageSize);
+        this.schemaBlocksPages = this.storeroomClient.getSchemaBlockPages(event.pageIndex, event.pageSize);
         this.schemaBlocksPages.subscribe((page) => {
-            if (endIndex > page.totalElements) {
-                endIndex = page.totalElements;
-            }
-            this.pageSliceSchema = page.content.slice(startIndex, endIndex);
+            this.totalElements = page.totalElements;
+            this.schemaBlocks = page.content;
         });
     }
 
