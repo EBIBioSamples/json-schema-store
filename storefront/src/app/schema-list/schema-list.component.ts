@@ -13,8 +13,8 @@ import {async} from 'rxjs/internal/scheduler/async';
 export class SchemaListComponent implements OnInit {
 
     private schemaBlocksPages: Observable<Page>;
-    private schemaBlocks: any[];
-    private totalElements: number;
+    public schemaBlocks: any[];
+    public totalElements: number;
 
     constructor(private storeroomClient: StoreRoomService) {
     }
