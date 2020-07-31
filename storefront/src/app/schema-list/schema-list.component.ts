@@ -3,7 +3,6 @@ import {PageEvent} from '@angular/material/paginator';
 import {StoreRoomService} from '../service/storeroom/store-room.service';
 import {Page} from '../dto/dto.module';
 import {Observable} from 'rxjs';
-import {async} from 'rxjs/internal/scheduler/async';
 
 @Component({
     selector: 'app-schema-list',
@@ -12,9 +11,9 @@ import {async} from 'rxjs/internal/scheduler/async';
 })
 export class SchemaListComponent implements OnInit {
 
-    private schemaBlocksPages: Observable<Page>;
     public schemaBlocks: any[];
     public totalElements: number;
+    private schemaBlocksPages: Observable<Page>;
 
     constructor(private storeroomClient: StoreRoomService) {
     }
