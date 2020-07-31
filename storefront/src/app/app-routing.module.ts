@@ -1,13 +1,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {SchemaBrowserComponent} from './schema-browser/schema-browser.component';
-import {DashboardComponent} from './dashboard/dashboard.component';
+import {AppComponent} from './app.component';
 
 
 const routes: Routes = [
-    {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
-    {path: 'dashboard', component: DashboardComponent},
-    {path: 'browse', component: SchemaBrowserComponent}
+    {path: '', redirectTo: '/home', pathMatch: 'full'},
+    {path: '**', redirectTo: '/home', pathMatch: 'full'},
+    {path: 'home', component: AppComponent}
 ];
 
 @NgModule({

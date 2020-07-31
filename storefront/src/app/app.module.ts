@@ -9,8 +9,6 @@ import {MaterialModule} from './material/material.module';
 import {NgJsonEditorModule} from 'ang-jsoneditor';
 
 import {AppComponent} from './app.component';
-import {SchemaBrowserComponent} from './schema-browser/schema-browser.component';
-import {DashboardComponent} from './dashboard/dashboard.component';
 import {EditorComponent} from './editor/editor.component';
 import {StoreRoomService} from './service/storeroom/store-room.service';
 import { LayoutComponent } from './layout/layout.component';
@@ -21,8 +19,6 @@ import { SchemaListComponent } from './schema-list/schema-list.component';
 @NgModule({
     declarations: [
         AppComponent,
-        SchemaBrowserComponent,
-        DashboardComponent,
         EditorComponent,
         LayoutComponent,
         HeaderComponent,

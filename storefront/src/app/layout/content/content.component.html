@@ -9,8 +9,9 @@
     <mat-drawer-container class="example-container">
         <mat-drawer #drawer [mode]="deviceXs?'over':'side'" [opened]="!deviceXs" position="start" fxFlex="20"
                     fxLayout="column" fxLayoutAlign="start space-between" [style.marginTop.px]="10" [style.top.px]="sideBarScroll()">
-            <mat-list role="list" class="list-width" *ngFor="let i of [].constructor(2)">
-                <mat-list-item role="listitem" class="list-item" matRipple>Side Bar Item List</mat-list-item>
+            <mat-list role="list" class="list-width" >
+                <mat-list-item role="listitem" class="list-item" matRipple>Schemas</mat-list-item>
+                <mat-list-item role="listitem" class="list-item" matRipple>Schema Editor</mat-list-item>
             </mat-list>
         </mat-drawer>
         <!-- <p>Test</p> -->

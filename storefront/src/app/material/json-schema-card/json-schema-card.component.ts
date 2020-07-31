@@ -14,4 +14,8 @@ export class JsonSchemaCardComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  viewSchema(): void {
+    console.log(this.schemaBlock);
+  }
+
 }
