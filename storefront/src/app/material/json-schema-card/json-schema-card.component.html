@@ -10,6 +10,6 @@
         <p>{{schemaBlock.description}}</p>
     </mat-card-content>
     <mat-card-actions>
-        <button mat-button (click)="viewSchema()">View</button>
+        <button mat-button><a [queryParams]="schemaBlock" routerLink="/home/editor">View</a></button>
     </mat-card-actions>
 </mat-card>
