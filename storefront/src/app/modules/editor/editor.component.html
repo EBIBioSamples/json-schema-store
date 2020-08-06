@@ -1,4 +1,5 @@
 <div>
     <json-editor [data]="data" [options]="editorOptions"></json-editor>
-    <button (click)="createJsonSchema()">Create</button>
+    <button *ngIf="isUpdate" (click)="updateJsonSchema()">Update</button>
+    <button *ngIf="!isUpdate" (click)="createJsonSchema()">Create</button>
 </div>
