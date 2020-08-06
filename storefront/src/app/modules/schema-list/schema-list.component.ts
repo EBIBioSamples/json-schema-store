@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PageEvent} from '@angular/material/paginator';
-import {StoreRoomService} from '../service/storeroom/store-room.service';
-import {Page} from '../dto/dto.module';
+import {StoreRoomService} from '../../service/storeroom/store-room.service';
+import {Page} from '../../dto/dto.module';
 import {Observable} from 'rxjs';
 
 @Component({

@@ -9,21 +9,12 @@ import {MaterialModule} from './material/material.module';
 import {NgJsonEditorModule} from 'ang-jsoneditor';
 
 import {AppComponent} from './app.component';
-import {EditorComponent} from './editor/editor.component';
 import {StoreRoomService} from './service/storeroom/store-room.service';
-import { LayoutComponent } from './layout/layout.component';
-import { HeaderComponent } from './layout/header/header.component';
-import { ContentComponent } from './layout/content/content.component';
-import { SchemaListComponent } from './schema-list/schema-list.component';
+import {DefaultModule} from './layout/default/default.module';
 
 @NgModule({
     declarations: [
-        AppComponent,
-        EditorComponent,
-        LayoutComponent,
-        HeaderComponent,
-        ContentComponent,
-        SchemaListComponent
+        AppComponent
     ],
     imports: [
         BrowserModule,
@@ -32,7 +23,8 @@ import { SchemaListComponent } from './schema-list/schema-list.component';
         MaterialModule,
         AppRoutingModule,
         NgJsonEditorModule,
-        HttpClientModule
+        HttpClientModule,
+        DefaultModule
     ],
     providers: [StoreRoomService],
     bootstrap: [AppComponent]

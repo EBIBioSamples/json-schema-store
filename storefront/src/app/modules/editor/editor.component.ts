@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {JsonEditorComponent, JsonEditorOptions} from 'ang-jsoneditor';
-import {StoreRoomService} from '../service/storeroom/store-room.service';
+import {StoreRoomService} from '../../service/storeroom/store-room.service';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -82,7 +82,9 @@ export class EditorComponent implements OnInit , OnDestroy {
     }
 
     ngOnInit(): void {
-        this.getSchemaBlcok();
+        if (this.route.snapshot.queryParamMap && this.route.snapshot.queryParamMap.has('$id')) {
+            this.getSchemaBlcok();
+        }
     }
 
     ngOnDestroy(): void {
