@@ -15,11 +15,12 @@ export class EditorComponent implements OnInit , OnDestroy {
     public data: any;
     @ViewChild(JsonEditorComponent, {static: false}) editor: JsonEditorComponent;
     public isUpdate: boolean;
+    private jsonSchema: any;
 
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute) {
         this.editorOptions = new JsonEditorOptions();
         this.editorOptions.modes = ['code', 'text', 'tree', 'view'];
-        this.editorOptions.onChange = () => console.log(this.editor.get());
+        this.editorOptions.onChange = () => this.jsonSchema = this.editor.get();
         this.data = {
             $schema: 'http://json-schema.org/draft-07/schema#',
             $id: 'https://schemablocks.org/schemas/xxxxx',
@@ -85,7 +86,7 @@ export class EditorComponent implements OnInit , OnDestroy {
     ngOnInit(): void {
         if (this.route.snapshot.queryParamMap && this.route.snapshot.queryParamMap.has('$id')) {
             this.isUpdate = true;
-            this.getSchemaBlcok();
+            this.getSchemaBlock();
         }
     }
 
@@ -93,7 +94,7 @@ export class EditorComponent implements OnInit , OnDestroy {
         this.data = null;
     }
 
-    getSchemaBlcok(): void {
+    getSchemaBlock(): void {
         this.route
             .queryParams
             .subscribe(params => {
@@ -107,12 +108,21 @@ export class EditorComponent implements OnInit , OnDestroy {
     }
 
     createJsonSchema(): void {
-        console.log(this.editor.get());
         this.storeroomClient.createJsonSchema(this.editor.get());
     }
 
     updateJsonSchema(): void {
-        console.log(this.editor.get());
-        this.storeroomClient.updateSchemaBlock(this.editor.get());
+        this.storeroomClient.updateSchemaBlock(this.editor.get())
+            .subscribe((response) => {
+                console.log(response);
+            });
+    }
+
+    deleteJsonSchema(): void {
+        this.jsonSchema = this.editor.get();
+        this.storeroomClient.deleteSchemaBlock(this.jsonSchema.$id)
+            .subscribe((response) => {
+                console.log(response);
+            });
     }
 }

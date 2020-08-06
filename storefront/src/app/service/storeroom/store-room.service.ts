@@ -29,10 +29,11 @@ export class StoreRoomService {
         return this.http.get(url);
     }
 
-    public updateSchemaBlock(jsonSchema: object): void {
-        this.http.put('http://localhost:8080/api/v1/schemas', jsonSchema)
-            .subscribe((response) => {
-                console.log(response);
-            });
+    public updateSchemaBlock(jsonSchema: object): Observable<any> {
+        return this.http.put('http://localhost:8080/api/v1/schemas', jsonSchema);
+    }
+
+    public deleteSchemaBlock(id: string): Observable<any> {
+        return this.http.delete('http://localhost:8080/api/v1/schemas/?id=' + id);
     }
 }
