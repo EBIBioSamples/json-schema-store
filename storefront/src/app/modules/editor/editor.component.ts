@@ -16,6 +16,7 @@ export class EditorComponent implements OnInit , OnDestroy {
     @ViewChild(JsonEditorComponent, {static: false}) editor: JsonEditorComponent;
     public isUpdate: boolean;
     private jsonSchema: any;
+    private metaSchema: any;
 
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute) {
         this.editorOptions = new JsonEditorOptions();
@@ -94,6 +95,11 @@ export class EditorComponent implements OnInit , OnDestroy {
         this.data = null;
     }
 
+    getMetaSchema(): void {
+        this.storeroomClient.getMetaSchema().subscribe((response) => {
+            this.metaSchema = response;
+        });
+    }
     getSchemaBlock(): void {
         this.route
             .queryParams

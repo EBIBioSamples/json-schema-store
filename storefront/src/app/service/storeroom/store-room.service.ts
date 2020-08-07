@@ -14,6 +14,10 @@ export class StoreRoomService {
     constructor(private http: HttpClient) {
     }
 
+    public getMetaSchema(): Observable<any> {
+        return this.http.get(this.storeroomApi + '/metaSchemas');
+    }
+
     public createJsonSchema(jsonSchema: object): void {
         this.http.post(this.storeroomApi + '/schemas', jsonSchema)
             .subscribe((response) => {
