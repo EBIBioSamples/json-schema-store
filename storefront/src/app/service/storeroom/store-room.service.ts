@@ -3,6 +3,7 @@ import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Page} from '../../dto/dto.module';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
+import {ValidationResponse} from '../../dto/validationResponse';
 
 @Injectable({
     providedIn: 'root'
@@ -41,5 +42,9 @@ export class StoreRoomService {
 
     public deleteSchemaBlock(id: string): Observable<any> {
         return this.http.delete(this.storeroomApi + '/schemas/?id=' + id);
+    }
+
+    public validateSchema(jsonSchema: object): Observable<any> {
+        return this.http.post<ValidationResponse>(this.storeroomApi + '/validate', jsonSchema);
     }
 }

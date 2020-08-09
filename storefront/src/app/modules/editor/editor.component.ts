@@ -2,8 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {JsonEditorComponent, JsonEditorOptions} from 'ang-jsoneditor';
 import {StoreRoomService} from '../../service/storeroom/store-room.service';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {IError} from 'ang-jsoneditor/jsoneditor/jsoneditoroptions';
 
 @Component({
     selector: 'app-editor',
@@ -22,6 +21,8 @@ export class EditorComponent implements OnInit , OnDestroy {
         this.editorOptions = new JsonEditorOptions();
         this.editorOptions.modes = ['code', 'text', 'tree', 'view'];
         this.editorOptions.onChange = () => this.jsonSchema = this.editor.get();
+        this.editorOptions.onValidate = () => this.validateSchema();
+        this.editorOptions.navigationBar = true;
         this.data = {
             $schema: 'http://json-schema.org/draft-07/schema#',
             $id: 'https://schemablocks.org/schemas/xxxxx',
@@ -105,10 +106,11 @@ export class EditorComponent implements OnInit , OnDestroy {
             .queryParams
             .subscribe(params => {
                 if (params) {}
-                console.log(params.$id);
+                this.editorOptions.mode = 'view';
                 this.storeroomClient.getSchemaBlockById(params.$id)
                     .subscribe((response) => {
                         this.data = response;
+                        this.jsonSchema = this.data;
                     });
             });
     }
@@ -130,5 +132,20 @@ export class EditorComponent implements OnInit , OnDestroy {
             .subscribe((response) => {
                 console.log(response);
             });
+    }
+
+    private validateSchema(): IError[] {
+        console.log('start validating scehma!');
+        console.log(this.jsonSchema);
+        let error: IError[] = [];
+        if (this.jsonSchema) {
+            this.storeroomClient.validateSchema(this.jsonSchema)
+                .subscribe((response) => {
+                    console.log(response);
+                    error = response.validationErrors;
+                    return error;
+                });
+        }
+        return error;
     }
 }
