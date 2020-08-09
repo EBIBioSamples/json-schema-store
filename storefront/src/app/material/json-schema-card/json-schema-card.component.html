@@ -1,15 +1,40 @@
 <mat-card class="example-card">
     <mat-card-header>
-        <div mat-card-avatar class="example-header-image" fxLayoutAlign.xs="center center"></div>
+        <div class="example-header-image" fxLayoutAlign.xs="center center" mat-card-avatar></div>
         <mat-card-title>{{schemaBlock.title}}</mat-card-title>
         <mat-card-subtitle>Dog Breed</mat-card-subtitle>
     </mat-card-header>
-    <img mat-card-image src="assets/images/schemablock.png"
-         alt="Photo of a Shiba Inu">
+<!--    <img alt="Photo of a Shiba Inu" mat-card-image
+         src="assets/images/schemablock.png">-->
     <mat-card-content>
         <p>{{schemaBlock.description}}</p>
     </mat-card-content>
     <mat-card-actions>
         <button mat-button><a [queryParams]="{$id: schemaBlock.$id}" routerLink="/editor">View</a></button>
     </mat-card-actions>
+    <mat-card-footer>
+        <mat-accordion>
+            <mat-expansion-panel (closed)="panelOpenState = false"
+                                 (opened)="panelOpenState = true">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        List of Versions
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        Click to See more
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <!--content start -->
+                <mat-list>
+                    <mat-list-item> Item 1 </mat-list-item>
+                    <mat-list-item> Item 2 </mat-list-item>
+                    <mat-list-item> Item 3 </mat-list-item>
+                    <mat-list-item> Item 4 </mat-list-item>
+                    <mat-list-item> Item 5 </mat-list-item>
+                    <mat-list-item> Item 6 </mat-list-item>
+                </mat-list>
+                <!--content end -->
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-card-footer>
 </mat-card>

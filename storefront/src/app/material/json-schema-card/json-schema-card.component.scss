@@ -2,3 +2,11 @@
   max-width: 320px;
   margin: 0px 5px 5px 0px;
 }
+
+
+mat-list {
+  flex-grow: 1;
+  max-height: 200px;
+  border: 1px solid darkgray;
+  overflow: auto;
+}

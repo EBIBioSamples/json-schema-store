@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 import {JsonSchemaCardComponent} from './json-schema-card/json-schema-card.component';
 import {RouterModule} from '@angular/router';
@@ -25,7 +26,8 @@ const material = [
     MatInputModule,
     MatCardModule,
     MatListModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatExpansionModule
 ];
 
 @NgModule({

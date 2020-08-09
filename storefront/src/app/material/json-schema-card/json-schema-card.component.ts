@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {stringify} from '@angular/compiler/src/util';
 
 @Component({
     selector: 'app-json-schema-card',
@@ -10,6 +9,7 @@ import {stringify} from '@angular/compiler/src/util';
 export class JsonSchemaCardComponent implements OnInit {
 
     @Input() schemaBlock: any;
+    panelOpenState = false;
 
     constructor(private router: Router) {
     }
