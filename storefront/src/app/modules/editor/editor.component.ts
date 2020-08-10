@@ -11,15 +11,20 @@ import {IError} from 'ang-jsoneditor/jsoneditor/jsoneditoroptions';
 })
 export class EditorComponent implements OnInit , OnDestroy {
     public editorOptions: JsonEditorOptions;
+    public editorOptions2: JsonEditorOptions;
     public data: any;
     @ViewChild(JsonEditorComponent, {static: false}) editor: JsonEditorComponent;
+    @ViewChild(JsonEditorComponent, {static: false}) editorMetaSchema: JsonEditorComponent;
     public isUpdate: boolean;
     private jsonSchema: any;
     private metaSchema: any;
+    public panelOpenState = false;
 
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute) {
         this.editorOptions = new JsonEditorOptions();
+        this.editorOptions2 = new JsonEditorOptions();
         this.editorOptions.modes = ['code', 'text', 'tree', 'view'];
+        this.editorOptions2.mode = 'view';
         this.editorOptions.onChange = () => this.jsonSchema = this.editor.get();
         this.editorOptions.onValidate = () => this.validateSchema();
         this.editorOptions.navigationBar = true;
@@ -90,6 +95,7 @@ export class EditorComponent implements OnInit , OnDestroy {
             this.isUpdate = true;
             this.getSchemaBlock();
         }
+        this.getMetaSchema();
     }
 
     ngOnDestroy(): void {
@@ -147,5 +153,9 @@ export class EditorComponent implements OnInit , OnDestroy {
                 });
         }
         return error;
+    }
+
+    public onClickPanelOpenState(): void {
+        this.panelOpenState = !this.panelOpenState;
     }
 }
