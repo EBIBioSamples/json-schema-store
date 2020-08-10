@@ -4,8 +4,7 @@
                    [pageSizeOptions]="[3, 6, 9]"
                    [pageSize]="3">
     </mat-paginator>
-    <div class="example-sidenav-content" fxLayout="row wrap" fxLayout.xs="column"
-         fxLayoutAlign="space-evenly center">
+    <div fxFlex="column">
         <app-json-schema-card *ngFor="let schemaBlock of schemaBlocks"
                               [schemaBlock]="schemaBlock"></app-json-schema-card>
     </div>
