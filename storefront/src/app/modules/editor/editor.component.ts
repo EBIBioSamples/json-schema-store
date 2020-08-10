@@ -18,7 +18,7 @@ export class EditorComponent implements OnInit , OnDestroy {
     public isUpdate: boolean;
     private jsonSchema: any;
     private metaSchema: any;
-    public panelOpenState = false;
+    public isMetaSchemaViewerDisable = false;
 
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute) {
         this.editorOptions = new JsonEditorOptions();
@@ -155,7 +155,7 @@ export class EditorComponent implements OnInit , OnDestroy {
         return error;
     }
 
-    public onClickPanelOpenState(): void {
-        this.panelOpenState = !this.panelOpenState;
+    public onClickMetaSchemaViewer(): void {
+        this.isMetaSchemaViewerDisable = !this.isMetaSchemaViewerDisable;
     }
 }
