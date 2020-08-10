@@ -35,13 +35,18 @@ The project will be comprised of the following tasks:
 * MongoDB 4.2.6
 ### Installation
 Run this in terminal to run the application.
+
+#### Option 1
 ```shell script
 $ cd json-schema-store
-$ mvn clean install -DskipTest
+$ mvn clean install -DskipTests
 $ cd ../storeroom
 $ docker-compose up --build
 ```
-
+#### Option 2
+```shell script
+$ sh run.sh
+```
 ### Schema UI (storefront)
 After running the application Schema UI can be access via browser
 ```http request
