@@ -1,26 +1,27 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {JsonEditorComponent, JsonEditorOptions} from 'ang-jsoneditor';
 import {StoreRoomService} from '../../service/storeroom/store-room.service';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {IError} from 'ang-jsoneditor/jsoneditor/jsoneditoroptions';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-editor',
     templateUrl: './editor.component.html',
     styleUrls: ['./editor.component.scss']
 })
-export class EditorComponent implements OnInit , OnDestroy {
+export class EditorComponent implements OnInit, OnDestroy {
     public editorOptions: JsonEditorOptions;
     public editorOptions2: JsonEditorOptions;
     public data: any;
     @ViewChild(JsonEditorComponent, {static: false}) editor: JsonEditorComponent;
     @ViewChild(JsonEditorComponent, {static: false}) editorMetaSchema: JsonEditorComponent;
     public isUpdate: boolean;
+    public isMetaSchemaViewerDisable = false;
     private jsonSchema: any;
     private metaSchema: any;
-    public isMetaSchemaViewerDisable = false;
 
-    constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute) {
+    constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute, private snackBar: MatSnackBar) {
         this.editorOptions = new JsonEditorOptions();
         this.editorOptions2 = new JsonEditorOptions();
         this.editorOptions.modes = ['code', 'text', 'tree', 'view'];
@@ -51,11 +52,13 @@ export class EditorComponent implements OnInit , OnDestroy {
             this.metaSchema = response;
         });
     }
+
     getSchemaBlock(): void {
         this.route
             .queryParams
             .subscribe(params => {
-                if (params) {}
+                if (params) {
+                }
                 this.editorOptions.mode = 'view';
                 this.storeroomClient.getSchemaBlockById(params.$id)
                     .subscribe((response) => {
@@ -84,6 +87,10 @@ export class EditorComponent implements OnInit , OnDestroy {
             });
     }
 
+    public onClickMetaSchemaViewer(): void {
+        this.isMetaSchemaViewerDisable = !this.isMetaSchemaViewerDisable;
+    }
+
     private validateSchema(): IError[] {
         console.log('start validating scehma!');
         console.log(this.jsonSchema);
@@ -97,9 +104,5 @@ export class EditorComponent implements OnInit , OnDestroy {
                 });
         }
         return error;
-    }
-
-    public onClickMetaSchemaViewer(): void {
-        this.isMetaSchemaViewerDisable = !this.isMetaSchemaViewerDisable;
     }
 }

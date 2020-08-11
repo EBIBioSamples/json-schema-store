@@ -10,6 +10,7 @@ import {EditorComponent} from '../../modules/editor/editor.component';
 import {NgJsonEditorModule} from 'ang-jsoneditor';
 import {SchemaListComponent} from '../../modules/schema-list/schema-list.component';
 import {MaterialModule} from '../../material/material.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import {MaterialModule} from '../../material/material.module';
         SchemaListComponent
     ],
     imports: [
+        BrowserAnimationsModule,
         CommonModule,
         FlexLayoutModule,
         RouterModule,
