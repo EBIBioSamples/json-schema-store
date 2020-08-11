@@ -69,13 +69,22 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     createJsonSchema(): void {
-        this.storeroomClient.createJsonSchema(this.editor.get());
+        this.storeroomClient.createJsonSchema(this.editor.get())
+            .subscribe((response) => {
+                console.log(response);
+                this.openSnackBar('Created Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
+            }, (error) => {
+                this.openSnackBar(error, {panelClass: 'snackbar-error'}, 'Close');
+            });
     }
 
     updateJsonSchema(): void {
         this.storeroomClient.updateSchemaBlock(this.editor.get())
             .subscribe((response) => {
                 console.log(response);
+                this.openSnackBar('Updated Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
+            }, (error) => {
+                this.openSnackBar(error, {panelClass: 'snackbar-error'}, 'Close');
             });
     }
 
@@ -83,7 +92,9 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.jsonSchema = this.editor.get();
         this.storeroomClient.deleteSchemaBlock(this.jsonSchema.$id)
             .subscribe((response) => {
-                console.log(response);
+                this.openSnackBar('Deleted Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
+            }, (error) => {
+                this.openSnackBar(error, {panelClass: 'snackbar-error'}, 'Close');
             });
     }
 
@@ -104,5 +115,12 @@ export class EditorComponent implements OnInit, OnDestroy {
                 });
         }
         return error;
+    }
+
+    private openSnackBar(message: string, config: object = {duration: 5000}, action: string = ''): void {
+        const snackBarRef = this.snackBar.open(message, action, config);
+        snackBarRef.onAction().subscribe(() => {
+            snackBarRef.dismiss();
+        });
     }
 }

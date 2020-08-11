@@ -19,11 +19,8 @@ export class StoreRoomService {
         return this.http.get(this.storeroomApi + '/metaSchemas');
     }
 
-    public createJsonSchema(jsonSchema: object): void {
-        this.http.post(this.storeroomApi + '/schemas', jsonSchema)
-            .subscribe((response) => {
-                console.log(response);
-            });
+    public createJsonSchema(jsonSchema: object): Observable<any> {
+        return this.http.post(this.storeroomApi + '/schemas', jsonSchema);
     }
 
     public getSchemaBlockPages(pageNumber = 0, pageSize = 3): Observable<Page> {
