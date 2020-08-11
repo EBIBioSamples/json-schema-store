@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -11,6 +11,7 @@ import {NgJsonEditorModule} from 'ang-jsoneditor';
 import {AppComponent} from './app.component';
 import {StoreRoomService} from './service/storeroom/store-room.service';
 import {DefaultModule} from './layout/default/default.module';
+import {HttpErrorInterceptor} from './interceptors/http-error.interceptor';
 
 @NgModule({
     declarations: [
@@ -26,7 +27,14 @@ import {DefaultModule} from './layout/default/default.module';
         HttpClientModule,
         DefaultModule
     ],
-    providers: [StoreRoomService],
+    providers: [
+        StoreRoomService,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true
+        }
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
