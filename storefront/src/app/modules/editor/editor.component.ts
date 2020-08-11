@@ -92,7 +92,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.jsonSchema = this.editor.get();
         this.storeroomClient.deleteSchemaBlock(this.jsonSchema.$id)
             .subscribe((response) => {
-                this.openSnackBar('Deleted Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
+                this.openSnackBar('Deleted Successfully!', {duration: 5000, panelClass: 'snackbar-warn'});
             }, (error) => {
                 this.openSnackBar(error, {panelClass: 'snackbar-error'}, 'Close');
             });
