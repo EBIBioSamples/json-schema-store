@@ -52,6 +52,21 @@ After running the application Schema UI can be access via browser
 ```http request
 http://localhost:8080
 ```
+### SchemaRepo (Document Store)
+To access docker container of mogodb server from the host, find the IP address and continue with that
+```shell script
+$ docker ps # to get the container ID
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id
+```
+#### example
+```shell script
+$ docker ps
+CONTAINER ID        IMAGE                                        COMMAND                  CREATED             STATUS              PORTS                                 NAMES
+76eb0212d926        biosamples/json-schema-store:latest          "java -jar /app.jar …"   4 minutes ago       Up 4 minutes        0.0.0.0:8080->8080/tcp                storeroom_app_1
+cfb03a5f8125        mongo:4.2.6                                  "docker-entrypoint.s…"   4 minutes ago       Up 4 minutes        27017/tcp, 0.0.0.0:27030->27030/tcp   SchemaRepo
+5ca6e7dde0c9        ebispot/elixir-jsonsschema-validator:1.3.0   "npm start"              4 minutes ago       Up 4 minutes        0.0.0.0:3000->3020/tcp                validator
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' cfb03a5f8125
+172.18.0.3
+```
 
- 
 
