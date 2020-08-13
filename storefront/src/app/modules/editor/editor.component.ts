@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {JsonEditorComponent, JsonEditorOptions} from 'ang-jsoneditor';
 import {StoreRoomService} from '../../service/storeroom/store-room.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {IError} from 'ang-jsoneditor/jsoneditor/jsoneditoroptions';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
@@ -21,7 +21,8 @@ export class EditorComponent implements OnInit, OnDestroy {
     private jsonSchema: any;
     private metaSchema: any;
 
-    constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute, private snackBar: MatSnackBar) {
+    constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute, private snackBar: MatSnackBar,
+                private router: Router) {
         this.editorOptions = new JsonEditorOptions();
         this.editorOptions2 = new JsonEditorOptions();
         this.editorOptions.modes = ['code', 'text', 'tree', 'view'];
@@ -36,6 +37,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.router.routeReuseStrategy.shouldReuseRoute = () =>  false;
         if (this.route.snapshot.queryParamMap && this.route.snapshot.queryParamMap.has('$id')) {
             this.isUpdate = true;
             this.getSchemaBlock();
@@ -57,8 +59,6 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.route
             .queryParams
             .subscribe(params => {
-                if (params) {
-                }
                 this.editorOptions.mode = 'view';
                 this.storeroomClient.getSchemaBlockById(params.$id)
                     .subscribe((response) => {
@@ -92,7 +92,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.jsonSchema = this.editor.get();
         this.storeroomClient.deleteSchemaBlock(this.jsonSchema.$id)
             .subscribe((response) => {
-                this.openSnackBar('Deleted Successfully!', {duration: 5000, panelClass: 'snackbar-warn'});
+                this.openSnackBar('Deleted Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
             }, (error) => {
                 this.openSnackBar(error, {panelClass: 'snackbar-error'}, 'Close');
             });
