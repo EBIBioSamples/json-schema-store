@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.config.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
@@ -13,6 +16,7 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.repository.SchemaB
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,6 +47,16 @@ public class SchemaBlockService {
   public List<SchemaBlockDocument> getAllSchemaBlocks() {
     return modelMapper.map(
         schemaBlockRepository.findAll(), new TypeToken<List<SchemaBlockDocument>>() {}.getType());
+  }
+
+  public Page<SchemaBlockDocument> getAllSchemaBlocksPage(Integer page, Integer size) {
+    Page<SchemaBlock> schemaBlocks = schemaBlockRepository.findAll(PageRequest.of(page, size));
+    List<SchemaBlockDocument> schemaBlockDocuments =
+        schemaBlocks.stream()
+            .map(s -> modelMapper.map(s, SchemaBlockDocument.class))
+            .collect(Collectors.toList());
+    return new PageImpl<>(
+        schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
   }
 
   public void deleteSchemaBlocks(@NonNull SchemaBlockDocument schemaBlockDocument) {

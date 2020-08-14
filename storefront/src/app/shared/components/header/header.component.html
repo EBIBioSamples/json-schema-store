@@ -1,0 +1,27 @@
+<!--<header fxLayoutAlign="space-between center">
+    <div>Logo</div>
+    <div fxLayout="row" fxLayoutGap="20px">
+        <a routerLink="/">Home</a>
+        <a routerLink="/login">Login</a>
+    </div>
+</header>-->
+<mat-toolbar color="primary">
+    <mat-toolbar-row fxLayoutAlign="space-between center">
+        <div fxLayout="row">
+            <button mat-button>
+                <mat-icon>home</mat-icon>
+                <span class="logo">Schema UI</span>
+            </button>
+            <div>
+                <button mat-button routerLink="/">Home</button>
+                <button mat-button>About</button>
+                <button mat-button>Contact us</button>
+            </div>
+        </div>
+        <div>
+            <button mat-icon-button>
+                <span >Menu</span>
+            </button>
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>

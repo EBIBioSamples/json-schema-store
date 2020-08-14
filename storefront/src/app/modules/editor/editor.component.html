@@ -1,0 +1,24 @@
+<div fxLayout="row" fxLayoutAlign="start">
+
+    <div fxFlex>
+        <h3>Editor</h3>
+        <json-editor #editor [data]="data" [options]="editorOptions"></json-editor>
+        <button (click)="updateJsonSchema()" *ngIf="isUpdate">Update</button>
+        <button (click)="deleteJsonSchema()" *ngIf="isUpdate">Delete</button>
+        <button (click)="createJsonSchema()" *ngIf="!isUpdate">Create</button>
+    </div>
+    <div fxLayoutAlign="start center">
+        <button (click)="onClickMetaSchemaViewer()" *ngIf="!isMetaSchemaViewerDisable" aria-label="Meta schema Expansion button"
+                mat-icon-button>
+            <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+        <button (click)="onClickMetaSchemaViewer()" *ngIf="isMetaSchemaViewerDisable" aria-label="Meta schema shrink button"
+                mat-icon-button>
+            <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+    </div>
+    <div *ngIf="isMetaSchemaViewerDisable" fxFlex>
+        <h3>Meta Schema</h3>
+        <json-editor #editorMetaSchema [data]="metaSchema" [options]="editorOptions2"></json-editor>
+    </div>
+</div>

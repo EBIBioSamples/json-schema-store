@@ -1,0 +1,11 @@
+<div>
+    <mat-paginator (page)="onPageChange($event)"
+                   [length]="totalElements"
+                   [pageSizeOptions]="[3, 6, 9]"
+                   [pageSize]="3">
+    </mat-paginator>
+    <div fxFlex="column">
+        <app-json-schema-card *ngFor="let schemaBlock of schemaBlocks"
+                              [schemaBlock]="schemaBlock"></app-json-schema-card>
+    </div>
+</div>
