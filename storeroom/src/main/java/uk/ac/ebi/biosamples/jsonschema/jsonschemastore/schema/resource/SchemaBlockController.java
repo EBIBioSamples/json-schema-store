@@ -15,7 +15,6 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidateRespon
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.client.dto.ValidationState;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
-import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.SchemaBlockService;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.util.JsonSchemaMappingUtil;
 
@@ -74,12 +73,15 @@ public class SchemaBlockController {
   public ResponseEntity<Page<SchemaBlockDocument>> searchSchemas(
       @RequestParam(value = "key", required = true) @NonNull String searchKey,
       @RequestParam(value = "page", required = false) Integer page,
-      @RequestParam(value = "size", required = false) Integer size) throws JsonSchemaServiceException {
-    try{
-      return ResponseEntity.ok(schemaBlockService.searchSchemas(searchKey, Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 3)));
+      @RequestParam(value = "size", required = false) Integer size)
+      throws JsonSchemaServiceException {
+    try {
+      return ResponseEntity.ok(
+          schemaBlockService.searchSchemas(
+              searchKey, Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 3)));
     } catch (Exception e) {
-      log.error("Error occurred while searching key: "+ searchKey, e);
-      throw new JsonSchemaServiceException("Error occurred while searching key: "+ searchKey, e);
+      log.error("Error occurred while searching key: " + searchKey, e);
+      throw new JsonSchemaServiceException("Error occurred while searching key: " + searchKey, e);
     }
   }
 

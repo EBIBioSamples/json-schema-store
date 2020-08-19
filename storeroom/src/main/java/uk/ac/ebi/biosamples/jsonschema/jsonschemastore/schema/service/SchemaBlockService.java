@@ -84,12 +84,13 @@ public class SchemaBlockService {
 
   public Page<SchemaBlockDocument> searchSchemas(String searchKey, Integer page, Integer size) {
     TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingAny(searchKey);
-    Page<SchemaBlock> schemaBlocks =  schemaBlockRepository.findAllBy(textCriteria, PageRequest.of(page, size));
+    Page<SchemaBlock> schemaBlocks =
+        schemaBlockRepository.findAllBy(textCriteria, PageRequest.of(page, size));
     List<SchemaBlockDocument> schemaBlockDocuments =
-            schemaBlocks.stream()
-                    .map(schemaBlock -> modelMapper.map(schemaBlock, SchemaBlockDocument.class))
-                    .collect(Collectors.toList());
+        schemaBlocks.stream()
+            .map(schemaBlock -> modelMapper.map(schemaBlock, SchemaBlockDocument.class))
+            .collect(Collectors.toList());
     return new PageImpl<>(
-            schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
+        schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
   }
 }
