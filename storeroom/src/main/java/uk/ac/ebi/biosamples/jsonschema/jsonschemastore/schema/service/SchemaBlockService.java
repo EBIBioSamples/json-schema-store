@@ -8,6 +8,7 @@ import org.modelmapper.config.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
@@ -79,5 +80,16 @@ public class SchemaBlockService {
       log.error(errorMessage);
       throw new JsonSchemaServiceException(errorMessage);
     }
+  }
+
+  public Page<SchemaBlockDocument> searchSchemas(String searchKey, Integer page, Integer size) {
+    TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingAny(searchKey);
+    Page<SchemaBlock> schemaBlocks =  schemaBlockRepository.findAllBy(textCriteria, PageRequest.of(page, size));
+    List<SchemaBlockDocument> schemaBlockDocuments =
+            schemaBlocks.stream()
+                    .map(schemaBlock -> modelMapper.map(schemaBlock, SchemaBlockDocument.class))
+                    .collect(Collectors.toList());
+    return new PageImpl<>(
+            schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
   }
 }
