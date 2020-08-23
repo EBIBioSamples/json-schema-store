@@ -46,31 +46,5 @@ public class JsonSchemaMappingUtil {
     }
   }
 
- /* public static ObjectNode replaceRefFields(SchemaBlockDocument schemaBlockDocument) {
-    ObjectNode objectNode = objectMapper.valueToTree(schemaBlockDocument);
-    JsonSchemaMappingUtil.replaceRefFields(objectNode);
-    return objectNode;
-  }
 
-  private static void replaceRefFields(final ObjectNode objectNode) {
-    List<String> fieldNames = Lists.newArrayList(objectNode.fieldNames());
-    fieldNames.forEach(
-        fieldName -> {
-          if (Objects.nonNull(objectNode.get(fieldName))) {
-            if ($_REF.equals(fieldName)) {
-              objectNode.set(_REF, objectNode.remove(fieldName));
-            }
-            if (objectNode.get(fieldName) instanceof ArrayNode) {
-              for (int i=0; i < objectNode.size(); i++) {
-                if (Objects.nonNull(objectNode.get(i))) {
-                  replaceRefFields((ObjectNode)objectNode.get(i));
-                }
-              }
-            }
-            if (objectNode.get(fieldName) instanceof ObjectNode) {
-              replaceRefFields((ObjectNode) objectNode.get(fieldName));
-            }
-          }
-        });
-  }*/
 }
