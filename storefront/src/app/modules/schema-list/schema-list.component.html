@@ -2,12 +2,9 @@
     <div fxLayout="column" fxLayoutAlign="start center">
         <mat-form-field appearance="outline" class="search-bar">
             <mat-label>Search</mat-label>
-            <input #search matInput placeholder="Schema title" type="search">
-            <mat-icon (click)="doSearch(search)" matSuffix>search</mat-icon>
+            <input #search (keydown.enter)="doSearch(search)" matInput placeholder="Schema title" type="search">
+            <mat-icon (click)="doSearch(search)" class="search-icon" matSuffix>search</mat-icon>
         </mat-form-field>
-        <!--<button (click)="doSearch(search.value)" aria-label="Search Schemas" color="accent" mat-icon-button>
-            <mat-icon>search</mat-icon>
-        </button>-->
     </div>
     <div fxLayout="column">
         <div>
