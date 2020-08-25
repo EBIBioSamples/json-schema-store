@@ -18,6 +18,8 @@ import java.util.Map;
 public class SchemaBlockDocument {
   @NonNull
   private String id;
+  private String schemaName;
+  private String version;
   private String schema;
   private String title;
   private String description;

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -30,9 +29,11 @@ public class SchemaBlockDocumentDeserializer extends StdDeserializer<SchemaBlock
   @Override
   public SchemaBlockDocument deserialize(
       JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-    JsonNode jsonNode = addVersionForMeta(jsonParser.getCodec().readTree(jsonParser));
+    JsonNode jsonNode = jsonParser.getCodec().readTree(jsonParser);
     return SchemaBlockDocument.builder()
         .id(Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText())
+        .version(getVersion(jsonNode))
+        .schemaName(getSchemaName(jsonNode))
         .schema(getString(jsonNode.get("$schema")))
         .description(getString(jsonNode.get("description")))
         .type(getString(jsonNode.get("type")))
@@ -81,13 +82,14 @@ public class SchemaBlockDocumentDeserializer extends StdDeserializer<SchemaBlock
     }
   }
 
-  private JsonNode addVersionForMeta(JsonNode jsonNode) {
-    String[] segments =
-        Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!")
-            .asText()
-            .split("/");
-    ObjectNode metaNode = (ObjectNode) jsonNode.get("meta");
-    metaNode.put("version", segments[segments.length - 1]);
-    return ((ObjectNode) jsonNode).set("meta", metaNode);
+  private String getVersion(JsonNode jsonNode) {
+    String $id = Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText();
+    String[] segments = $id.split("/");
+    return segments[segments.length - 1];
+  }
+
+  private String getSchemaName(JsonNode jsonNode) {
+    String $id = Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText();
+    return $id.substring(0, $id.lastIndexOf('/'));
   }
 }

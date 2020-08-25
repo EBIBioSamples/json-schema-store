@@ -17,6 +17,8 @@ import java.util.Map;
 public class SchemaBlock {
   @TextIndexed(weight = 3F)
   @Id private String id;
+  private String schemaName;
+  private String version;
   private String schema;
   @TextIndexed(weight = 2F)
   private String title;
