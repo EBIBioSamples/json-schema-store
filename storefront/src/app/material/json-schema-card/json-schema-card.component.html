@@ -4,8 +4,6 @@
         <mat-card-title>{{schemaBlock.title}}</mat-card-title>
         <mat-card-subtitle>Dog Breed</mat-card-subtitle>
     </mat-card-header>
-<!--    <img alt="Photo of a Shiba Inu" mat-card-image
-         src="assets/images/schemablock.png">-->
     <mat-card-content>
         <p>{{schemaBlock.description}}</p>
     </mat-card-content>
@@ -13,28 +11,27 @@
         <button mat-button><a [queryParams]="{$id: schemaBlock.$id}" routerLink="/editor">View</a></button>
     </mat-card-actions>
     <mat-card-footer>
-        <mat-accordion>
-            <mat-expansion-panel (closed)="panelOpenState = false"
-                                 (opened)="panelOpenState = true">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        List of Versions
-                    </mat-panel-title>
-                    <mat-panel-description>
-                        Click to See more
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-                <!--content start -->
-                <mat-list>
-                    <mat-list-item> Item 1 </mat-list-item>
-                    <mat-list-item> Item 2 </mat-list-item>
-                    <mat-list-item> Item 3 </mat-list-item>
-                    <mat-list-item> Item 4 </mat-list-item>
-                    <mat-list-item> Item 5 </mat-list-item>
-                    <mat-list-item> Item 6 </mat-list-item>
-                </mat-list>
-                <!--content end -->
-            </mat-expansion-panel>
-        </mat-accordion>
+        <mat-expansion-panel (afterExpand)="onExpansionPanel()"
+                             (closed)="panelOpenState = false"
+                             (opened)="panelOpenState = true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    List of Versions
+                </mat-panel-title>
+                <mat-panel-description>
+                    Click to See more
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <!--content start -->
+            <mat-paginator (page)="onPageChange($event)"
+                           [length]="totalElements"
+                           [pageSizeOptions]="[3, 6, 9]"
+                           [pageSize]="3">
+            </mat-paginator>
+            <mat-list>
+                <mat-list-item *ngFor="let schema of schemaBlocks">{{schema.title}}</mat-list-item>
+            </mat-list>
+            <!--content end -->
+        </mat-expansion-panel>
     </mat-card-footer>
 </mat-card>

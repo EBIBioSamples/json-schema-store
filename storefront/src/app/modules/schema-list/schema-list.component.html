@@ -15,8 +15,10 @@
             </mat-paginator>
         </div>
         <div>
-            <app-json-schema-card *ngFor="let schemaBlock of schemaBlocks"
-                                  [schemaBlock]="schemaBlock"></app-json-schema-card>
+            <mat-accordion>
+                <app-json-schema-card *ngFor="let schemaBlock of schemaBlocks"
+                                      [schemaBlock]="schemaBlock"></app-json-schema-card>
+            </mat-accordion>
         </div>
     </div>
 </div>

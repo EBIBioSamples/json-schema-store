@@ -30,6 +30,12 @@ export class StoreRoomService {
         return this.http.get(url);
     }
 
+    public getSchemaVersionList(id: string, pageNumber = 0, pageSize = 3): Observable<any> {
+        const schemaName = id.substring(0, id.lastIndexOf('/'));
+        const url = this.storeroomApi + '/schemas/versions?schemaName=' + schemaName + '&page=' + pageNumber + '&size=' + pageSize;
+        return this.http.get(url);
+    }
+
     public searchSchemas(searchKey = '', pageNumber = 0, pageSize = 3): Observable<any> {
         const url = this.storeroomApi + '/schemas/search?key=' + searchKey + '&page=' + pageNumber + '&size=' + pageSize;
         return this.http.get<Page>(url);
