@@ -16,6 +16,7 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlo
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.repository.SchemaBlockRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,15 @@ public class SchemaBlockService {
 
   public SchemaBlockDocument createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
-    return modelMapper.map(schemaBlockRepository.insert(schemaBlock), SchemaBlockDocument.class);
+
+    // Get Previous latest version if it exists
+    Optional<SchemaBlock> optionalSchemaBlock = schemaBlockRepository
+            .findFirstBySchemaNameOrderByVersionDesc(Objects.requireNonNull(schemaBlock.getSchemaName(), "schemaName cannot be null"));
+
+    schemaBlock.setLatest(true);
+    SchemaBlock resultSchemaBlock = schemaBlockRepository.insert(schemaBlock);
+    updatePreviousLatest(optionalSchemaBlock);
+    return modelMapper.map(resultSchemaBlock, SchemaBlockDocument.class);
   }
 
   public Optional<SchemaBlockDocument> getAllSchemaBlocksById(@NonNull String id) {
@@ -92,5 +101,14 @@ public class SchemaBlockService {
             .collect(Collectors.toList());
     return new PageImpl<>(
         schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
+  }
+
+  private void updatePreviousLatest(Optional<SchemaBlock> optionalSchemaBlock) {
+    // change the latest status of previous if it exists
+    if (optionalSchemaBlock.isPresent()) {
+      SchemaBlock previousSchemaBlock = optionalSchemaBlock.get();
+      previousSchemaBlock.setLatest(false);
+      schemaBlockRepository.save(previousSchemaBlock);
+    }
   }
 }

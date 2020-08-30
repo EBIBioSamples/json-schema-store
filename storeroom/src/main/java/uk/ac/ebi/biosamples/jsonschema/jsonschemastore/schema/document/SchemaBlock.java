@@ -19,6 +19,7 @@ public class SchemaBlock {
   @Id private String id;
   private String schemaName;
   private String version;
+  private boolean isLatest;
   private String schema;
   @TextIndexed(weight = 2F)
   private String title;
