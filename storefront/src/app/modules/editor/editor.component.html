@@ -1,5 +1,14 @@
-<div fxLayout="row" fxLayoutAlign="start">
+<div fxLayout="column" fxLayoutAlign="start">
 
+    <div fxLayoutAlign="end">
+        <button mat-raised-button [matMenuTriggerFor]="menu" color="primary">Download As</button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item disabled>CSV</button>
+            <button mat-menu-item disabled>JSON</button>
+            <button mat-menu-item disabled>XML</button>
+        </mat-menu>
+    </div>
+    <div>
     <div fxFlex>
         <h3>Editor</h3>
         <json-editor #editor [data]="data" [options]="editorOptions"></json-editor>
@@ -20,5 +29,6 @@
     <div *ngIf="isMetaSchemaViewerDisable" fxFlex>
         <h3>Meta Schema</h3>
         <json-editor #editorMetaSchema [data]="metaSchema" [options]="editorOptions2"></json-editor>
+    </div>
     </div>
 </div>
