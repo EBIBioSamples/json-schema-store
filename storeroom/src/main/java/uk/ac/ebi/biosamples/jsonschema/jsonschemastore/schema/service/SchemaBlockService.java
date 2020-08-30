@@ -5,10 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.config.Configuration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
@@ -18,7 +14,6 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.repository.SchemaB
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -59,16 +54,6 @@ public class SchemaBlockService {
         schemaBlockRepository.findAll(), new TypeToken<List<SchemaBlockDocument>>() {}.getType());
   }
 
-  public Page<SchemaBlockDocument> getAllSchemaBlocksPage(Integer page, Integer size) {
-    Page<SchemaBlock> schemaBlocks = schemaBlockRepository.findAll(PageRequest.of(page, size));
-    List<SchemaBlockDocument> schemaBlockDocuments =
-        schemaBlocks.stream()
-            .map(s -> modelMapper.map(s, SchemaBlockDocument.class))
-            .collect(Collectors.toList());
-    return new PageImpl<>(
-        schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
-  }
-
   public void deleteSchemaBlocks(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
     schemaBlockRepository.delete(schemaBlock);
@@ -89,18 +74,6 @@ public class SchemaBlockService {
       log.error(errorMessage);
       throw new JsonSchemaServiceException(errorMessage);
     }
-  }
-
-  public Page<SchemaBlockDocument> searchSchemas(String searchKey, Integer page, Integer size) {
-    TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingAny(searchKey);
-    Page<SchemaBlock> schemaBlocks =
-        schemaBlockRepository.findAllBy(textCriteria, PageRequest.of(page, size));
-    List<SchemaBlockDocument> schemaBlockDocuments =
-        schemaBlocks.stream()
-            .map(schemaBlock -> modelMapper.map(schemaBlock, SchemaBlockDocument.class))
-            .collect(Collectors.toList());
-    return new PageImpl<>(
-        schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
   }
 
   private void updatePreviousLatest(Optional<SchemaBlock> optionalSchemaBlock) {

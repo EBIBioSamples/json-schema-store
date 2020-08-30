@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface SchemaBlockRepository extends MongoRepository<SchemaBlock, String> {
   Page<SchemaBlock> findAllBy(TextCriteria criteria, Pageable pageable);
 
+  Page<SchemaBlock> findAllByLatestTrue(Pageable pageable);
+
   Optional<SchemaBlock> findFirstBySchemaNameOrderByVersionDesc(String schemaName);
 }
