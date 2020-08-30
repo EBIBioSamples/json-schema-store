@@ -32,6 +32,10 @@ export class JsonSchemaCardComponent implements OnInit {
         });
     }
 
+    public getSchemaVersion(id: string): string {
+        return id.substring(0, id.lastIndexOf('/'));
+    }
+
     onPageChange($event: PageEvent): void {
         this.schemaBlocksPages = this.storeroomClient.getSchemaVersionList(this.schemaBlock.$id, $event.pageIndex, $event.pageSize);
         this.schemaBlocksPages.subscribe((page) => {

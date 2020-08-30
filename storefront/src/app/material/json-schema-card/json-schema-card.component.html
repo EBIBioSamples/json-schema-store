@@ -29,7 +29,10 @@
                            [pageSize]="3">
             </mat-paginator>
             <mat-list>
-                <mat-list-item *ngFor="let schema of schemaBlocks">{{schema.title}}</mat-list-item>
+                <mat-list-item *ngFor="let schema of schemaBlocks">
+                    <a [queryParams]="{$id: schema.$id}"
+                       routerLink="/editor">Version {{ schema.$id.substring(schema.$id.lastIndexOf('/') + 1) }}</a>
+                </mat-list-item>
             </mat-list>
             <!--content end -->
         </mat-expansion-panel>
