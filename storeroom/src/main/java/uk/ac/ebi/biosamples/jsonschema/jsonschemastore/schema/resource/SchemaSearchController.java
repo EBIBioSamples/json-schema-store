@@ -43,11 +43,28 @@ public class SchemaSearchController {
       throws JsonSchemaServiceException {
     try {
       return ResponseEntity.ok(
-          schemaSearchService.searchSchemas(
+          schemaSearchService.fullTextSearchSchemas(
               searchKey, Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 3)));
     } catch (Exception e) {
       log.error("Error occurred while searching key: " + searchKey, e);
       throw new JsonSchemaServiceException("Error occurred while searching key: " + searchKey, e);
+    }
+  }
+
+  @GetMapping("/versions")
+  public ResponseEntity<Page<SchemaBlockDocument>> querySchemas(
+          @RequestParam(value = "schemaName", required = true) @NonNull String schemaName,
+          @RequestParam(value = "page", required = false) Integer page,
+          @RequestParam(value = "size", required = false) Integer size)
+          throws JsonSchemaServiceException {
+    try {
+
+      return ResponseEntity.ok(
+              schemaSearchService.getListOfVersionsOfSchema(
+                      schemaName, Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 3)));
+    } catch (Exception e) {
+      log.error("Error occurred while searching key: " + schemaName, e);
+      throw new JsonSchemaServiceException("Error occurred while searching key: " + schemaName, e);
     }
   }
 }

@@ -40,7 +40,7 @@ public class SchemaSearchService {
         schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
   }
 
-  public Page<SchemaBlockDocument> searchSchemas(String searchKey, Integer page, Integer size) {
+  public Page<SchemaBlockDocument> fullTextSearchSchemas(String searchKey, Integer page, Integer size) {
     TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingAny(searchKey);
     Page<SchemaBlock> schemaBlocks =
         schemaBlockRepository.findAllBy(textCriteria, PageRequest.of(page, size));
@@ -50,5 +50,16 @@ public class SchemaSearchService {
             .collect(Collectors.toList());
     return new PageImpl<>(
         schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
+  }
+
+  public Page<SchemaBlockDocument> getListOfVersionsOfSchema(String schemaName, Integer page, Integer size) {
+    Page<SchemaBlock> schemaBlocks =
+            schemaBlockRepository.findBySchemaNameOrderByVersionDesc(schemaName, PageRequest.of(page, size));
+    List<SchemaBlockDocument> schemaBlockDocuments =
+            schemaBlocks.stream()
+                    .map(schemaBlock -> modelMapper.map(schemaBlock, SchemaBlockDocument.class))
+                    .collect(Collectors.toList());
+    return new PageImpl<>(
+            schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
   }
 }
