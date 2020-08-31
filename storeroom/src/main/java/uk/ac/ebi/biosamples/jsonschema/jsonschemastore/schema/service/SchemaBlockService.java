@@ -39,7 +39,7 @@ public class SchemaBlockService {
 
     schemaBlock.setLatest(true);
     SchemaBlock resultSchemaBlock = schemaBlockRepository.insert(schemaBlock);
-    updatePreviousLatest(optionalSchemaBlock);
+    updatePreviousLatest(optionalSchemaBlock, false);
     return modelMapper.map(resultSchemaBlock, SchemaBlockDocument.class);
   }
 
@@ -57,15 +57,25 @@ public class SchemaBlockService {
   public void deleteSchemaBlocks(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
     schemaBlockRepository.delete(schemaBlock);
+    // Get Previous latest version if it exists
+    Optional<SchemaBlock> optionalSchemaBlock =
+        schemaBlockRepository.findFirstBySchemaNameOrderByVersionDesc(
+            Objects.requireNonNull(schemaBlock.getSchemaName(), "schemaName cannot be null"));
+    updatePreviousLatest(optionalSchemaBlock, true);
   }
 
   public void deleteSchemaBlocksById(@NonNull String id) {
     schemaBlockRepository.deleteById(id);
+    // Get Previous latest version if it exists
+    Optional<SchemaBlock> optionalSchemaBlock =
+        schemaBlockRepository.findFirstBySchemaNameOrderByVersionDesc(
+            Objects.requireNonNull(
+                id.substring(0, id.lastIndexOf('/')), "schemaName cannot be null"));
+    updatePreviousLatest(optionalSchemaBlock, true);
   }
 
   public SchemaBlockDocument updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument)
       throws JsonSchemaServiceException {
-    // TODO: enable versioning
     if (schemaBlockRepository.existsById(schemaBlockDocument.getId())) {
       SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
       return modelMapper.map(schemaBlockRepository.save(schemaBlock), SchemaBlockDocument.class);
@@ -76,11 +86,11 @@ public class SchemaBlockService {
     }
   }
 
-  private void updatePreviousLatest(Optional<SchemaBlock> optionalSchemaBlock) {
+  private void updatePreviousLatest(Optional<SchemaBlock> optionalSchemaBlock, boolean latestStatus) {
     // change the latest status of previous if it exists
     if (optionalSchemaBlock.isPresent()) {
       SchemaBlock previousSchemaBlock = optionalSchemaBlock.get();
-      previousSchemaBlock.setLatest(false);
+      previousSchemaBlock.setLatest(latestStatus);
       schemaBlockRepository.save(previousSchemaBlock);
     }
   }
