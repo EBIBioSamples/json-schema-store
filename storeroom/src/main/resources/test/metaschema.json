@@ -1,0 +1,456 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/Welcome",
+  "definitions": {
+    "Welcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "format": "uri",
+          "qt-uri-protocols": [
+            "http"
+          ]
+        },
+        "$id": {
+          "type": "string",
+          "format": "uri",
+          "qt-uri-protocols": [
+            "https"
+          ],
+          "qt-uri-extensions": [
+            ".4"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/Meta"
+        },
+        "properties": {
+          "$ref": "#/definitions/Properties"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "oneof": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Oneof"
+          }
+        },
+        "additionalProperties": {
+          "type": "boolean"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WelcomeExample"
+          }
+        }
+      },
+      "required": [
+        "$id",
+        "$schema",
+        "additionalProperties",
+        "description",
+        "examples",
+        "meta",
+        "oneof",
+        "properties",
+        "required",
+        "title",
+        "type"
+      ],
+      "title": "Welcome"
+    },
+    "WelcomeExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "term": {
+          "$ref": "#/definitions/ClassOfOnset"
+        },
+        "classOfOnset": {
+          "$ref": "#/definitions/ClassOfOnset"
+        }
+      },
+      "required": [
+        "classOfOnset",
+        "term"
+      ],
+      "title": "WelcomeExample"
+    },
+    "Meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contributors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Contributor"
+          }
+        },
+        "provenance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Contributor"
+          }
+        },
+        "used_by": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Contributor"
+          }
+        },
+        "sb_status": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contributors",
+        "provenance",
+        "sb_status",
+        "used_by"
+      ],
+      "title": "Meta"
+    },
+    "Contributor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "qt-uri-protocols": [
+            "https"
+          ],
+          "qt-uri-extensions": [
+            ".rst"
+          ]
+        }
+      },
+      "required": [
+        "description"
+      ],
+      "title": "Contributor"
+    },
+    "Oneof": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "properties"
+      ],
+      "title": "Oneof"
+    },
+    "Properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "term": {
+          "$ref": "#/definitions/Term"
+        },
+        "ageOfOnset": {
+          "$ref": "#/definitions/AgeOfOnset"
+        },
+        "ageRangeOfOnset": {
+          "$ref": "#/definitions/AgeRangeOfOnset"
+        },
+        "classOfOnset": {
+          "$ref": "#/definitions/PropertiesClassOfOnset"
+        },
+        "diseaseStage": {
+          "$ref": "#/definitions/DiseaseStage"
+        },
+        "tnmFinding": {
+          "$ref": "#/definitions/DiseaseStage"
+        }
+      },
+      "required": [
+        "ageOfOnset",
+        "ageRangeOfOnset",
+        "classOfOnset",
+        "diseaseStage",
+        "term",
+        "tnmFinding"
+      ],
+      "title": "Properties"
+    },
+    "AgeOfOnset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allof": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AgeOfOnsetAllof"
+          }
+        }
+      },
+      "required": [
+        "allof"
+      ],
+      "title": "AgeOfOnset"
+    },
+    "AgeOfOnsetAllof": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "format": "uri",
+          "qt-uri-protocols": [
+            "https"
+          ],
+          "qt-uri-extensions": [
+            ".json"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Start"
+          }
+        }
+      },
+      "required": [],
+      "title": "AgeOfOnsetAllof"
+    },
+    "Start": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "age": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "age"
+      ],
+      "title": "Start"
+    },
+    "AgeRangeOfOnset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "$ref": {
+          "type": "string",
+          "format": "uri",
+          "qt-uri-protocols": [
+            "https"
+          ],
+          "qt-uri-extensions": [
+            ".json"
+          ]
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AgeRangeOfOnsetExample"
+          }
+        }
+      },
+      "required": [
+        "$ref",
+        "description",
+        "examples"
+      ],
+      "title": "AgeRangeOfOnset"
+    },
+    "AgeRangeOfOnsetExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/definitions/Start"
+        }
+      },
+      "required": [
+        "start"
+      ],
+      "title": "AgeRangeOfOnsetExample"
+    },
+    "PropertiesClassOfOnset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "$ref": {
+          "type": "string",
+          "format": "uri",
+          "qt-uri-protocols": [
+            "https"
+          ],
+          "qt-uri-extensions": [
+            ".json"
+          ]
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ClassOfOnset"
+          }
+        }
+      },
+      "required": [
+        "$ref",
+        "description",
+        "examples"
+      ],
+      "title": "PropertiesClassOfOnset"
+    },
+    "DiseaseStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "items": {
+          "$ref": "#/definitions/Items"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ClassOfOnset"
+            }
+          }
+        }
+      },
+      "required": [
+        "description",
+        "examples",
+        "items",
+        "type"
+      ],
+      "title": "DiseaseStage"
+    },
+    "ClassOfOnset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "title": "ClassOfOnset"
+    },
+    "Items": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "format": "uri",
+          "qt-uri-protocols": [
+            "https"
+          ],
+          "qt-uri-extensions": [
+            ".json"
+          ]
+        }
+      },
+      "required": [
+        "$ref"
+      ],
+      "title": "Items"
+    },
+    "Term": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allof": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TermAllof"
+          }
+        }
+      },
+      "required": [
+        "allof"
+      ],
+      "title": "Term"
+    },
+    "TermAllof": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "format": "uri",
+          "qt-uri-protocols": [
+            "https"
+          ],
+          "qt-uri-extensions": [
+            ".json"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AllofExample"
+          }
+        }
+      },
+      "required": [],
+      "title": "TermAllof"
+    },
+    "AllofExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "AllofExample"
+    }
+  }
+}

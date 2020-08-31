@@ -59,32 +59,6 @@ public class SchemaBlockController {
     return ResponseEntity.ok(schemaBlockService.getAllSchemaBlocks());
   }
 
-  @GetMapping("/schemas/page")
-  public ResponseEntity<Page<SchemaBlockDocument>> getAllSchemaBlocksPage(
-      @RequestParam(value = "page", required = false) Integer page,
-      @RequestParam(value = "size", required = false) Integer size) {
-
-    return ResponseEntity.ok(
-        schemaBlockService.getAllSchemaBlocksPage(
-            Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 3)));
-  }
-
-  @GetMapping("/schemas/search")
-  public ResponseEntity<Page<SchemaBlockDocument>> searchSchemas(
-      @RequestParam(value = "key", required = true) @NonNull String searchKey,
-      @RequestParam(value = "page", required = false) Integer page,
-      @RequestParam(value = "size", required = false) Integer size)
-      throws JsonSchemaServiceException {
-    try {
-      return ResponseEntity.ok(
-          schemaBlockService.searchSchemas(
-              searchKey, Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 3)));
-    } catch (Exception e) {
-      log.error("Error occurred while searching key: " + searchKey, e);
-      throw new JsonSchemaServiceException("Error occurred while searching key: " + searchKey, e);
-    }
-  }
-
   @PostMapping("/schemas")
   public ResponseEntity<JsonNode> createSchemaBlock(@RequestBody SchemaBlockDocument schemaBlockDocument) throws JsonSchemaServiceException {
     try {

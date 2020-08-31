@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import {MatRippleModule} from '@angular/material/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
@@ -15,6 +16,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import {JsonSchemaCardComponent} from './json-schema-card/json-schema-card.component';
 import {RouterModule} from '@angular/router';
+import {CommonModule} from '@angular/common';
 
 const material = [
     MatSidenavModule,
@@ -33,7 +35,7 @@ const material = [
 ];
 
 @NgModule({
-    imports: [material, RouterModule],
+    imports: [material, RouterModule, CommonModule, FlexLayoutModule],
     declarations: [
         JsonSchemaCardComponent
     ],

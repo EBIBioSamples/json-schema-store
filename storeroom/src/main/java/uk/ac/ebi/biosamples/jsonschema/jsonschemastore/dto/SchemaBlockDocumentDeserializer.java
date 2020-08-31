@@ -32,6 +32,8 @@ public class SchemaBlockDocumentDeserializer extends StdDeserializer<SchemaBlock
     JsonNode jsonNode = jsonParser.getCodec().readTree(jsonParser);
     return SchemaBlockDocument.builder()
         .id(Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText())
+        .version(getVersion(jsonNode))
+        .schemaName(getSchemaName(jsonNode))
         .schema(getString(jsonNode.get("$schema")))
         .description(getString(jsonNode.get("description")))
         .type(getString(jsonNode.get("type")))
@@ -78,5 +80,16 @@ public class SchemaBlockDocumentDeserializer extends StdDeserializer<SchemaBlock
     } else {
       return null;
     }
+  }
+
+  private String getVersion(JsonNode jsonNode) {
+    String $id = Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText();
+    String[] segments = $id.split("/");
+    return segments[segments.length - 1];
+  }
+
+  private String getSchemaName(JsonNode jsonNode) {
+    String $id = Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText();
+    return $id.substring(0, $id.lastIndexOf('/'));
   }
 }

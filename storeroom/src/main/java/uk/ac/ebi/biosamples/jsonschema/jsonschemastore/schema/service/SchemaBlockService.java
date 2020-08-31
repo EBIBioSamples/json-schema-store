@@ -2,13 +2,10 @@ package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.Opt;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.config.Configuration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.exception.JsonSchemaServiceException;
@@ -16,8 +13,8 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.document.SchemaBlo
 import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.repository.SchemaBlockRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,7 +33,15 @@ public class SchemaBlockService {
 
   public SchemaBlockDocument createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
-    return modelMapper.map(schemaBlockRepository.insert(schemaBlock), SchemaBlockDocument.class);
+
+    // Get Previous latest version if it exists
+    Optional<SchemaBlock> optionalSchemaBlock = schemaBlockRepository
+            .findFirstBySchemaNameOrderByVersionDesc(Objects.requireNonNull(schemaBlock.getSchemaName(), "schemaName cannot be null"));
+
+    schemaBlock.setLatest(true);
+    SchemaBlock resultSchemaBlock = schemaBlockRepository.insert(schemaBlock);
+    updatePreviousLatest(optionalSchemaBlock, false);
+    return modelMapper.map(resultSchemaBlock, SchemaBlockDocument.class);
   }
 
   public Optional<SchemaBlockDocument> getAllSchemaBlocksById(@NonNull String id) {
@@ -50,28 +55,35 @@ public class SchemaBlockService {
         schemaBlockRepository.findAll(), new TypeToken<List<SchemaBlockDocument>>() {}.getType());
   }
 
-  public Page<SchemaBlockDocument> getAllSchemaBlocksPage(Integer page, Integer size) {
-    Page<SchemaBlock> schemaBlocks = schemaBlockRepository.findAll(PageRequest.of(page, size));
-    List<SchemaBlockDocument> schemaBlockDocuments =
-        schemaBlocks.stream()
-            .map(s -> modelMapper.map(s, SchemaBlockDocument.class))
-            .collect(Collectors.toList());
-    return new PageImpl<>(
-        schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
-  }
-
   public void deleteSchemaBlocks(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
+    Optional<SchemaBlock> schemaBlockOptional = schemaBlockRepository.findById(schemaBlockDocument.getId());
     schemaBlockRepository.delete(schemaBlock);
+    // Get Previous latest version if it exists
+    if (schemaBlockOptional.isPresent() && schemaBlockOptional.get().isLatest()) {
+      Optional<SchemaBlock> optionalSchemaBlock =
+              schemaBlockRepository.findFirstBySchemaNameOrderByVersionDesc(
+                      Objects.requireNonNull(
+                              schemaBlockDocument.getId().substring(0,schemaBlockDocument.getId().lastIndexOf('/')), "schemaName cannot be null"));
+      updatePreviousLatest(optionalSchemaBlock, true);
+    }
   }
 
   public void deleteSchemaBlocksById(@NonNull String id) {
+    Optional<SchemaBlock> schemaBlock = schemaBlockRepository.findById(id);
     schemaBlockRepository.deleteById(id);
+    // Get Previous latest version if it exists
+    if (schemaBlock.isPresent() && schemaBlock.get().isLatest()) {
+      Optional<SchemaBlock> optionalSchemaBlock =
+              schemaBlockRepository.findFirstBySchemaNameOrderByVersionDesc(
+                      Objects.requireNonNull(
+                              id.substring(0, id.lastIndexOf('/')), "schemaName cannot be null"));
+      updatePreviousLatest(optionalSchemaBlock, true);
+    }
   }
 
   public SchemaBlockDocument updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument)
       throws JsonSchemaServiceException {
-    // TODO: enable versioning
     if (schemaBlockRepository.existsById(schemaBlockDocument.getId())) {
       SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
       return modelMapper.map(schemaBlockRepository.save(schemaBlock), SchemaBlockDocument.class);
@@ -82,15 +94,12 @@ public class SchemaBlockService {
     }
   }
 
-  public Page<SchemaBlockDocument> searchSchemas(String searchKey, Integer page, Integer size) {
-    TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingAny(searchKey);
-    Page<SchemaBlock> schemaBlocks =
-        schemaBlockRepository.findAllBy(textCriteria, PageRequest.of(page, size));
-    List<SchemaBlockDocument> schemaBlockDocuments =
-        schemaBlocks.stream()
-            .map(schemaBlock -> modelMapper.map(schemaBlock, SchemaBlockDocument.class))
-            .collect(Collectors.toList());
-    return new PageImpl<>(
-        schemaBlockDocuments, PageRequest.of(page, size), schemaBlocks.getTotalElements());
+  private void updatePreviousLatest(Optional<SchemaBlock> optionalSchemaBlock, boolean latestStatus) {
+    // change the latest status of previous if it exists
+    if (optionalSchemaBlock.isPresent()) {
+      SchemaBlock previousSchemaBlock = optionalSchemaBlock.get();
+      previousSchemaBlock.setLatest(latestStatus);
+      schemaBlockRepository.save(previousSchemaBlock);
+    }
   }
 }

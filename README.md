@@ -26,6 +26,7 @@ The project will be comprised of the following tasks:
 - [Software](#software)
 - [Installation](#installation)
 - [Schema UI (storefront)](#schema-ui-storefront)
+- [Documentations](#documentations)
 
 ### Software
 * Java OpenJdk-11
@@ -68,5 +69,6 @@ cfb03a5f8125        mongo:4.2.6                                  "docker-entrypo
 $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' cfb03a5f8125
 172.18.0.3
 ```
-
-
+### Documentations
+* [API](https://github.com/EBIBioSamples/json-schema-store/wiki/API-Reference)
+* [Further Improvements](https://github.com/EBIBioSamples/json-schema-store/wiki/Further-Improvements)
