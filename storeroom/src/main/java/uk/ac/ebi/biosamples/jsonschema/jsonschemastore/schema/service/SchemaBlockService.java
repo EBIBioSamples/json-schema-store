@@ -2,6 +2,7 @@ package uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.Opt;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.config.Configuration;
@@ -56,22 +57,29 @@ public class SchemaBlockService {
 
   public void deleteSchemaBlocks(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
+    Optional<SchemaBlock> schemaBlockOptional = schemaBlockRepository.findById(schemaBlockDocument.getId());
     schemaBlockRepository.delete(schemaBlock);
     // Get Previous latest version if it exists
-    Optional<SchemaBlock> optionalSchemaBlock =
-        schemaBlockRepository.findFirstBySchemaNameOrderByVersionDesc(
-            Objects.requireNonNull(schemaBlock.getSchemaName(), "schemaName cannot be null"));
-    updatePreviousLatest(optionalSchemaBlock, true);
+    if (schemaBlockOptional.isPresent() && schemaBlockOptional.get().isLatest()) {
+      Optional<SchemaBlock> optionalSchemaBlock =
+              schemaBlockRepository.findFirstBySchemaNameOrderByVersionDesc(
+                      Objects.requireNonNull(
+                              schemaBlockDocument.getId().substring(0,schemaBlockDocument.getId().lastIndexOf('/')), "schemaName cannot be null"));
+      updatePreviousLatest(optionalSchemaBlock, true);
+    }
   }
 
   public void deleteSchemaBlocksById(@NonNull String id) {
+    Optional<SchemaBlock> schemaBlock = schemaBlockRepository.findById(id);
     schemaBlockRepository.deleteById(id);
     // Get Previous latest version if it exists
-    Optional<SchemaBlock> optionalSchemaBlock =
-        schemaBlockRepository.findFirstBySchemaNameOrderByVersionDesc(
-            Objects.requireNonNull(
-                id.substring(0, id.lastIndexOf('/')), "schemaName cannot be null"));
-    updatePreviousLatest(optionalSchemaBlock, true);
+    if (schemaBlock.isPresent() && schemaBlock.get().isLatest()) {
+      Optional<SchemaBlock> optionalSchemaBlock =
+              schemaBlockRepository.findFirstBySchemaNameOrderByVersionDesc(
+                      Objects.requireNonNull(
+                              id.substring(0, id.lastIndexOf('/')), "schemaName cannot be null"));
+      updatePreviousLatest(optionalSchemaBlock, true);
+    }
   }
 
   public SchemaBlockDocument updateSchemaBlocks(SchemaBlockDocument schemaBlockDocument)
