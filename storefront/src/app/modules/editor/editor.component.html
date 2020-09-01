@@ -3,9 +3,9 @@
     <div fxLayoutAlign="end">
         <button mat-raised-button [matMenuTriggerFor]="menu" color="primary">Download As</button>
         <mat-menu #menu="matMenu">
-            <button mat-menu-item disabled>CSV</button>
-            <button mat-menu-item disabled>JSON</button>
-            <button mat-menu-item disabled>XML</button>
+            <button mat-menu-item (click)="downloadAs('CSV')">CSV</button>
+            <button mat-menu-item disabled (click)="downloadAs('JSON')">JSON</button>
+            <button mat-menu-item disabled (click)="downloadAs('XML')">XML</button>
         </mat-menu>
     </div>
     <div>

@@ -4,6 +4,7 @@ import {StoreRoomService} from '../../service/storeroom/store-room.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IError} from 'ang-jsoneditor/jsoneditor/jsoneditoroptions';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {JsonConverterService} from '../../service/json-converter/json-converter.service';
 
 @Component({
     selector: 'app-editor',
@@ -22,7 +23,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     private metaSchema: any;
 
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute, private snackBar: MatSnackBar,
-                private router: Router) {
+                private router: Router, private jsonConverterService: JsonConverterService) {
         this.editorOptions = new JsonEditorOptions();
         this.editorOptions2 = new JsonEditorOptions();
         this.editorOptions.modes = ['code', 'text', 'tree', 'view'];
@@ -100,6 +101,13 @@ export class EditorComponent implements OnInit, OnDestroy {
 
     public onClickMetaSchemaViewer(): void {
         this.isMetaSchemaViewerDisable = !this.isMetaSchemaViewerDisable;
+    }
+
+    public downloadAs(format: string): void {
+        const jsonSchema = JSON.parse(this.editor.getText());
+        if (format === 'CSV') {
+            this.jsonConverterService.jsonToCSV(jsonSchema);
+        }
     }
 
     private validateSchema(): IError[] {

@@ -24,6 +24,7 @@
     "@angular/router": "~10.0.5",
     "ang-jsoneditor": "^1.9.4",
     "jsoneditor": "^9.0.3",
+    "jsonexport": "^3.0.1",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"
