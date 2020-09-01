@@ -104,9 +104,10 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     public downloadAs(format: string): void {
-        const jsonSchema = JSON.parse(this.editor.getText());
-        if (format === 'CSV') {
-            this.jsonConverterService.jsonToCSV(jsonSchema);
+        if (format === 'JSON') {
+            this.jsonConverterService.jsonToJSONAndDownload(this.editor.get());
+        } else if (format === 'XML') {
+            this.jsonConverterService.jsonToXMLAndDownload(this.editor.get());
         }
     }
 
