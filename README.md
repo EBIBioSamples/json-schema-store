@@ -74,4 +74,4 @@ $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' c
 * [Further Improvements](https://github.com/EBIBioSamples/json-schema-store/wiki/Further-Improvements)
 
 ### Notes
-Started as a GSoC 2020 project under GA4GH 
+Started as a [GSoC 2020](https://gist.github.com/Hashan-Rashmi-Perera/99f6983bcfb11e7990abbdd484796854) project under GA4GH 
