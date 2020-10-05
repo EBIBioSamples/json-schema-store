@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/Welcome",
+  "$ref": "#/definitions/MetaSchema",
   "definitions": {
-    "Welcome": {
+    "MetaSchema": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -17,7 +17,8 @@
           "type": "string",
           "format": "uri",
           "qt-uri-protocols": [
-            "https"
+            "https",
+            "http"
           ],
           "qt-uri-extensions": [
             ".4"
@@ -56,7 +57,7 @@
         "examples": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/WelcomeExample"
+            "$ref": "#/definitions/SchemaExample"
           }
         }
       },
@@ -73,9 +74,9 @@
         "title",
         "type"
       ],
-      "title": "Welcome"
+      "title": "MetaSchema"
     },
-    "WelcomeExample": {
+    "SchemaExample": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -90,7 +91,7 @@
         "classOfOnset",
         "term"
       ],
-      "title": "WelcomeExample"
+      "title": "SchemaExample"
     },
     "Meta": {
       "type": "object",
