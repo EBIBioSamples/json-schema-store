@@ -41,7 +41,7 @@ Run this in terminal to run the application.
 ```shell script
 $ cd json-schema-store
 $ mvn clean install -DskipTests
-$ cd ../storeroom
+$ cd storeroom
 $ docker-compose up --build
 ```
 #### Option 2
