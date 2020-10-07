@@ -12,12 +12,12 @@ import uk.ac.ebi.biosamples.jsonschema.jsonschemastore.schema.service.MetaSchema
 @RestController
 @RequestMapping("/api/v1")
 public class MetaSchemaController {
-
     private MetaSchemaService metaSchemaService;
 
     public MetaSchemaController(MetaSchemaService metaSchemaService) {
         this.metaSchemaService = metaSchemaService;
     }
+
     @GetMapping("/metaSchemas")
     public ResponseEntity<JsonNode> getMetaSchema() {
         return ResponseEntity.ok(this.metaSchemaService.getMetaSchema());
