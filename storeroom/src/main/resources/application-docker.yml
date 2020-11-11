@@ -17,3 +17,10 @@ management:
 # Elixir Validator
 elixirValidator:
   hostUrl: http://validator:3020/validate
+
+# BioSample AAP Conf
+aap:
+  url: https://explore.api.aai.ebi.ac.uk
+  schemaAuthority: ROLE_self.json-schema-store
+jwt:
+  certificate: https://explore.api.aai.ebi.ac.uk/meta/public.der
