@@ -1,7 +1,7 @@
 <div fxLayout="column" fxLayoutAlign="start">
 
     <div fxLayoutAlign="end">
-        <button mat-raised-button [matMenuTriggerFor]="menu" color="primary">Download As</button>
+        <button class="vf-button vf-button--primary" mat-raised-button [matMenuTriggerFor]="menu" color="primary">Download As</button>
         <mat-menu #menu="matMenu">
             <button mat-menu-item disabled>CSV</button>
             <button mat-menu-item disabled>JSON</button>
@@ -14,7 +14,7 @@
         <json-editor #editor [data]="data" [options]="editorOptions"></json-editor>
         <button (click)="updateJsonSchema()" *ngIf="isUpdate">Update</button>
         <button (click)="deleteJsonSchema()" *ngIf="isUpdate">Delete</button>
-        <button (click)="createJsonSchema()" *ngIf="!isUpdate">Create</button>
+        <button class="vf-button vf-button--primary" (click)="createJsonSchema()" *ngIf="!isUpdate">Create</button>
     </div>
     <div fxLayoutAlign="start center">
         <button (click)="onClickMetaSchemaViewer()" *ngIf="!isMetaSchemaViewerDisable" aria-label="Meta schema Expansion button"

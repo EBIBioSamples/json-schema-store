@@ -29,6 +29,7 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/assets/css/vf2-styles.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -94,6 +95,7 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/assets/css/vf2-styles.css",
               "src/styles.scss"
             ],
             "scripts": []

@@ -20,3 +20,8 @@ services:
     links:
       - mongodb
       - validator
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
