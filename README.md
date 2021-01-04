@@ -41,13 +41,13 @@ Run this in terminal to run the application.
 ```shell script
 $ cd json-schema-store
 $ mvn clean install -DskipTests
-$ docker-compose up --build
+$ docker-compose up -d --build
 ```
 #### Option 2
 ```shell script
 $ sh run.sh
 ```
-### Schema UI (storefront)
+### Schema UI
 After running the application Schema UI can be access via browser
 ```http request
 http://localhost:8080
