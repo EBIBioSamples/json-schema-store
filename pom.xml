@@ -123,7 +123,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>uk.ac.ebi.biosamples.jsonschema.jsonschemastore.JsonSchemaStoreApplication</mainClass>
+                    <mainClass>uk.ac.ebi.biosamples.jsonschemastore.JsonSchemaStoreApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

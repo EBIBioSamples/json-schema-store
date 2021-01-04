@@ -10,6 +10,8 @@ cache:
 
 stages:
   - build
+  - test
+  - deploy
 
 build:
   stage: build
@@ -17,7 +19,7 @@ build:
     - mvn $MAVEN_CLI_OPTS package
   artifacts:
     paths:
-      - target/storeroom/storeroom-0.0.1-SNAPSHOT.jar
+      - target/json-schema-store-0.0.1-SNAPSHOT.jar
 
 #test:
 #  stage: test
@@ -27,6 +29,15 @@ build:
 deploy:
   stage: deploy
   script:
-    - ssh ebi-cli become spotbot "ssh scooby 'scp ebi-cli:target/storeroom/storeroom-0.0.1-SNAPSHOT.jar /mnt/data/biosamples/sw/wwwdev/agents-solr.jar'"
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
+    - eval $(ssh-agent -s)
+    - echo "$NOAH_LOGIN_SSH_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan ebi-cli >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh -v -o StrictHostKeyChecking=no isuru@ebi-cli rm -rf /nfs/spot/data/test/biosamples/json-schema-store
+    - scp -r -v -o StrictHostKeyChecking=no . isuru@ebi-cli:/nfs/spot/data/test/biosamples/json-schema-store
+    - ssh ebi-cli become spotbot "ssh scooby 'scp ebi-cli:target/storeroom/storeroom-0.0.1-SNAPSHOT.jar /mnt/data/biosamples/sw/wwwdev/storeroom.jar'"
   only:
     - master

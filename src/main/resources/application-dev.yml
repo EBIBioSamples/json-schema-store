@@ -4,7 +4,7 @@ spring:
     mongodb:
       port: 27017
       host: localhost
-      database: SchemaRepo
+      database: schemastore
       repositories:
         type: auto
 # spring actuator
