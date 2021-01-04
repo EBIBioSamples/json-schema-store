@@ -1,0 +1,30 @@
+<div class="schema-search">
+    <div fxLayout="column" fxLayoutAlign="start center">
+        <div class="vf-form | vf-search vf-search--inline search-bar">
+            <div class="vf-form__item | vf-search__item">
+                <input #search (keydown.enter)="doSearch(search)" type="search" placeholder="Search Schema"
+                       id="inlinesearchitem" class="vf-form__input | vf-search__input">
+            </div>
+            <button (click)="doSearch(search)" class="vf-search__button | vf-button vf-button--primary">Search</button>
+        </div>
+    </div>
+
+
+
+    <div fxLayout="column" fxLayoutAlign="start center">
+        <div>
+
+        </div>
+        <div *ngIf="schemaBlocks">
+            <mat-paginator (page)="onPageChange($event)"
+                           [length]="totalElements"
+                           [pageSizeOptions]="[10, 20]"
+                           [pageSize]="10">
+            </mat-paginator>
+            <mat-accordion>
+                <app-json-schema-card *ngFor="let schemaBlock of schemaBlocks"
+                                      [schemaBlock]="schemaBlock"></app-json-schema-card>
+            </mat-accordion>
+        </div>
+    </div>
+</div>
