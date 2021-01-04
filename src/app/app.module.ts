@@ -12,10 +12,12 @@ import {AppComponent} from './app.component';
 import {StoreRoomService} from './service/storeroom/store-room.service';
 import {DefaultModule} from './layout/default/default.module';
 import {HttpErrorInterceptor} from './interceptors/http-error.interceptor';
+import { AboutComponent } from './modules/about/about.component';
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        AboutComponent
     ],
     imports: [
         BrowserModule,

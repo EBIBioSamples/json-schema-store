@@ -4,3 +4,26 @@
 :host ::ng-deep json-editor jsoneditor-outer {
   height: 600px;
 }
+
+.editor {
+  margin-top: 30px;
+}
+
+.action-bar {
+  margin-top: 30px;
+}
+
+.meta-schema-select {
+  padding: 3px 10px;
+  line-height: 1;
+  margin-top: -20px;
+}
+
+// hack for css class re-arrange problem
+.vf-button {
+  font-family: IBM Plex Sans, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 8px;
+}

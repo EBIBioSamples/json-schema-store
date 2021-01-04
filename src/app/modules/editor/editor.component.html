@@ -1,34 +1,48 @@
-<div fxLayout="column" fxLayoutAlign="start">
-
-    <div fxLayoutAlign="end">
-        <button class="vf-button vf-button--primary" mat-raised-button [matMenuTriggerFor]="menu" color="primary">Download As</button>
-        <mat-menu #menu="matMenu">
-            <button mat-menu-item disabled>CSV</button>
-            <button mat-menu-item disabled>JSON</button>
-            <button mat-menu-item disabled>XML</button>
-        </mat-menu>
-    </div>
+<div fxLayout="column" fxLayoutAlign="start" class="editor">
     <div>
-    <div fxFlex>
-        <h3>Editor</h3>
-        <json-editor #editor [data]="data" [options]="editorOptions"></json-editor>
-        <button (click)="updateJsonSchema()" *ngIf="isUpdate">Update</button>
-        <button (click)="deleteJsonSchema()" *ngIf="isUpdate">Delete</button>
-        <button class="vf-button vf-button--primary" (click)="createJsonSchema()" *ngIf="!isUpdate">Create</button>
+        <div fxFlex>
+            <div class="vf-section-header">
+                <div class="vf-section-header__heading vf-section-header__heading--is-link">Schema Editor</div>
+            </div>
+            <json-editor #editor [data]="data" [options]="editorOptions"></json-editor>
+        </div>
+        <div fxLayoutAlign="start center">
+            <button (click)="onClickMetaSchemaViewer()" *ngIf="isMetaSchemaViewerDisable"
+                    aria-label="Meta schema Expansion button"
+                    mat-icon-button>
+                <mat-icon>keyboard_arrow_right</mat-icon>
+            </button>
+            <button (click)="onClickMetaSchemaViewer()" *ngIf="!isMetaSchemaViewerDisable"
+                    aria-label="Meta schema shrink button"
+                    mat-icon-button>
+                <mat-icon>keyboard_arrow_left</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="isMetaSchemaViewerDisable" fxFlex>
+            <div class="vf-section-header">
+
+            </div>
+            <div class="vf-grid vf-grid__col-2">
+                <label class="vf-section-header__heading vf-section-header__heading--is-link" for="vf-form__select">Select Meta-Schema</label>
+                <select class="vf-form__select meta-schema-select" id="vf-form__select">
+                    <option value="Generic" selected>Generic</option>
+                    <option value="BioSamples">BioSamples</option>
+                    <option value="SchemaBlocks">SchemaBlocks</option>
+                </select>
+            </div>
+            <json-editor #editorMetaSchema [data]="metaSchema" [options]="editorOptions2"></json-editor>
+        </div>
     </div>
-    <div fxLayoutAlign="start center">
-        <button (click)="onClickMetaSchemaViewer()" *ngIf="!isMetaSchemaViewerDisable" aria-label="Meta schema Expansion button"
-                mat-icon-button>
-            <mat-icon>keyboard_arrow_right</mat-icon>
-        </button>
-        <button (click)="onClickMetaSchemaViewer()" *ngIf="isMetaSchemaViewerDisable" aria-label="Meta schema shrink button"
-                mat-icon-button>
-            <mat-icon>keyboard_arrow_left</mat-icon>
-        </button>
-    </div>
-    <div *ngIf="isMetaSchemaViewerDisable" fxFlex>
-        <h3>Meta Schema</h3>
-        <json-editor #editorMetaSchema [data]="metaSchema" [options]="editorOptions2"></json-editor>
-    </div>
-    </div>
+</div>
+
+<div class="action-bar" fxLayoutAlign="end">
+    <button class="vf-button vf-button--tertiary vf-button--sm" [matMenuTriggerFor]="menu">Download Template</button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item disabled>CSV</button>
+        <button mat-menu-item disabled>JSON</button>
+        <button mat-menu-item disabled>XML</button>
+    </mat-menu>
+    <button class="vf-button vf-button--primary vf-button--sm" (click)="createJsonSchema()" *ngIf="!isUpdate">Create</button>
+    <button class="vf-button vf-button--tertiary vf-button--sm" (click)="deleteJsonSchema()" *ngIf="isUpdate">Delete</button>
+    <button class="vf-button vf-button--primary vf-button--sm" (click)="updateJsonSchema()" *ngIf="isUpdate">Update</button>
 </div>
