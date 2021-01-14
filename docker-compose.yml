@@ -3,9 +3,8 @@ services:
   mongodb:
     image: mongo:4.2.6
     container_name: "SchemaRepo"
-    command: mongod --port 27030
     ports:
-    - 27030:27030
+      - 27017:27017
   validator:
     image: ebispot/elixir-jsonsschema-validator:1.3.0
     container_name: "validator"
@@ -16,12 +15,12 @@ services:
     build: .
     image: biosamples/json-schema-store:latest
     ports:
-    - 8080:8080
+      - 8080:8080
     links:
       - mongodb
       - validator
-networks:
-  default:
-    ipam:
-      config:
-        - subnet: 172.30.0.0/16
+#networks:
+#  default:
+#    ipam:
+#      config:
+#        - subnet: 172.30.0.0/16

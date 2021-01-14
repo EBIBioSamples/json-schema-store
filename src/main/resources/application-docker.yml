@@ -2,9 +2,9 @@
 spring:
   data:
     mongodb:
-      port: 27030
+      port: 27017
       host: SchemaRepo
-      database: SchemaRepo
+      database: schemastore
       repositories:
         type: auto
 # spring actuator
