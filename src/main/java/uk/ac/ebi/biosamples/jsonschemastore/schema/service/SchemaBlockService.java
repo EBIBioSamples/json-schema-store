@@ -30,6 +30,13 @@ public class SchemaBlockService {
             .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
   }
 
+  public Optional<SchemaBlockDocument> getSchemaByNameAndVersion(String schemaName, String version) {
+    Objects.requireNonNull(schemaName, "schema name cannot be null");
+    Objects.requireNonNull(version, "schema version cannot be null");
+    Optional<SchemaBlock> optionalSchema = schemaBlockRepository.findFirstBySchemaNameAndVersionOrderByVersionDesc(schemaName, version);
+    return optionalSchema.map(s -> modelMapper.map(s, SchemaBlockDocument.class));
+  }
+
   public SchemaBlockDocument createSchemaBlock(@NonNull SchemaBlockDocument schemaBlockDocument) {
     SchemaBlock schemaBlock = modelMapper.map(schemaBlockDocument, SchemaBlock.class);
 

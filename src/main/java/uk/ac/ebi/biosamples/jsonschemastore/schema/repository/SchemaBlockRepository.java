@@ -16,4 +16,7 @@ public interface SchemaBlockRepository extends MongoRepository<SchemaBlock, Stri
   Page<SchemaBlock> findBySchemaNameOrderByVersionDesc(String schemaName, Pageable pageable);
 
   Optional<SchemaBlock> findFirstBySchemaNameOrderByVersionDesc(String schemaName);
+
+  Optional<SchemaBlock> findFirstBySchemaNameAndVersionOrderByVersionDesc(String schemaName, String version);
+
 }
