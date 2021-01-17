@@ -12,6 +12,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.model.ValidationResponse;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaValidationService;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaIdExtractor;
+import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
 
 import java.util.Objects;
 
@@ -21,13 +22,10 @@ import java.util.Objects;
 public class SchemaController {
     private final SchemaService schemaService;
     private final SchemaValidationService schemaValidationService;
-    private final SchemaIdExtractor schemaIdExtractor;
 
-    public SchemaController(SchemaService schemaService, SchemaValidationService schemaValidationService,
-                            SchemaIdExtractor schemaIdExtractor) {
+    public SchemaController(SchemaService schemaService, SchemaValidationService schemaValidationService) {
         this.schemaService = schemaService;
         this.schemaValidationService = schemaValidationService;
-        this.schemaIdExtractor = schemaIdExtractor;
     }
 
     @GetMapping("/id")
@@ -46,17 +44,19 @@ public class SchemaController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<JsonSchema>> getSchemaPage(@RequestParam(value = "page", required = false) Integer page,
+    public ResponseEntity<Page<JsonSchema>> getSchemaPage(@RequestParam(value = "text", required = false) String text,
+                                                          @RequestParam(value = "page", required = false) Integer page,
                                                           @RequestParam(value = "size", required = false) Integer size) {
 
-        int effectivePage = Objects.requireNonNullElse(page, 0);
-        int effectiveSize = Objects.requireNonNullElse(size, 10);
-        return ResponseEntity.ok(schemaService.getSchemaPage(effectivePage, effectiveSize));
+        text = Objects.requireNonNullElse(text, "");
+        page = Objects.requireNonNullElse(page, 0);
+        size = Objects.requireNonNullElse(size, 10);
+        return ResponseEntity.ok(schemaService.getSchemaPage(text, page, size));
     }
 
     @PostMapping
     public ResponseEntity<JsonSchema> createSchema(@RequestBody JsonSchema schema) {
-        populateSchemaRequestFields(schema);
+        SchemaObjectPopulator.populateSchemaRequestFields(schema);
         if (schemaService.schemaExists(schema.getId())) {
             return ResponseEntity.badRequest().build();
         }
@@ -71,7 +71,7 @@ public class SchemaController {
 
     @PutMapping
     public ResponseEntity<JsonSchema> updateSchema(@RequestParam("id") String id, @RequestBody JsonSchema schema) {
-        populateSchemaRequestFields(schema);
+        SchemaObjectPopulator.populateSchemaRequestFields(schema);
         if (!schemaService.schemaExists(schema.getId())) {
             return ResponseEntity.badRequest().build();
         }
@@ -92,15 +92,5 @@ public class SchemaController {
 
         schemaService.deleteSchema(id);
         return ResponseEntity.ok().build();
-    }
-
-    private void populateSchemaRequestFields(JsonSchema schema) {
-        JsonNode node = schema.getSchema();
-        String schemaId = Objects.requireNonNull(node.get("$id"), "$id field cannot be null!").asText();
-        schema.setId(schemaId);
-        schema.setName(schemaIdExtractor.getSchemaName(schemaId));
-        schema.setVersion(schemaIdExtractor.getVersion(schemaId));
-        schema.setTitle(node.get("title").asText());
-        schema.setDescription(node.get("description").asText());
     }
 }

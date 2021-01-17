@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.query.Term;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
@@ -36,8 +39,15 @@ public class SchemaService {
         return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);
     }
 
-    public Page<JsonSchema> getSchemaPage(int page, int size) {
-        Page<MongoJsonSchema> mongoSchemas = schemaRepository.findAll(PageRequest.of(page, size));
+    public Page<JsonSchema> getSchemaPage(String text, int page, int size) {
+        Page<MongoJsonSchema> mongoSchemas;
+        if (text.isEmpty()) {
+            mongoSchemas = schemaRepository.findAll(PageRequest.of(page, size));
+        } else {
+            TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingAny(text);
+            mongoSchemas = schemaRepository.findAllBy(textCriteria, PageRequest.of(page, size));
+        }
+
         List<JsonSchema> schemas = mongoSchemas.stream()
                 .map(modelConverter::mongoJsonSchemaToJsonSchema)
                 .collect(Collectors.toList());

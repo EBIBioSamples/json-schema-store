@@ -47,7 +47,6 @@ export class SchemaListComponent implements OnInit {
     }
 
     doSearch(searchKey: any): void {
-        console.log('hey button');
         this.isSearchMode = true;
         this.search = searchKey;
         this.schemaBlocksPages = this.storeroomClient.searchSchemas(searchKey.value);

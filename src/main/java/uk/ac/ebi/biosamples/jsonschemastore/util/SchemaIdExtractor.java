@@ -9,7 +9,7 @@ import java.util.Objects;
 @Component
 public class SchemaIdExtractor {
 
-    public String getVersion(String id) {
+    public static String getVersion(String id) {
         String schemaId = Objects.requireNonNull(id, "$id filed cannot be null!");
         String[] pathSegments = decomposeSchemaId(schemaId);
         String schemaVersion = "1.0.0";
@@ -20,7 +20,7 @@ public class SchemaIdExtractor {
         return schemaVersion;
     }
 
-    public String getSchemaName(String id) {
+    public static String getSchemaName(String id) {
         String schemaId = Objects.requireNonNull(id, "$id filed cannot be null!");
         String[] pathSegments = decomposeSchemaId(schemaId);
         String schemaName;
@@ -33,7 +33,7 @@ public class SchemaIdExtractor {
         return schemaName;
     }
 
-    public String[] decomposeSchemaId(String schemaId) {
+    public static String[] decomposeSchemaId(String schemaId) {
         String path;
         try {
             path = new URL(schemaId).getPath();

@@ -22,6 +22,9 @@ export class EditorComponent implements OnInit, OnDestroy {
     private jsonSchema: any;
     private metaSchema: any;
 
+    private metaSchemas: Map<String, any>;
+    private metaSchemaId: string;
+
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute, private snackBar: MatSnackBar,
                 private router: Router) {
         this.editorOptions = new JsonEditorOptions();
@@ -33,6 +36,8 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.editorOptions.navigationBar = true;
         this.editorOptions.schema = {};
         this.data = INIT_SCHEMA;
+
+        this.metaSchemas = new Map<String, any>();
     }
 
     ngOnInit(): void {
@@ -41,7 +46,8 @@ export class EditorComponent implements OnInit, OnDestroy {
             this.isUpdate = true;
             this.getSchemaBlock();
         }
-        this.getMetaSchema();
+        // this.getMetaSchema();
+        this.getAllMetaSchemas();
     }
 
     ngOnDestroy(): void {
@@ -54,6 +60,15 @@ export class EditorComponent implements OnInit, OnDestroy {
         });
     }
 
+    getAllMetaSchemas(): void {
+        this.storeroomClient.getAllMetaSchema().subscribe((response) => {
+            for (var schema of response['content']) {
+                this.metaSchemas.set(schema['name'], schema)
+            }
+            this.metaSchema = response['content'][0]['schema'];
+        });
+    }
+
     getSchemaBlock(): void {
         this.route
             .queryParams
@@ -61,14 +76,20 @@ export class EditorComponent implements OnInit, OnDestroy {
                 this.editorOptions.mode = 'view';
                 this.storeroomClient.getSchemaBlockById(params.$id)
                     .subscribe((response) => {
-                        this.data = response;
+                        this.data = response['schema'];
                         this.jsonSchema = this.data;
                     });
             });
     }
 
     createJsonSchema(): void {
-        this.storeroomClient.createJsonSchema(this.editor.get())
+        const schema = this.editor.get();
+        const request = {
+            domain: 'placeholer',
+            metaSchema: 'https://schemablocks.org/meataschemas/1.0.1/jsonMetaSchema',
+            schema: schema
+        };
+        this.storeroomClient.createJsonSchema(request)
             .subscribe((response) => {
                 console.log(response);
                 this.openSnackBar('Created Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
@@ -78,7 +99,13 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     updateJsonSchema(): void {
-        this.storeroomClient.updateSchemaBlock(this.editor.get())
+        const schema = this.editor.get();
+        const request = {
+            domain: 'placeholer',
+            metaSchema: 'https://schemablocks.org/meataschemas/1.0.1/jsonMetaSchema',
+            schema: schema
+        };
+        this.storeroomClient.updateSchemaBlock(request)
             .subscribe((response) => {
                 console.log(response);
                 this.openSnackBar('Updated Successfully!', {duration: 5000, panelClass: 'snackbar-success'});

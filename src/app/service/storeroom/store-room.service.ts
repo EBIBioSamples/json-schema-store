@@ -20,13 +20,17 @@ export class StoreRoomService {
         return this.http.get(this.storeroomApi + '/metaSchemas');
     }
 
+    public getAllMetaSchema(): Observable<any> {
+        return this.http.get(this.storeroomApi + '/metaSchemas');
+    }
+
     public getSchemaBlockPages(pageNumber = 0, pageSize = 3): Observable<Page> {
-        const url = this.storeroomApi + '/schemas/page?page=' + pageNumber + '&size=' + pageSize;
+        const url = this.storeroomApi + '/schemas?page=' + pageNumber + '&size=' + pageSize;
         return this.http.get<Page>(url);
     }
 
     public getSchemaBlockById(id: string): Observable<any> {
-        const url = this.storeroomApi + '/schemas/?id=' + id;
+        const url = this.storeroomApi + '/schemas/id?id=' + id;
         return this.http.get(url);
     }
 
@@ -37,7 +41,7 @@ export class StoreRoomService {
     }
 
     public searchSchemas(searchKey = '', pageNumber = 0, pageSize = 3): Observable<any> {
-        const url = this.storeroomApi + '/schemas/search?key=' + searchKey + '&page=' + pageNumber + '&size=' + pageSize;
+        const url = this.storeroomApi + '/schemas?text=' + searchKey + '&page=' + pageNumber + '&size=' + pageSize;
         return this.http.get<Page>(url);
     }
 
@@ -54,7 +58,9 @@ export class StoreRoomService {
     // Put Operations
 
     public updateSchemaBlock(jsonSchema: object): Observable<any> {
-        return this.http.put(this.storeroomApi + '/schemas', jsonSchema);
+        console.log(jsonSchema);
+        console.log(jsonSchema['schema']);
+        return this.http.put(this.storeroomApi + '/schemas?id=' + jsonSchema['schema']['$id'] , jsonSchema);
     }
 
     // Delete Operations
