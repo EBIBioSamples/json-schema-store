@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.service;
+package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,8 +7,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.repository.SchemaBlockRepository;
+import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaBlockRepository;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.service;
+package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -8,8 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.repository.SchemaBlockRepository;
+import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaBlockRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

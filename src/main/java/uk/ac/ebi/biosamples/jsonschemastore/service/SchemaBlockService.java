@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.service;
+package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +8,8 @@ import org.modelmapper.config.Configuration;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.repository.SchemaBlockRepository;
+import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaBlockRepository;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class SchemaBlockService {
 
   public Optional<SchemaBlockDocument> getSchemaByNameAndVersion(String schemaName, String version) {
     Objects.requireNonNull(schemaName, "schema name cannot be null");
-    Objects.requireNonNull(version, "schema version cannot be null");
+    Objects.requireNonNull(version, "schema version cannot be null"); //todo if version null get latest
     Optional<SchemaBlock> optionalSchema = schemaBlockRepository.findFirstBySchemaNameAndVersionOrderByVersionDesc(schemaName, version);
     return optionalSchema.map(s -> modelMapper.map(s, SchemaBlockDocument.class));
   }

@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.resource;
+package uk.ac.ebi.biosamples.jsonschemastore.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,7 +13,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidateResponseDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidationState;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.service.SchemaBlockService;
+import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaBlockService;
 import uk.ac.ebi.biosamples.jsonschemastore.schema.util.JsonSchemaMappingUtil;
 
 import java.util.List;

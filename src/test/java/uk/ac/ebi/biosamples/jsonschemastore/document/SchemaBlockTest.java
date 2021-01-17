@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.document;
+package uk.ac.ebi.biosamples.jsonschemastore.document;
 
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.impl.PojoClassFactory;

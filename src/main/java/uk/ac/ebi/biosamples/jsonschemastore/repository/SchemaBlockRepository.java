@@ -1,10 +1,10 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.repository;
+package uk.ac.ebi.biosamples.jsonschemastore.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
 
 import java.util.Optional;
 

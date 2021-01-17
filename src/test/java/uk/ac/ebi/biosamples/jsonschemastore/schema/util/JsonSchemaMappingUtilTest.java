@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
 
 class JsonSchemaMappingUtilTest {
   private static final ObjectMapper objectMapper = new ObjectMapper();

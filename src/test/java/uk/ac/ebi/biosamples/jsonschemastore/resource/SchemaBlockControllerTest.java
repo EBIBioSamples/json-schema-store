@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.resource;
+package uk.ac.ebi.biosamples.jsonschemastore.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.ac.ebi.biosamples.jsonschemastore.client.ValidatorClient;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.service.SchemaBlockService;
+import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaBlockService;
 
 import java.util.Collections;
 import java.util.List;

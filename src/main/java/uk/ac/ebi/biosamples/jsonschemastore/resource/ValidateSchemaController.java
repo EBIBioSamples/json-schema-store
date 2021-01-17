@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.resource;
+package uk.ac.ebi.biosamples.jsonschemastore.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidateResponseDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.service.ValidateSchemaService;
+import uk.ac.ebi.biosamples.jsonschemastore.service.ValidateSchemaService;
 
 @Slf4j
 @RestController

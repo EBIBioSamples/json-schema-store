@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.schema.resource;
+package uk.ac.ebi.biosamples.jsonschemastore.resource;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.service.SchemaSearchService;
+import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaSearchService;
 
 import java.util.Objects;
 
