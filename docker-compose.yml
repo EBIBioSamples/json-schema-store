@@ -2,23 +2,24 @@ version: '3'
 services:
   mongodb:
     image: mongo:4.2.6
-    container_name: "SchemaRepo"
     ports:
       - 27017:27017
   validator:
     image: ebispot/elixir-jsonsschema-validator:1.3.0
-    container_name: "validator"
     command: npm start
     ports:
-      - 3000:3020
-  app:
+      - 3020:3020
+  json-schema-store:
     build: .
     image: biosamples/json-schema-store:latest
     ports:
-      - 8080:8080
+      - 8085:8085
     links:
       - mongodb
       - validator
+    environment:
+      - spring.data.mongodb.uri=mongodb://mongodb:27017/schemastore
+      - elixirValidator.hostUrl=http://validator:3020/validate
 #networks:
 #  default:
 #    ipam:
