@@ -3,10 +3,12 @@ spring:
   data:
     mongodb:
       port: 27017
-      host: SchemaRepo
+      host: mongodb
       database: schemastore
       repositories:
         type: auto
+server:
+  port: 8085
 # spring actuator
 management:
   endpoints:

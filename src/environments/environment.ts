@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  storeroom_api: 'http://localhost:8080/api/v1'
+  storeroom_api: '/api/v2'
 };
 
 /*

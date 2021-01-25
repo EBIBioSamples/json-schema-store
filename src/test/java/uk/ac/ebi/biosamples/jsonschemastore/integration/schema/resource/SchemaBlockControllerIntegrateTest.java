@@ -21,8 +21,8 @@ import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
 import uk.ac.ebi.biosamples.jsonschemastore.integration.util.SchemaBlockFactoryUtil;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.repository.SchemaBlockRepository;
+import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaBlockRepository;
 
 import java.io.File;
 

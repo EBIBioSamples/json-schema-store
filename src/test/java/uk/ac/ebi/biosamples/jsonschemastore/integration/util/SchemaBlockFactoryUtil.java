@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import uk.ac.ebi.biosamples.jsonschemastore.dto.SchemaBlockDocument;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.document.SchemaBlock;
+import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SchemaBlockFactoryUtil {

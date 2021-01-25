@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -83,13 +85,36 @@ public class SchemaBlockDocumentDeserializer extends StdDeserializer<SchemaBlock
   }
 
   private String getVersion(JsonNode jsonNode) {
-    String $id = Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText();
-    String[] segments = $id.split("/");
-    return segments[segments.length - 1];
+    String schemaId = Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText();
+    String[] pathSegments = decomposeSchemaId(schemaId);
+    String schemaVersion = "1.0.0";
+    if (pathSegments.length > 1) {
+      schemaVersion = pathSegments[pathSegments.length - 2];
+    }
+
+    return schemaVersion;
   }
 
   private String getSchemaName(JsonNode jsonNode) {
-    String $id = Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText();
-    return $id.substring(0, $id.lastIndexOf('/'));
+    String schemaId = Objects.requireNonNull(jsonNode.get("$id"), "$id filed cannot be null!").asText();
+    String[] pathSegments = decomposeSchemaId(schemaId);
+    String schemaName;
+    if (pathSegments.length > 1) {
+      schemaName = pathSegments[pathSegments.length - 1];
+    } else {
+      schemaName = pathSegments[0];
+    }
+
+    return schemaName;
+  }
+
+  private String[] decomposeSchemaId(String schemaId) {
+    String path;
+    try {
+      path = new URL(schemaId).getPath();
+    } catch (MalformedURLException e) {
+      path = schemaId;
+    }
+    return path.split("/");
   }
 }

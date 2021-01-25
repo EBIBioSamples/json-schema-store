@@ -4,6 +4,7 @@ import {StoreRoomService} from '../../service/storeroom/store-room.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IError} from 'ang-jsoneditor/jsoneditor/jsoneditoroptions';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {META_SCHEMA, INIT_SCHEMA} from '../../dto/mock_json'
 
 @Component({
     selector: 'app-editor',
@@ -21,6 +22,9 @@ export class EditorComponent implements OnInit, OnDestroy {
     private jsonSchema: any;
     private metaSchema: any;
 
+    private metaSchemas: Map<String, any>;
+    private metaSchemaId: string;
+
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute, private snackBar: MatSnackBar,
                 private router: Router) {
         this.editorOptions = new JsonEditorOptions();
@@ -30,10 +34,10 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.editorOptions.onChange = () => this.jsonSchema = this.editor.get();
         // this.editorOptions.onValidate = () => this.validateSchema();
         this.editorOptions.navigationBar = true;
-        // tslint:disable-next-line:max-line-length
-        this.editorOptions.schema = { $schema: 'http://json-schema.org/draft-07/schema#', $ref: '#/definitions/Welcome', definitions: { Welcome: { type: 'object', additionalProperties: false, properties: { $schema: { type: 'string', format: 'uri', 'qt-uri-protocols': [ 'http' ] }, $id: { type: 'string', format: 'uri', 'qt-uri-protocols': [ 'https' ], 'qt-uri-extensions': [ '.0' ] }, title: { type: 'string' }, description: { type: 'string' }, type: { type: 'string' }, meta: { $ref: '#/definitions/Meta' }, properties: { $ref: '#/definitions/Properties' }, required: { type: 'array', items: { type: 'string' } }, oneof: { type: 'array', items: { $ref: '#/definitions/Oneof' } }, additionalProperties: { type: 'boolean' }, examples: { type: 'array', items: { $ref: '#/definitions/WelcomeExample' } } }, required: [ '$id', '$schema', 'additionalProperties', 'description', 'examples', 'meta', 'oneof', 'properties', 'required', 'title', 'type' ], title: 'Welcome' }, WelcomeExample: { type: 'object', additionalProperties: false, properties: { term: { $ref: '#/definitions/ClassOfOnset' }, classOfOnset: { $ref: '#/definitions/ClassOfOnset' } }, required: [ 'classOfOnset', 'term' ], title: 'WelcomeExample' }, Meta: { type: 'object', additionalProperties: false, properties: { contributors: { type: 'array', items: { $ref: '#/definitions/Contributor' } }, provenance: { type: 'array', items: { $ref: '#/definitions/Contributor' } }, used_by: { type: 'array', items: { $ref: '#/definitions/Contributor' } }, sb_status: { type: 'string' } }, required: [ 'contributors', 'provenance', 'sb_status', 'used_by' ], title: 'Meta' }, Contributor: { type: 'object', additionalProperties: false, properties: { description: { type: 'string' }, id: { type: 'string', 'qt-uri-protocols': [ 'https' ], 'qt-uri-extensions': [ '.rst' ] } }, required: [ 'description' ], title: 'Contributor' }, Oneof: { type: 'object', additionalProperties: false, properties: { properties: { type: 'array', items: { type: 'string' } } }, required: [ 'properties' ], title: 'Oneof' }, Properties: { type: 'object', additionalProperties: false, properties: { term: { $ref: '#/definitions/Term' }, ageOfOnset: { $ref: '#/definitions/AgeOfOnset' }, ageRangeOfOnset: { $ref: '#/definitions/AgeRangeOfOnset' }, classOfOnset: { $ref: '#/definitions/PropertiesClassOfOnset' }, diseaseStage: { $ref: '#/definitions/DiseaseStage' }, tnmFinding: { $ref: '#/definitions/DiseaseStage' } }, required: [ 'ageOfOnset', 'ageRangeOfOnset', 'classOfOnset', 'diseaseStage', 'term', 'tnmFinding' ], title: 'Properties' }, AgeOfOnset: { type: 'object', additionalProperties: false, properties: { allof: { type: 'array', items: { $ref: '#/definitions/AgeOfOnsetAllof' } } }, required: [ 'allof' ], title: 'AgeOfOnset' }, AgeOfOnsetAllof: { type: 'object', additionalProperties: false, properties: { $ref: { type: 'string', format: 'uri', 'qt-uri-protocols': [ 'https' ], 'qt-uri-extensions': [ '.json' ] }, description: { type: 'string' }, examples: { type: 'array', items: { $ref: '#/definitions/Start' } } }, required: [], title: 'AgeOfOnsetAllof' }, Start: { type: 'object', additionalProperties: false, properties: { age: { type: 'string' } }, required: [ 'age' ], title: 'Start' }, AgeRangeOfOnset: { type: 'object', additionalProperties: false, properties: { description: { type: 'string' }, $ref: { type: 'string', format: 'uri', 'qt-uri-protocols': [ 'https' ], 'qt-uri-extensions': [ '.json' ] }, examples: { type: 'array', items: { $ref: '#/definitions/AgeRangeOfOnsetExample' } } }, required: [ '$ref', 'description', 'examples' ], title: 'AgeRangeOfOnset' }, AgeRangeOfOnsetExample: { type: 'object', additionalProperties: false, properties: { start: { $ref: '#/definitions/Start' } }, required: [ 'start' ], title: 'AgeRangeOfOnsetExample' }, PropertiesClassOfOnset: { type: 'object', additionalProperties: false, properties: { description: { type: 'string' }, $ref: { type: 'string', format: 'uri', 'qt-uri-protocols': [ 'https' ], 'qt-uri-extensions': [ '.json' ] }, examples: { type: 'array', items: { $ref: '#/definitions/ClassOfOnset' } } }, required: [ '$ref', 'description', 'examples' ], title: 'PropertiesClassOfOnset' }, DiseaseStage: { type: 'object', additionalProperties: false, properties: { description: { type: 'string' }, type: { type: 'string' }, items: { $ref: '#/definitions/Items' }, examples: { type: 'array', items: { type: 'array', items: { $ref: '#/definitions/ClassOfOnset' } } } }, required: [ 'description', 'examples', 'items', 'type' ], title: 'DiseaseStage' }, ClassOfOnset: { type: 'object', additionalProperties: false, properties: { id: { type: 'string' }, label: { type: 'string' } }, required: [ 'id', 'label' ], title: 'ClassOfOnset' }, Items: { type: 'object', additionalProperties: false, properties: { $ref: { type: 'string', format: 'uri', 'qt-uri-protocols': [ 'https' ], 'qt-uri-extensions': [ '.json' ] } }, required: [ '$ref' ], title: 'Items' }, Term: { type: 'object', additionalProperties: false, properties: { allof: { type: 'array', items: { $ref: '#/definitions/TermAllof' } } }, required: [ 'allof' ], title: 'Term' }, TermAllof: { type: 'object', additionalProperties: false, properties: { $ref: { type: 'string', format: 'uri', 'qt-uri-protocols': [ 'https' ], 'qt-uri-extensions': [ '.json' ] }, description: { type: 'string' }, examples: { type: 'array', items: { $ref: '#/definitions/AllofExample' } } }, required: [], title: 'TermAllof' }, AllofExample: { type: 'object', additionalProperties: false, properties: { id: { type: 'string' } }, required: [ 'id' ], title: 'AllofExample' } } };
-        // tslint:disable-next-line:max-line-length
-        this.data = { $schema: 'http://json-schema.org/draft-07/schema#', $id: 'https://schemablocks.org/schemas/xxxxx', title: 'title', description: 'description', type: 'object', meta: { contributors: [ { description: 'X-Files Working Group' }, { description: 'Dana Scully', id: 'orcid:xxxx' } ], provenance: [ { description: 'description', id: 'https://github.com/xfiles/xfiles/xxxxxx' } ], used_by: [ { description: 'Phenopackets', id: 'https://github.com/xfiles/xfiles/xxxx' } ], sb_status: 'implemented' }, properties: { term: { allof: [ { $ref: 'https://schemablocks.org/schemas/sb-phenopackets/v1.0.0/OntologyClass.json' }, { description: 'The identifier of this disease\ne.g. MONDO:0007043, OMIM:101600, Orphanet:710, DOID:14705 (note these are all equivalent)\n', examples: [ { id: 'MONDO:0007043' } ] } ] } }, required: [ 'term' ], additionalProperties: false, examples: [ { term: { id: 'MONDO:0007043', label: 'Pfeiffer syndrome' } } ] };
+        this.editorOptions.schema = {};
+        this.data = INIT_SCHEMA;
+
+        this.metaSchemas = new Map<String, any>();
     }
 
     ngOnInit(): void {
@@ -42,7 +46,8 @@ export class EditorComponent implements OnInit, OnDestroy {
             this.isUpdate = true;
             this.getSchemaBlock();
         }
-        this.getMetaSchema();
+        // this.getMetaSchema();
+        this.getAllMetaSchemas();
     }
 
     ngOnDestroy(): void {
@@ -55,6 +60,15 @@ export class EditorComponent implements OnInit, OnDestroy {
         });
     }
 
+    getAllMetaSchemas(): void {
+        this.storeroomClient.getAllMetaSchema().subscribe((response) => {
+            for (var schema of response['content']) {
+                this.metaSchemas.set(schema['name'], schema)
+            }
+            this.metaSchema = response['content'][0]['schema'];
+        });
+    }
+
     getSchemaBlock(): void {
         this.route
             .queryParams
@@ -62,14 +76,20 @@ export class EditorComponent implements OnInit, OnDestroy {
                 this.editorOptions.mode = 'view';
                 this.storeroomClient.getSchemaBlockById(params.$id)
                     .subscribe((response) => {
-                        this.data = response;
+                        this.data = response['schema'];
                         this.jsonSchema = this.data;
                     });
             });
     }
 
     createJsonSchema(): void {
-        this.storeroomClient.createJsonSchema(this.editor.get())
+        const schema = this.editor.get();
+        const request = {
+            domain: 'placeholer',
+            metaSchema: 'https://schemablocks.org/meataschemas/1.0.1/jsonMetaSchema',
+            schema: schema
+        };
+        this.storeroomClient.createJsonSchema(request)
             .subscribe((response) => {
                 console.log(response);
                 this.openSnackBar('Created Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
@@ -79,7 +99,13 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     updateJsonSchema(): void {
-        this.storeroomClient.updateSchemaBlock(this.editor.get())
+        const schema = this.editor.get();
+        const request = {
+            domain: 'placeholer',
+            metaSchema: 'https://schemablocks.org/meataschemas/1.0.1/jsonMetaSchema',
+            schema: schema
+        };
+        this.storeroomClient.updateSchemaBlock(request)
             .subscribe((response) => {
                 console.log(response);
                 this.openSnackBar('Updated Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
