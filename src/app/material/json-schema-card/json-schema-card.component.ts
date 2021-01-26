@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {PageEvent} from '@angular/material/paginator';
 import {StoreRoomService} from '../../service/storeroom/store-room.service';
 import {Observable} from 'rxjs';
-import {Page} from '../../dto/page';
+import {SchemaPage} from '../../dto/schemaPage';
 
 @Component({
     selector: 'app-json-schema-card',
@@ -16,7 +16,7 @@ export class JsonSchemaCardComponent implements OnInit {
     public schemaBlocks: any[];
     public totalElements: number;
     panelOpenState = false;
-    private schemaBlocksPages: Observable<Page>;
+    private schemaBlocksPages: Observable<SchemaPage>;
 
     constructor(private router: Router, private storeroomClient: StoreRoomService) {
     }
@@ -27,8 +27,8 @@ export class JsonSchemaCardComponent implements OnInit {
     onExpansionPanel(): void {
         this.schemaBlocksPages = this.storeroomClient.getSchemaVersionList(this.schemaBlock.$id);
         this.schemaBlocksPages.subscribe((page) => {
-            this.totalElements = page.totalElements;
-            this.schemaBlocks = page.content;
+            this.totalElements = page.page.totalElements;
+            this.schemaBlocks = page._embedded.schemas;
         });
     }
 
@@ -39,8 +39,8 @@ export class JsonSchemaCardComponent implements OnInit {
     onPageChange($event: PageEvent): void {
         this.schemaBlocksPages = this.storeroomClient.getSchemaVersionList(this.schemaBlock.$id, $event.pageIndex, $event.pageSize);
         this.schemaBlocksPages.subscribe((page) => {
-            this.totalElements = page.totalElements;
-            this.schemaBlocks = page.content;
+            this.totalElements = page.page.totalElements;
+            this.schemaBlocks = page._embedded.schemas;
         });
     }
 }
