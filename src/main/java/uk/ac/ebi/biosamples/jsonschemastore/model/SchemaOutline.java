@@ -1,17 +1,14 @@
 package uk.ac.ebi.biosamples.jsonschemastore.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 @Data
-public abstract class Schema extends RepresentationModel<Schema> {
+@Relation(collectionRelation = "schemas")
+public class SchemaOutline extends RepresentationModel<SchemaOutline> {
     protected String id;
     protected String name;
     protected String version;
     protected String title;
-    protected String description;
-    protected String domain;
-    protected String metaSchema;
-    protected JsonNode schema;
 }

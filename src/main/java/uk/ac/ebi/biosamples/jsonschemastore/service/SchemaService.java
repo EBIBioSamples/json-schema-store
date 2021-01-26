@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.query.Term;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.biosamples.jsonschemastore.document.SchemaBlock;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
@@ -50,6 +49,15 @@ public class SchemaService {
 
         List<JsonSchema> schemas = mongoSchemas.stream()
                 .map(modelConverter::mongoJsonSchemaToJsonSchema)
+                .collect(Collectors.toList());
+        return new PageImpl<>(schemas, PageRequest.of(page, size), mongoSchemas.getTotalElements());
+    }
+
+    public Page<SchemaOutline> getSchemaList(int page, int size) {
+        Page<MongoJsonSchema> mongoSchemas = schemaRepository.findAll(PageRequest.of(page, size));
+
+        List<SchemaOutline> schemas = mongoSchemas.stream()
+                .map(modelConverter::mongoJsonSchemaToSchemaOutline)
                 .collect(Collectors.toList());
         return new PageImpl<>(schemas, PageRequest.of(page, size), mongoSchemas.getTotalElements());
     }

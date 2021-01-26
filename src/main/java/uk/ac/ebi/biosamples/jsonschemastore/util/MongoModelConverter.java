@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.MetaSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoMetaSchema;
 
@@ -80,5 +81,15 @@ public class MongoModelConverter {
         }
 
         return jsonSchema;
+    }
+
+    public SchemaOutline mongoJsonSchemaToSchemaOutline(MongoJsonSchema mongoJsonSchema) {
+        SchemaOutline schema = new SchemaOutline();
+        schema.setId(mongoJsonSchema.getId());
+        schema.setName(mongoJsonSchema.getName());
+        schema.setVersion(mongoJsonSchema.getVersion());
+        schema.setTitle(mongoJsonSchema.getTitle());
+
+        return schema;
     }
 }

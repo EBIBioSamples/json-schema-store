@@ -62,10 +62,10 @@ export class EditorComponent implements OnInit, OnDestroy {
 
     getAllMetaSchemas(): void {
         this.storeroomClient.getAllMetaSchema().subscribe((response) => {
-            for (var schema of response['content']) {
+            for (let schema of response['_embedded']['schemas']) {
                 this.metaSchemas.set(schema['name'], schema)
             }
-            this.metaSchema = response['content'][0]['schema'];
+            this.metaSchema = response['_embedded']['schemas'][0]['schema'];
         });
     }
 
@@ -74,7 +74,7 @@ export class EditorComponent implements OnInit, OnDestroy {
             .queryParams
             .subscribe(params => {
                 this.editorOptions.mode = 'view';
-                this.storeroomClient.getSchemaBlockById(params.$id)
+                this.storeroomClient.getSchema(params.$id)
                     .subscribe((response) => {
                         this.data = response['schema'];
                         this.jsonSchema = this.data;
@@ -89,7 +89,7 @@ export class EditorComponent implements OnInit, OnDestroy {
             metaSchema: 'https://schemablocks.org/meataschemas/1.0.1/jsonMetaSchema',
             schema: schema
         };
-        this.storeroomClient.createJsonSchema(request)
+        this.storeroomClient.createSchema(request)
             .subscribe((response) => {
                 console.log(response);
                 this.openSnackBar('Created Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
@@ -105,7 +105,7 @@ export class EditorComponent implements OnInit, OnDestroy {
             metaSchema: 'https://schemablocks.org/meataschemas/1.0.1/jsonMetaSchema',
             schema: schema
         };
-        this.storeroomClient.updateSchemaBlock(request)
+        this.storeroomClient.updateSchema(request)
             .subscribe((response) => {
                 console.log(response);
                 this.openSnackBar('Updated Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
@@ -116,7 +116,7 @@ export class EditorComponent implements OnInit, OnDestroy {
 
     deleteJsonSchema(): void {
         this.jsonSchema = this.editor.get();
-        this.storeroomClient.deleteSchemaBlock(this.jsonSchema.$id)
+        this.storeroomClient.deleteSchema(this.jsonSchema.$id)
             .subscribe((response) => {
                 this.openSnackBar('Deleted Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
             }, (error) => {

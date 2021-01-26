@@ -1,18 +1,19 @@
 package uk.ac.ebi.biosamples.jsonschemastore.resource;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
-import uk.ac.ebi.biosamples.jsonschemastore.model.ValidationResponse;
+import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaValidationService;
-import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaIdExtractor;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
+import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaResourceAssembler;
 
 import java.util.Objects;
 
@@ -22,15 +23,19 @@ import java.util.Objects;
 public class SchemaController {
     private final SchemaService schemaService;
     private final SchemaValidationService schemaValidationService;
+    private final SchemaResourceAssembler schemaResourceAssembler;
 
-    public SchemaController(SchemaService schemaService, SchemaValidationService schemaValidationService) {
+    public SchemaController(SchemaService schemaService, SchemaValidationService schemaValidationService,
+                            SchemaResourceAssembler schemaResourceAssembler) {
         this.schemaService = schemaService;
         this.schemaValidationService = schemaValidationService;
+        this.schemaResourceAssembler = schemaResourceAssembler;
     }
 
-    @GetMapping("/id")
-    public ResponseEntity<JsonSchema> getSchemaById(@RequestParam("id") String id) {
+    @GetMapping
+    public ResponseEntity<JsonSchema> getSchema(@RequestParam("id") String id) {
         return schemaService.getSchemaById(id)
+                .map(schemaResourceAssembler::populateResources)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -39,19 +44,29 @@ public class SchemaController {
     public ResponseEntity<JsonSchema> getSchemaWithVersion(@PathVariable("schemaName") String schemaName,
                                                            @PathVariable("version") String version) {
         return schemaService.getSchemaByNameAndVersion(schemaName, version)
+                .map(schemaResourceAssembler::populateResources)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping
-    public ResponseEntity<Page<JsonSchema>> getSchemaPage(@RequestParam(value = "text", required = false) String text,
-                                                          @RequestParam(value = "page", required = false) Integer page,
-                                                          @RequestParam(value = "size", required = false) Integer size) {
-
+    @GetMapping("/search")
+    public PagedModel<EntityModel<JsonSchema>> getSchemaPage1(@RequestParam(value = "text", required = false) String text,
+                                                              @RequestParam(value = "page", required = false) Integer page,
+                                                              @RequestParam(value = "size", required = false) Integer size) {
         text = Objects.requireNonNullElse(text, "");
         page = Objects.requireNonNullElse(page, 0);
         size = Objects.requireNonNullElse(size, 10);
-        return ResponseEntity.ok(schemaService.getSchemaPage(text, page, size));
+        Page<JsonSchema> schemaPage = schemaService.getSchemaPage(text, page, size);
+        return schemaResourceAssembler.buildPage(schemaPage);
+    }
+
+    @GetMapping("/list")
+    public PagedModel<EntityModel<SchemaOutline>> getSchemaList(@RequestParam(value = "page", required = false) Integer page,
+                                                                @RequestParam(value = "size", required = false) Integer size) {
+        page = Objects.requireNonNullElse(page, 0);
+        size = Objects.requireNonNullElse(size, 100);
+        Page<SchemaOutline> schemaPage = schemaService.getSchemaList(page, size);
+        return schemaResourceAssembler.buildPageForSchemaOutline(schemaPage);
     }
 
     @PostMapping

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Page} from '../../dto/dto.module';
+import {SchemaPage} from '../../dto/dto.module';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {ValidationResponse} from '../../dto/validationResponse';
@@ -9,7 +9,7 @@ import {ValidationResponse} from '../../dto/validationResponse';
     providedIn: 'root'
 })
 export class StoreRoomService {
-    public page: Page;
+    public page: SchemaPage;
     private storeroomApi = environment.storeroom_api;
 
     constructor(private http: HttpClient) {
@@ -21,16 +21,16 @@ export class StoreRoomService {
     }
 
     public getAllMetaSchema(): Observable<any> {
-        return this.http.get(this.storeroomApi + '/metaSchemas');
+        return this.http.get(this.storeroomApi + '/metaSchemas/search');
     }
 
-    public getSchemaBlockPages(pageNumber = 0, pageSize = 3): Observable<Page> {
-        const url = this.storeroomApi + '/schemas?page=' + pageNumber + '&size=' + pageSize;
-        return this.http.get<Page>(url);
+    public getJsonSchemaPage(pageNumber = 0, pageSize = 3): Observable<SchemaPage> {
+        const url = this.storeroomApi + '/schemas/search?page=' + pageNumber + '&size=' + pageSize;
+        return this.http.get<SchemaPage>(url);
     }
 
-    public getSchemaBlockById(id: string): Observable<any> {
-        const url = this.storeroomApi + '/schemas/id?id=' + id;
+    public getSchema(id: string): Observable<any> {
+        const url = this.storeroomApi + '/schemas?id=' + id;
         return this.http.get(url);
     }
 
@@ -40,14 +40,12 @@ export class StoreRoomService {
         return this.http.get(url);
     }
 
-    public searchSchemas(searchKey = '', pageNumber = 0, pageSize = 3): Observable<any> {
-        const url = this.storeroomApi + '/schemas?text=' + searchKey + '&page=' + pageNumber + '&size=' + pageSize;
-        return this.http.get<Page>(url);
+    public searchSchema(searchKey = '', pageNumber = 0, pageSize = 3): Observable<any> {
+        const url = this.storeroomApi + '/schemas/search?text=' + searchKey + '&page=' + pageNumber + '&size=' + pageSize;
+        return this.http.get<SchemaPage>(url);
     }
 
-    // Post Operations
-
-    public createJsonSchema(jsonSchema: object): Observable<any> {
+    public createSchema(jsonSchema: object): Observable<any> {
         return this.http.post(this.storeroomApi + '/schemas', jsonSchema);
     }
 
@@ -55,17 +53,11 @@ export class StoreRoomService {
         return this.http.post<ValidationResponse>(this.storeroomApi + '/validate', jsonSchema);
     }
 
-    // Put Operations
-
-    public updateSchemaBlock(jsonSchema: object): Observable<any> {
-        console.log(jsonSchema);
-        console.log(jsonSchema['schema']);
+    public updateSchema(jsonSchema: object): Observable<any> {
         return this.http.put(this.storeroomApi + '/schemas?id=' + jsonSchema['schema']['$id'] , jsonSchema);
     }
 
-    // Delete Operations
-
-    public deleteSchemaBlock(id: string): Observable<any> {
+    public deleteSchema(id: string): Observable<any> {
         return this.http.delete(this.storeroomApi + '/schemas/?id=' + id);
     }
 }

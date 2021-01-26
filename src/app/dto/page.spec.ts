@@ -1,7 +1,7 @@
-import { Page } from './page';
+import { SchemaPage } from './schemaPage';
 
 describe('Page', () => {
   it('should create an instance', () => {
-    expect(new Page()).toBeTruthy();
+    expect(new SchemaPage()).toBeTruthy();
   });
 });
