@@ -37,7 +37,7 @@ The project will be comprised of the following tasks:
 ### Build and run
 - Build and run with all dependencies using docker-compose
     ```shell script
-    $ mvn clean install -DskipTests
+    $ mvn clean install
     $ docker-compose up -d --build
     ```
 - Go to `http://localhost:8085`

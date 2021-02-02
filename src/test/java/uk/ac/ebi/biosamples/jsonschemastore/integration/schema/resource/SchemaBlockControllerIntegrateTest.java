@@ -37,7 +37,7 @@ class SchemaBlockControllerIntegrateTest {
   private static final DockerComposeContainer environment =
       new DockerComposeContainer(
               new File(
-                  "src/test/java/uk/ac/ebi/biosamples/jsonschema/jsonschemastore/integration/resources/compose-test.yml"))
+                  "src/test/resources/compose-test.yml"))
           .withLocalCompose(false)
           .waitingFor("validator_1", Wait.forHttp("/validate"));
 

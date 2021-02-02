@@ -45,6 +45,7 @@ class SchemaBlockServiceTest {
   public void testCreateSchemaBlock() {
     SchemaBlockDocument schemaBlockDocument = new SchemaBlockDocument();
     schemaBlockDocument.setTitle("test");
+    schemaBlockDocument.setSchemaName("http://www.ebi.ac.uk/biosamples/schemas/test1/1.0.1");
     SchemaBlockDocument result = schemaBlockService.createSchemaBlock(schemaBlockDocument);
     Assertions.assertNotNull(result, "result cannot be null");
   }
