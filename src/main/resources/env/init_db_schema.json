@@ -12,6 +12,7 @@
   },
   {
     "id" : "schemas/certification/biosamples-minimal.json",
+    "accession" : "ERC100001",
     "name" : "biosamples-minimal.json",
     "version" : "certification",
     "title" : "sample",
@@ -23,6 +24,7 @@
   },
   {
     "id" : "https://www.ebi.ac.uk/biosamples/schemas/1.2.0/plant-miappe.json",
+    "accession" : "ERC100002",
     "name" : "plant-miappe.json",
     "version" : "1.2.0",
     "title" : "ENA Plant MIAPPE Checklist for omics and phenomic interoperability",

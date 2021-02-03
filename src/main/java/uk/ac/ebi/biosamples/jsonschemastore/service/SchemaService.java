@@ -20,10 +20,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class SchemaService {
+    private final AccessioningService accessioningService;
     private final SchemaRepository schemaRepository;
     private final MongoModelConverter modelConverter;
 
-    public SchemaService(SchemaRepository schemaRepository, MongoModelConverter modelConverter) {
+    public SchemaService(AccessioningService accessioningService, SchemaRepository schemaRepository, MongoModelConverter modelConverter) {
+        this.accessioningService = accessioningService;
         this.schemaRepository = schemaRepository;
         this.modelConverter = modelConverter;
     }
@@ -62,13 +64,8 @@ public class SchemaService {
         return new PageImpl<>(schemas, PageRequest.of(page, size), mongoSchemas.getTotalElements());
     }
 
-    public JsonSchema createSchema(@NonNull JsonSchema jsonSchema) {
-        MongoJsonSchema mongoJsonSchema = modelConverter.jsonSchemaToMongoJsonSchema(jsonSchema);
-        MongoJsonSchema mongoJsonSchemaResult = schemaRepository.insert(mongoJsonSchema);
-        return modelConverter.mongoJsonSchemaToJsonSchema(mongoJsonSchemaResult);
-    }
-
-    public JsonSchema updateSchema(@NonNull JsonSchema jsonSchema) {
+    public JsonSchema saveSchema(@NonNull JsonSchema jsonSchema) {
+        populateAccession(jsonSchema);
         MongoJsonSchema mongoJsonSchema = modelConverter.jsonSchemaToMongoJsonSchema(jsonSchema);
         MongoJsonSchema mongoJsonSchemaResult = schemaRepository.save(mongoJsonSchema);
         return modelConverter.mongoJsonSchemaToJsonSchema(mongoJsonSchemaResult);
@@ -81,5 +78,10 @@ public class SchemaService {
     public boolean schemaExists(String schemaId) {
         Optional<MongoJsonSchema> schema = schemaRepository.findById(schemaId);
         return schema.isPresent();
+    }
+
+    private void populateAccession(JsonSchema jsonSchema) {
+        String accession = accessioningService.getSchemaAccession(jsonSchema.getId());
+        jsonSchema.setAccession(accession);
     }
 }

@@ -22,6 +22,7 @@ public class MongoModelConverter {
     public MongoJsonSchema jsonSchemaToMongoJsonSchema(JsonSchema jsonSchema) {
         MongoJsonSchema mongoJsonSchema = new MongoJsonSchema();
         mongoJsonSchema.setId(jsonSchema.getId());
+        mongoJsonSchema.setAccession(jsonSchema.getAccession());
         mongoJsonSchema.setName(jsonSchema.getName());
         mongoJsonSchema.setVersion(jsonSchema.getVersion());
         mongoJsonSchema.setTitle(jsonSchema.getTitle());
@@ -36,6 +37,7 @@ public class MongoModelConverter {
     public JsonSchema mongoJsonSchemaToJsonSchema(MongoJsonSchema mongoJsonSchema) {
         JsonSchema jsonSchema = new JsonSchema();
         jsonSchema.setId(mongoJsonSchema.getId());
+        jsonSchema.setAccession(mongoJsonSchema.getAccession());
         jsonSchema.setName(mongoJsonSchema.getName());
         jsonSchema.setVersion(mongoJsonSchema.getVersion());
         jsonSchema.setTitle(mongoJsonSchema.getTitle());

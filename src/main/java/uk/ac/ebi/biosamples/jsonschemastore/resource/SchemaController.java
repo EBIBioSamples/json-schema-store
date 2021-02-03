@@ -81,7 +81,7 @@ public class SchemaController {
             return ResponseEntity.badRequest().build();
         }
 
-        return new ResponseEntity<>(schemaService.createSchema(schema), HttpStatus.CREATED);
+        return new ResponseEntity<>(schemaService.saveSchema(schema), HttpStatus.CREATED);
     }
 
     @PutMapping
@@ -96,7 +96,7 @@ public class SchemaController {
             return ResponseEntity.badRequest().build();
         }
 
-        return new ResponseEntity<>(schemaService.updateSchema(schema), HttpStatus.OK);
+        return new ResponseEntity<>(schemaService.saveSchema(schema), HttpStatus.OK);
     }
 
     @DeleteMapping
