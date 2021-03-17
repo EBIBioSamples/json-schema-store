@@ -13,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
-import uk.ac.ebi.biosamples.jsonschemastore.client.ValidatorClient;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.MetaSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
@@ -84,11 +83,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
       }, JsonSchema::setSchema);
     });*/
         return modelMapper;
-    }
-
-    @Bean
-    public ValidatorClient validatorClient() {
-        return new ValidatorClient();
     }
 
     // testing on the localhost

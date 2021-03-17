@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.resource;
+package uk.ac.ebi.biosamples.jsonschemastore.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -40,10 +40,10 @@ public class SchemaController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{version}/{schemaName}")
-    public ResponseEntity<JsonSchema> getSchemaWithVersion(@PathVariable("schemaName") String schemaName,
+    @GetMapping("/{accession}/{version}")
+    public ResponseEntity<JsonSchema> getSchemaByAccessionAndVersion(@PathVariable("accession") String accession,
                                                            @PathVariable("version") String version) {
-        return schemaService.getSchemaByNameAndVersion(schemaName, version)
+        return schemaService.getSchemaByAccessionAndVersion(accession, version)
                 .map(schemaResourceAssembler::populateResources)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -81,7 +81,7 @@ public class SchemaController {
             return ResponseEntity.badRequest().build();
         }
 
-        return new ResponseEntity<>(schemaService.createSchema(schema), HttpStatus.CREATED);
+        return new ResponseEntity<>(schemaService.saveSchema(schema), HttpStatus.CREATED);
     }
 
     @PutMapping
@@ -96,7 +96,7 @@ public class SchemaController {
             return ResponseEntity.badRequest().build();
         }
 
-        return new ResponseEntity<>(schemaService.updateSchema(schema), HttpStatus.OK);
+        return new ResponseEntity<>(schemaService.saveSchema(schema), HttpStatus.OK);
     }
 
     @DeleteMapping

@@ -7,6 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 @Data
 public abstract class Schema extends RepresentationModel<Schema> {
     protected String id;
+    protected String accession;
     protected String name;
     protected String version;
     protected String title;

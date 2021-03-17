@@ -1,6 +1,5 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -8,10 +7,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschemastore.model.MetaSchema;
-import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoMetaSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.MetaSchemaRepository;
-import uk.ac.ebi.biosamples.jsonschemastore.schema.util.JsonSchemaMappingUtil;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 
 import java.util.List;
@@ -27,10 +24,6 @@ public class MetaSchemaService {
     public MetaSchemaService(MetaSchemaRepository metaSchemaRepository, MongoModelConverter modelConverter) {
         this.metaSchemaRepository = metaSchemaRepository;
         this.modelConverter = modelConverter;
-    }
-
-    public JsonNode getMetaSchema() {
-        return JsonSchemaMappingUtil.getSchemaObject();
     }
 
     public Optional<MetaSchema> getSchemaById(@NonNull String id) {

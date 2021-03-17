@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidationErrors;
-import uk.ac.ebi.biosamples.jsonschemastore.client.dto.ValidationState;
 
 import java.util.List;
 

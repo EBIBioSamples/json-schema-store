@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.MetaSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
-import uk.ac.ebi.biosamples.jsonschemastore.resource.MetaSchemaController;
-import uk.ac.ebi.biosamples.jsonschemastore.resource.SchemaController;
+import uk.ac.ebi.biosamples.jsonschemastore.controller.MetaSchemaController;
+import uk.ac.ebi.biosamples.jsonschemastore.controller.SchemaController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
