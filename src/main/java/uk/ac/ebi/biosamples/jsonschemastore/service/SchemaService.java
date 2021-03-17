@@ -35,6 +35,11 @@ public class SchemaService {
         return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);
     }
 
+    public Optional<JsonSchema> getSchemaByAccessionAndVersion(@NonNull String accession, String version) {
+        Optional<MongoJsonSchema> optionalSchema = schemaRepository.findFirstByAccessionAndVersionOrderByVersionDesc(accession, version);
+        return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);
+    }
+
     public Optional<JsonSchema> getSchemaById(@NonNull String id) {
         Optional<MongoJsonSchema> optionalSchema = schemaRepository.findById(id);
         return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);

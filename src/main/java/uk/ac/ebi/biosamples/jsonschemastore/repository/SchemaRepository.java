@@ -18,4 +18,6 @@ public interface SchemaRepository extends MongoRepository<MongoJsonSchema, Strin
     Optional<MongoJsonSchema> findFirstByNameAndVersionOrderByVersionDesc(String schemaName, String version);
 
     Optional<MongoJsonSchema> findFirstByOrderByAccessionDesc();
+
+    Optional<MongoJsonSchema> findFirstByAccessionAndVersionOrderByVersionDesc(String accession, String version);
 }

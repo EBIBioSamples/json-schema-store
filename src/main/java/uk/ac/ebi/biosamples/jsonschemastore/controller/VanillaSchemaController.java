@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.resource;
+package uk.ac.ebi.biosamples.jsonschemastore.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;

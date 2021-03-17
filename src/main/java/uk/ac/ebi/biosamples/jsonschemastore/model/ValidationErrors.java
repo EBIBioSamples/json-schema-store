@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.client.dto;
+package uk.ac.ebi.biosamples.jsonschemastore.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
