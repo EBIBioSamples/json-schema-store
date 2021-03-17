@@ -40,10 +40,10 @@ public class SchemaController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{version}/{schemaName}")
-    public ResponseEntity<JsonSchema> getSchemaWithVersion(@PathVariable("schemaName") String schemaName,
+    @GetMapping("/{accession}/{version}")
+    public ResponseEntity<JsonSchema> getSchemaByAccessionAndVersion(@PathVariable("accession") String accession,
                                                            @PathVariable("version") String version) {
-        return schemaService.getSchemaByNameAndVersion(schemaName, version)
+        return schemaService.getSchemaByAccessionAndVersion(accession, version)
                 .map(schemaResourceAssembler::populateResources)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

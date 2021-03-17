@@ -23,18 +23,17 @@ public class VanillaSchemaController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{schemaName}")
-    public ResponseEntity<JsonNode> getSchemaByName(@PathVariable("schemaName") String schemaName,
-                                                    @RequestParam(value = "version", required = false) String version) {
-        return schemaService.getSchemaByNameAndVersion(schemaName, version)
+    @GetMapping("/{accession}")
+    public ResponseEntity<JsonNode> getSchemaByAccession(@PathVariable("accession") String accession) {
+        return schemaService.getLatestSchemaByAccession(accession)
                 .map(r -> ResponseEntity.ok(r.getSchema()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{version}/{schemaName}")
-    public ResponseEntity<JsonNode> getSchemaByNameAndVersion(@PathVariable("schemaName") String schemaName,
+    @GetMapping("/{accession}/{version}")
+    public ResponseEntity<JsonNode> getSchemaByAccessionAndVersion(@PathVariable("accession") String accession,
                                                               @PathVariable("version") String version) {
-        return schemaService.getSchemaByNameAndVersion(schemaName, version)
+        return schemaService.getSchemaByAccessionAndVersion(accession, version)
                 .map(r -> ResponseEntity.ok(r.getSchema()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -14,7 +14,7 @@ public class SchemaIdExtractor {
         String[] pathSegments = decomposeSchemaId(schemaId);
         String schemaVersion = "1.0.0";
         if (pathSegments.length > 1) {
-            schemaVersion = pathSegments[pathSegments.length - 2];
+            schemaVersion = pathSegments[pathSegments.length - 1];
         }
 
         return schemaVersion;
@@ -24,8 +24,8 @@ public class SchemaIdExtractor {
         String schemaId = Objects.requireNonNull(id, "$id filed cannot be null!");
         String[] pathSegments = decomposeSchemaId(schemaId);
         String schemaName;
-        if (pathSegments.length > 1) {
-            schemaName = pathSegments[pathSegments.length - 1];
+        if (pathSegments.length > 2) {
+            schemaName = pathSegments[pathSegments.length - 2];
         } else {
             schemaName = pathSegments[0];
         }
