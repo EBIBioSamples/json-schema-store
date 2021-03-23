@@ -40,7 +40,7 @@ deploy:
     - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d "rm -rf ~/deployments/sw/www/json-schema-store"
     - scp -r -v -o StrictHostKeyChecking=no ./target tc_spo01@wp-p1m2-3d:~/deployments/sw/www/json-schema-store
     - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d "export JAVA_HOME=~/servers/jdk-11"
-    - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d "export PATH=$JAVA_HOME/bin:$PATH"
+    - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d "export PATH=~/servers/jdk-11/bin:$PATH"
     - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d "nohup java -jar ~/deployments/sw/www/json-schema-store/json-schema-store-0.0.1-SNAPSHOT.jar --spring.config.location=file:~/config/application.yml &"
 #  only:
 #    - master
