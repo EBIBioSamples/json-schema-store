@@ -32,17 +32,15 @@ deploy:
   script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
     - eval $(ssh-agent -s)
-    - echo "$NOAH_LOGIN_SSH_KEY" | tr -d '\r' | ssh-add -
+    - echo "$BSD_PROD_SSH_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - ssh-keyscan ebi-cli >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh -v -o StrictHostKeyChecking=no isuru@ebi-cli rm -rf /nfs/spot/data/test/biosamples/json-schema-store
-    - scp -r -v -o StrictHostKeyChecking=no ./target isuru@ebi-cli:/nfs/spot/data/test/biosamples/json-schema-store
-    - ssh -v -o StrictHostKeyChecking=no isuru@ebi-cli become tc_spo01 "ssh wp-np2-40 'rm -rf /mnt/data/biosamples/sw/wwwdev/json-schema-store'"
-    - ssh -v -o StrictHostKeyChecking=no isuru@ebi-cli become tc_spo01 "ssh wp-np2-40 'scp -r ebi-cli:/nfs/spot/data/test/biosamples/json-schema-store /mnt/data/biosamples/sw/wwwdev/json-schema-store'"
-    - ssh -v -o StrictHostKeyChecking=no isuru@ebi-cli become tc_spo01 "ssh wp-np2-40 'export NODE_HOME=/mnt/data/biosamples/servers/node-v14.15.1-linux-x64'"
-    - ssh -v -o StrictHostKeyChecking=no isuru@ebi-cli become tc_spo01 "ssh wp-np2-40 'export PATH=$PATH:$NODE_HOME/bin'"
-    - ssh -v -o StrictHostKeyChecking=no isuru@ebi-cli become tc_spo01 "ssh wp-np2-40 'nohup java -jar /mnt/data/biosamples/sw/wwwdev/json-schema-store/json-schema-store-0.0.1-SNAPSHOT.jar &'"
+    - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d rm -rf ~/deployments/sw/www/json-schema-store
+    - scp -r -v -o StrictHostKeyChecking=no ./target tc_spo01@wp-p1m2-3d:~/deployments/sw/www/json-schema-store
+    - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d export JAVA_HOME=~/servers/jdk-11
+    - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d export PATH=$JAVA_HOME/bin:$PATH
+    - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d nohup java -jar ~/deployments/sw/www/json-schema-store/json-schema-store-0.0.1-SNAPSHOT.jar --spring.config.location=file:~/config/application.yml &'"
 #  only:
 #    - master
