@@ -58,7 +58,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     getAllMetaSchemas(): void {
-        this.storeroomClient.getAllMetaSchema().subscribe((response) => {
+        this.storeroomClient.getMetaSchema().subscribe((response) => {
             for (let schema of response['_embedded']['schemas']) {
                 this.metaSchemas.set(schema['id'], schema)
                 this.metaSchemaSelectList.push([schema['id'], schema['name']])

@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {PageEvent} from '@angular/material/paginator';
 import {StoreRoomService} from '../../service/storeroom/store-room.service';
-import {SchemaPage} from '../../dto/dto.module';
-import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
 
 @Component({
@@ -11,49 +9,40 @@ import {Router} from '@angular/router';
     styleUrls: ['./schema-list.component.scss']
 })
 export class SchemaListComponent implements OnInit {
-
-    public schemaBlocks: any[];
     public totalElements: number;
-    public search: any;
-    private schemaBlocksPages: Observable<SchemaPage>;
-    private isSearchMode = false;
+    public pageSize: number;
+    public pageIndex: number;
+    public pageSizeOptions: number[];
+    public schemas: object[];
+    public searchText: string;
 
     constructor(private storeroomClient: StoreRoomService, private router: Router) {
     }
 
     ngOnInit(): void {
+        this.searchText = '';
+        this.pageSize = 5;
+        this.pageIndex = 0;
+        this.pageSizeOptions = [5, 10, 20]
+
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        this.getSchemaBlockPages();
-        this.schemaBlocksPages.subscribe(page => {
-            this.totalElements = page.page.totalElements;
-            this.schemaBlocks = page._embedded.schemas;
-        });
+        this.search();
     }
 
-    getSchemaBlockPages(): void {
-        this.schemaBlocksPages = this.storeroomClient.getJsonSchemaPage();
+    search(): void {
+        this.getSchema(this.searchText, this.pageSize, this.pageIndex);
     }
 
     onPageChange(event: PageEvent): void {
-        if (this.isSearchMode) {
-            this.schemaBlocksPages = this.storeroomClient.searchSchema(this.search.value, event.pageIndex, event.pageSize);
-        } else {
-            this.schemaBlocksPages = this.storeroomClient.getJsonSchemaPage(event.pageIndex, event.pageSize);
-        }
-        this.schemaBlocksPages.subscribe((page) => {
-            this.totalElements = page.page.totalElements;
-            this.schemaBlocks = page._embedded.schemas;
-        });
+        this.getSchema(this.searchText, event.pageSize, event.pageIndex);
     }
 
-    doSearch(searchKey: any): void {
-        this.isSearchMode = true;
-        this.search = searchKey;
-        this.schemaBlocksPages = this.storeroomClient.searchSchema(searchKey.value);
-        this.schemaBlocksPages.subscribe((page) => {
-            this.totalElements = page.page.totalElements;
-            this.schemaBlocks = page._embedded.schemas;
-        });
+    getSchema(text: string, pageSize: number, pageIndex: number) {
+        this.storeroomClient.searchSchema(text, pageIndex, pageSize).subscribe((schemaPage) => {
+            this.pageIndex = schemaPage.page.number;
+            this.pageSize = schemaPage.page.size;
+            this.totalElements = schemaPage.page.totalElements;
+            this.schemas = schemaPage._embedded.schemas;
+        })
     }
-
 }

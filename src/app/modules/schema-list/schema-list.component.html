@@ -2,23 +2,24 @@
     <div fxLayout="column" fxLayoutAlign="start center">
         <div class="vf-form | vf-search vf-search--inline search-bar">
             <div class="vf-form__item | vf-search__item">
-                <input #search (keydown.enter)="doSearch(search)" type="search" placeholder="Search Schema"
+                <input [(ngModel)]="searchText" type="search" placeholder="Search Schema"
                        id="inlinesearchitem" class="vf-form__input | vf-search__input">
             </div>
-            <button (click)="doSearch(search)" class="vf-search__button | vf-button vf-button--primary">Search</button>
+            <button (click)="search()" class="vf-search__button | vf-button vf-button--primary">Search</button>
         </div>
     </div>
 
 
     <div fxLayout="column" fxLayoutAlign="start center">
-        <div class="search-result" *ngIf="schemaBlocks">
-            <mat-paginator (page)="onPageChange($event)"
-                           [length]="totalElements"
-                           [pageSizeOptions]="[10, 20]"
-                           [pageSize]="10">
+        <div class="search-result" *ngIf="schemas">
+            <mat-paginator [length]="totalElements"
+                           [pageSize]="pageSize"
+                           [pageIndex]="pageIndex"
+                           [pageSizeOptions]="pageSizeOptions"
+                           (page)="onPageChange($event)">
             </mat-paginator>
-            <app-json-schema-card *ngFor="let schemaBlock of schemaBlocks"
-                                  [schemaBlock]="schemaBlock"></app-json-schema-card>
+            <app-json-schema-card *ngFor="let schema of schemas"
+                                  [schemaBlock]="schema"></app-json-schema-card>
         </div>
     </div>
 </div>

@@ -11,6 +11,7 @@ import {NgJsonEditorModule} from 'ang-jsoneditor';
 import {SchemaListComponent} from '../../modules/schema-list/schema-list.component';
 import {MaterialModule} from '../../material/material.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {FormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
         RouterModule,
         SharedModule,
         NgJsonEditorModule,
-        MaterialModule
+        MaterialModule,
+        FormsModule
     ]
 })
 export class DefaultModule {
