@@ -4,7 +4,7 @@
             <div class="vf-section-header">
                 <div class="vf-section-header__heading vf-section-header__heading--is-link">Schema Editor</div>
             </div>
-            <json-editor #editor [data]="jsonSchema" [options]="jsonEditorOptions"></json-editor>
+            <json-editor #editor [data]="editorJsonSchema" [options]="jsonEditorOptions"></json-editor>
         </div>
         <div fxLayoutAlign="start center">
             <button (click)="onClickMetaSchemaViewer()" *ngIf="isMetaSchemaViewerDisable"

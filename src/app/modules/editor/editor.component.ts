@@ -14,15 +14,15 @@ import {META_SCHEMA, INIT_SCHEMA} from '../../dto/mock_json'
 export class EditorComponent implements OnInit, OnDestroy {
     public jsonEditorOptions: JsonEditorOptions;
     public metaEditorOptions: JsonEditorOptions;
-    public data: any;
     @ViewChild(JsonEditorComponent, {static: false}) editor: JsonEditorComponent;
     @ViewChild(JsonEditorComponent, {static: false}) editorMetaSchema: JsonEditorComponent;
     public isUpdate: boolean;
     public isMetaSchemaViewerDisable = true;
-    public jsonSchema: any;
-    public metaSchema: any;
-    public metaSchemas: Map<string, any>;
 
+    public editorJsonSchema: object;
+    public jsonSchema: object;
+    public metaSchema: object;
+    public metaSchemas: Map<string, object>;
     public metaSchemaSelectList: [string, string][];
 
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute, private snackBar: MatSnackBar,
@@ -37,8 +37,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.metaEditorOptions = new JsonEditorOptions();
         this.metaEditorOptions.mode = 'view';
 
-        this.data = INIT_SCHEMA;
-        this.metaSchemas = new Map<string, any>();
+        this.metaSchemas = new Map<string, object>();
         this.metaSchemaSelectList = [];
     }
 
@@ -48,7 +47,8 @@ export class EditorComponent implements OnInit, OnDestroy {
             this.isUpdate = true;
             this.getJsonSchema();
         } else {
-            this.jsonSchema = INIT_SCHEMA;
+            this.editorJsonSchema = INIT_SCHEMA;
+            this.jsonSchema = this.editorJsonSchema;
         }
         this.getAllMetaSchemas();
     }
@@ -74,8 +74,8 @@ export class EditorComponent implements OnInit, OnDestroy {
                 this.jsonEditorOptions.mode = 'view';
                 this.storeroomClient.getSchema(params.$id)
                     .subscribe((response) => {
-                        this.jsonSchema = response['schema'];
-                        this.data = response['schema'];
+                        this.editorJsonSchema = response['schema'];
+                        this.jsonSchema = this.editorJsonSchema;
                     });
             });
     }
@@ -114,7 +114,7 @@ export class EditorComponent implements OnInit, OnDestroy {
 
     deleteJsonSchema(): void {
         this.jsonSchema = this.editor.get();
-        this.storeroomClient.deleteSchema(this.jsonSchema.$id)
+        this.storeroomClient.deleteSchema(this.jsonSchema["$id"])
             .subscribe((response) => {
                 this.openSnackBar('Deleted Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
             }, (error) => {
