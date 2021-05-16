@@ -12,72 +12,70 @@ import {META_SCHEMA, INIT_SCHEMA} from '../../dto/mock_json'
     styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent implements OnInit, OnDestroy {
-    public editorOptions: JsonEditorOptions;
-    public editorOptions2: JsonEditorOptions;
+    public jsonEditorOptions: JsonEditorOptions;
+    public metaEditorOptions: JsonEditorOptions;
     public data: any;
     @ViewChild(JsonEditorComponent, {static: false}) editor: JsonEditorComponent;
     @ViewChild(JsonEditorComponent, {static: false}) editorMetaSchema: JsonEditorComponent;
     public isUpdate: boolean;
     public isMetaSchemaViewerDisable = true;
-    private jsonSchema: any;
-    private metaSchema: any;
+    public jsonSchema: any;
+    public metaSchema: any;
+    public metaSchemas: Map<string, any>;
 
-    private metaSchemas: Map<String, any>;
-    private metaSchemaId: string;
+    public metaSchemaSelectList: [string, string][];
 
     constructor(private storeroomClient: StoreRoomService, private route: ActivatedRoute, private snackBar: MatSnackBar,
                 private router: Router) {
-        this.editorOptions = new JsonEditorOptions();
-        this.editorOptions2 = new JsonEditorOptions();
-        this.editorOptions.modes = ['code', 'text', 'tree', 'view', 'form'];
-        this.editorOptions2.mode = 'view';
-        this.editorOptions.onChange = () => this.jsonSchema = this.editor.get();
+        this.jsonEditorOptions = new JsonEditorOptions();
+        this.jsonEditorOptions.modes = ['code', 'text', 'tree', 'view', 'form'];
+        this.jsonEditorOptions.onChange = () => this.jsonSchema = this.editor.get();
         // this.editorOptions.onValidate = () => this.validateSchema();
-        this.editorOptions.navigationBar = true;
-        this.editorOptions.schema = {};
-        this.data = INIT_SCHEMA;
+        this.jsonEditorOptions.navigationBar = true;
+        this.jsonEditorOptions.schema = {};
 
-        this.metaSchemas = new Map<String, any>();
+        this.metaEditorOptions = new JsonEditorOptions();
+        this.metaEditorOptions.mode = 'view';
+
+        this.data = INIT_SCHEMA;
+        this.metaSchemas = new Map<string, any>();
+        this.metaSchemaSelectList = [];
     }
 
     ngOnInit(): void {
         this.router.routeReuseStrategy.shouldReuseRoute = () =>  false;
         if (this.route.snapshot.queryParamMap && this.route.snapshot.queryParamMap.has('$id')) {
             this.isUpdate = true;
-            this.getSchemaBlock();
+            this.getJsonSchema();
+        } else {
+            this.jsonSchema = INIT_SCHEMA;
         }
-        // this.getMetaSchema();
         this.getAllMetaSchemas();
     }
 
     ngOnDestroy(): void {
-        this.data = null;
-    }
-
-    getMetaSchema(): void {
-        this.storeroomClient.getMetaSchema().subscribe((response) => {
-            this.metaSchema = response;
-        });
+        this.jsonSchema = null;
     }
 
     getAllMetaSchemas(): void {
         this.storeroomClient.getAllMetaSchema().subscribe((response) => {
             for (let schema of response['_embedded']['schemas']) {
-                this.metaSchemas.set(schema['name'], schema)
+                this.metaSchemas.set(schema['id'], schema)
+                this.metaSchemaSelectList.push([schema['id'], schema['name']])
             }
             this.metaSchema = response['_embedded']['schemas'][0]['schema'];
         });
     }
 
-    getSchemaBlock(): void {
+    getJsonSchema(): void {
         this.route
             .queryParams
             .subscribe(params => {
-                this.editorOptions.mode = 'view';
+                this.jsonEditorOptions.mode = 'view';
                 this.storeroomClient.getSchema(params.$id)
                     .subscribe((response) => {
+                        this.jsonSchema = response['schema'];
                         this.data = response['schema'];
-                        this.jsonSchema = this.data;
                     });
             });
     }
@@ -86,7 +84,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         const schema = this.editor.get();
         const request = {
             domain: 'placeholer',
-            metaSchema: 'https://schemablocks.org/meataschemas/1.0.1/jsonMetaSchema',
+            metaSchema: this.metaSchema["$id"],
             schema: schema
         };
         this.storeroomClient.createSchema(request)
@@ -102,7 +100,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         const schema = this.editor.get();
         const request = {
             domain: 'placeholer',
-            metaSchema: 'https://schemablocks.org/meataschemas/1.0.1/jsonMetaSchema',
+            metaSchema: this.metaSchema["$id"],
             schema: schema
         };
         this.storeroomClient.updateSchema(request)
@@ -129,7 +127,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     private validateSchema(): IError[] {
-        console.log('start validating scehma!');
+        console.log('start validating schema!');
         console.log(this.jsonSchema);
         let error: IError[] = [];
         if (this.jsonSchema) {
@@ -141,6 +139,10 @@ export class EditorComponent implements OnInit, OnDestroy {
                 });
         }
         return error;
+    }
+
+    onMetaSchemaSelect(value: string) {
+        this.metaSchema = this.metaSchemas.get(value)['schema'];
     }
 
     private openSnackBar(message: string, config: object = {duration: 5000}, action: string = ''): void {

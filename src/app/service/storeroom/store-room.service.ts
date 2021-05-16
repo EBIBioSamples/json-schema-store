@@ -15,11 +15,6 @@ export class StoreRoomService {
     constructor(private http: HttpClient) {
     }
 
-    // Get Operations
-    public getMetaSchema(): Observable<any> {
-        return this.http.get(this.storeroomApi + '/metaSchemas');
-    }
-
     public getAllMetaSchema(): Observable<any> {
         return this.http.get(this.storeroomApi + '/metaSchemas/search');
     }

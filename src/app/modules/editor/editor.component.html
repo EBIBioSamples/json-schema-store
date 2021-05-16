@@ -4,7 +4,7 @@
             <div class="vf-section-header">
                 <div class="vf-section-header__heading vf-section-header__heading--is-link">Schema Editor</div>
             </div>
-            <json-editor #editor [data]="data" [options]="editorOptions"></json-editor>
+            <json-editor #editor [data]="jsonSchema" [options]="jsonEditorOptions"></json-editor>
         </div>
         <div fxLayoutAlign="start center">
             <button (click)="onClickMetaSchemaViewer()" *ngIf="isMetaSchemaViewerDisable"
@@ -24,14 +24,12 @@
             </div>
             <div class="vf-grid vf-grid__col-2">
                 <label class="vf-section-header__heading vf-section-header__heading--is-link" for="vf-form__select">Select Meta-Schema</label>
-                <select class="vf-form__select meta-schema-select" id="vf-form__select">
-<!--                    <option *ngFor="let m of metaSchemas.values()" value="{{m.id}}" selected>{{m.name}}</option>-->
-                    <option value="Generic" selected>Generic</option>
-                    <option value="BioSamples">BioSamples</option>
-                    <option value="SchemaBlocks">SchemaBlocks</option>
+                <select class="vf-form__select meta-schema-select" id="vf-form__select" #metaSchemaSelect
+                        (change)='onMetaSchemaSelect(metaSchemaSelect.value)'>
+                    <option *ngFor="let m of metaSchemaSelectList" value="{{m[0]}}">{{m[1]}}</option>
                 </select>
             </div>
-            <json-editor #editorMetaSchema [data]="metaSchema" [options]="editorOptions2"></json-editor>
+            <json-editor #editorMetaSchema [data]="metaSchema" [options]="metaEditorOptions"></json-editor>
         </div>
     </div>
 </div>

@@ -191,7 +191,7 @@ export const META_SCHEMA = {
 
 export const INIT_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://schemablocks.org/schemas/xxxxx',
+    $id: 'https://www.ebi.ac.uk/biosamples/schemas/my-test-schema/1.0.0',
     title: 'title',
     description: 'description',
     type: 'object',

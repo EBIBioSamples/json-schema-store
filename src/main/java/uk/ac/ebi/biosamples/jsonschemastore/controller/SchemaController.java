@@ -70,7 +70,7 @@ public class SchemaController {
     }
 
     @PostMapping
-    public ResponseEntity<JsonSchema> createSchema(@RequestBody JsonSchema schema) {
+    public ResponseEntity createSchema(@RequestBody JsonSchema schema) {
         SchemaObjectPopulator.populateSchemaRequestFields(schema);
         if (schemaService.schemaExists(schema.getId())) {
             return ResponseEntity.badRequest().build();
@@ -78,7 +78,7 @@ public class SchemaController {
         try {
             schemaValidationService.validate(schema);
         } catch (JsonSchemaServiceException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation failed: " + e.getMessage());
         }
 
         return new ResponseEntity<>(schemaService.saveSchema(schema), HttpStatus.CREATED);
