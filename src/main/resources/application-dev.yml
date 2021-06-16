@@ -7,7 +7,6 @@ spring:
       database: schemastore
       repositories:
         type: auto
-#      uri: mongodb://biosdev:L85SKeuR@mongodb-hx-biosdev-dev-001.ebi.ac.uk:27017,mongodb-hh-biosdev-dev-002.ebi.ac.uk:27017/schemastore?replicaSet=biosdevrs017&readPreference=primary&authSource=admin&w=1
 # spring actuator
 management:
   endpoints:
