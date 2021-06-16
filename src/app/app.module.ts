@@ -13,11 +13,14 @@ import {StoreRoomService} from './service/storeroom/store-room.service';
 import {DefaultModule} from './layout/default/default.module';
 import {HttpErrorInterceptor} from './interceptors/http-error.interceptor';
 import { AboutComponent } from './modules/about/about.component';
+import { LoginComponent } from './modules/login/login.component';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
     declarations: [
         AppComponent,
-        AboutComponent
+        AboutComponent,
+        LoginComponent
     ],
     imports: [
         BrowserModule,
@@ -27,7 +30,8 @@ import { AboutComponent } from './modules/about/about.component';
         AppRoutingModule,
         NgJsonEditorModule,
         HttpClientModule,
-        DefaultModule
+        DefaultModule,
+        FormsModule
     ],
     providers: [
         StoreRoomService,

@@ -1,0 +1,12 @@
+<div class="vf-form login-form-wrapper">
+    <div class="login-form">
+        <h3>Login using your Webin account</h3>
+        <div class="vf-form__item">
+            <input [(ngModel)]="username" type="text" placeholder="Username"
+                   id="username" class="vf-form__input">
+            <input [(ngModel)]="password" type="password" placeholder="Password"
+                   id="password" class="vf-form__input">
+        </div>
+        <button (click)="login()" class="vf-button vf-button--primary login-button">Login</button>
+    </div>
+</div>
