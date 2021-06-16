@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
+import uk.ac.ebi.biosamples.jsonschemastore.exception.MalformedSchemaException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
@@ -70,15 +71,15 @@ public class SchemaController {
     }
 
     @PostMapping
-    public ResponseEntity createSchema(@RequestBody JsonSchema schema) {
+    public ResponseEntity<JsonSchema> createSchema(@RequestBody JsonSchema schema) {
         SchemaObjectPopulator.populateSchemaRequestFields(schema);
-        if (schemaService.schemaExists(schema.getId())) {
-            return ResponseEntity.badRequest().build();
+        if (schemaService.schemaIdExists(schema.getId())) {
+            throw new MalformedSchemaException("Schema Id already exists");
         }
         try {
             schemaValidationService.validate(schema);
         } catch (JsonSchemaServiceException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation failed: " + e.getMessage());
+            throw new MalformedSchemaException("Validation failed: " + e.getMessage());
         }
 
         return new ResponseEntity<>(schemaService.saveSchema(schema), HttpStatus.CREATED);
@@ -87,7 +88,7 @@ public class SchemaController {
     @PutMapping
     public ResponseEntity<JsonSchema> updateSchema(@RequestParam("id") String id, @RequestBody JsonSchema schema) {
         SchemaObjectPopulator.populateSchemaRequestFields(schema);
-        if (!schemaService.schemaExists(schema.getId())) {
+        if (!schemaService.schemaIdExists(schema.getId())) {
             return ResponseEntity.badRequest().build();
         }
         try {
@@ -101,7 +102,7 @@ public class SchemaController {
 
     @DeleteMapping
     public ResponseEntity<JsonSchema> deleteSchema(@RequestParam("id") String id) {
-        if (!schemaService.schemaExists(id)) {
+        if (!schemaService.schemaIdExists(id)) {
             return ResponseEntity.badRequest().build();
         }
 

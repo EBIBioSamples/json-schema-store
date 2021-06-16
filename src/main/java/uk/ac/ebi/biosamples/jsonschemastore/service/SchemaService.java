@@ -85,9 +85,14 @@ public class SchemaService {
         schemaRepository.deleteById(schemaId);
     }
 
-    public boolean schemaExists(String schemaId) {
+    public boolean schemaIdExists(String schemaId) {
         Optional<MongoJsonSchema> schema = schemaRepository.findById(schemaId);
         return schema.isPresent();
+    }
+
+    public boolean schemaNameExists(String schemaName) {
+        //todo domain + name exists
+        return false;
     }
 
     private void populateAccession(JsonSchema jsonSchema) {

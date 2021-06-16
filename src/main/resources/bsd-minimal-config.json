@@ -1,0 +1,6 @@
+{
+  "meta_schema": "",
+  "schema_template": "",
+  "checklist_root_path": "characteristics",
+  "checklist_field_template": "\"<organism>\":{\"type\":\"array\",\"items\":{\"properties\":{\"text\":{\"$ref\":\"#/definitions/nonEmptyString\"}},\"required\":[\"text\"]}}"
+}

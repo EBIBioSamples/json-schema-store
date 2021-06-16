@@ -7,6 +7,7 @@ spring:
       database: schemastore
       repositories:
         type: auto
+#      uri: mongodb://biosd:Y08hObvEStFy@mongos-hxvm7-dev-001.ebi.ac.uk:27017/schemastore?readPreference=secondaryPreferred&authSource=admin&w=majority
 # Elixir Validator
 elixirValidator:
-  hostUrl: http://localhost:3000/validate
+  hostUrl: http://localhost:3020/validate

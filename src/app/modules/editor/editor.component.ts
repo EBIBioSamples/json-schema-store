@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {IError} from 'ang-jsoneditor/jsoneditor/jsoneditoroptions';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {META_SCHEMA, INIT_SCHEMA} from '../../dto/mock_json'
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
     selector: 'app-editor',
@@ -89,7 +90,6 @@ export class EditorComponent implements OnInit, OnDestroy {
         };
         this.storeroomClient.createSchema(request)
             .subscribe((response) => {
-                console.log(response);
                 this.openSnackBar('Created Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
             }, (error) => {
                 this.openSnackBar(error, {panelClass: 'snackbar-error'}, 'Close');

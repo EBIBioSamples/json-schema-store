@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {SchemaPage} from '../../dto/dto.module';
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {ValidationResponse} from '../../dto/validationResponse';
+
+import { catchError, retry } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -32,6 +34,20 @@ export class StoreRoomService {
     public createSchema(jsonSchema: object): Observable<any> {
         return this.http.post(this.storeroomApi + '/schemas', jsonSchema);
     }
+
+    // public createSchema(jsonSchema: object): Observable<any> {
+    //     return this.http.post(this.storeroomApi + '/schemas', jsonSchema)
+    //         .pipe(catchError(this.handleError));
+    // }
+    //
+    // private handleError(error: HttpErrorResponse) {
+    //     if (error.status === 0) {//client-side or network error
+    //         console.error('An error occurred:', error.error);
+    //     } else {
+    //         console.error(`Backend returned code ${error.status}, ` + `body was: ${error.error}`);
+    //     }
+    //     return throwError('Something bad happened; please try again later.');
+    // }
 
     public updateSchema(jsonSchema: object): Observable<any> {
         return this.http.put(this.storeroomApi + '/schemas?id=' + jsonSchema['schema']['$id'] , jsonSchema);
