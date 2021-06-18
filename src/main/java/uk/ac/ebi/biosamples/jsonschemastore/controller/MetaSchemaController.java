@@ -18,7 +18,7 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v2/metaSchemas")
+@RequestMapping(value = "/api/v2/metaSchemas", produces = {"application/json"})
 public class MetaSchemaController {
     private MetaSchemaService metaSchemaService;
     private final SchemaValidationService schemaValidationService;

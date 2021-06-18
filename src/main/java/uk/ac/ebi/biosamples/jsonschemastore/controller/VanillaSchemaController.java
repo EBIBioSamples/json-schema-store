@@ -8,7 +8,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 
 @Slf4j
 @RestController
-@RequestMapping("/registry/schemas")
+@RequestMapping(value = "/registry/schemas", produces = {"application/json"})
 public class VanillaSchemaController {
     private SchemaService schemaService;
 
