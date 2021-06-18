@@ -1,4 +1,4 @@
-package uk.ac.ebi.biosamples.jsonschemastore.tools;
+package uk.ac.ebi.biosamples.jsonschemastore.ena;
 
 
 public class EnaChecklistToBioSamplesSchema {

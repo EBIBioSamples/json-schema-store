@@ -81,6 +81,17 @@ public class SchemaService {
         return modelConverter.mongoJsonSchemaToJsonSchema(mongoJsonSchemaResult);
     }
 
+    // todo check accession logic in both POST and PUT requests
+    public JsonSchema saveSchemaWithAccession(@NonNull JsonSchema jsonSchema) {
+        String accession = jsonSchema.getAccession();
+        if (accession != null && !accession.isEmpty()) {
+            jsonSchema.setAccession(accession);
+        }
+        MongoJsonSchema mongoJsonSchema = modelConverter.jsonSchemaToMongoJsonSchema(jsonSchema);
+        MongoJsonSchema mongoJsonSchemaResult = schemaRepository.save(mongoJsonSchema);
+        return modelConverter.mongoJsonSchemaToJsonSchema(mongoJsonSchemaResult);
+    }
+
     public void deleteSchema(@NonNull String schemaId) {
         schemaRepository.deleteById(schemaId);
     }

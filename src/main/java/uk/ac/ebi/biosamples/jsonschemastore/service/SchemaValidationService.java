@@ -3,6 +3,9 @@ package uk.ac.ebi.biosamples.jsonschemastore.service;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
@@ -56,7 +59,11 @@ public class SchemaValidationService {
         try {
             RestTemplate restTemplate = new RestTemplate();
             URI uri = URI.create(validatorUrl);
-            validationResponse = restTemplate.postForEntity(uri, validatorRequest, ValidationResponse.class).getBody();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<ValidationRequest> entity = new HttpEntity<>(validatorRequest ,headers);
+            validationResponse = restTemplate.postForEntity(uri, entity, ValidationResponse.class).getBody();
         } catch (Exception e) {
             log.error("Error occurred while validating JSON Object!", e);
             throw e;

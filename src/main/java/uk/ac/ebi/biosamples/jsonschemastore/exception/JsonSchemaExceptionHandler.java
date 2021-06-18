@@ -16,4 +16,10 @@ public class JsonSchemaExceptionHandler extends ResponseEntityExceptionHandler {
         String message = e.getMessage();
         return handleExceptionInternal(e, message, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+
+    @ExceptionHandler(value = {ApplicationStateException.class})
+    public ResponseEntity<Object> handleApplicationStateException(RuntimeException e, WebRequest request) {
+        String message = e.getMessage();
+        return handleExceptionInternal(e, message, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
 }

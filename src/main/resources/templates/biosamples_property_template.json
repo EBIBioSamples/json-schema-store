@@ -1,6 +1,8 @@
         "${property}": {
+          "description": "${property_description}",
           "type": "array",
           "items": {
+            "type": "object",
             "properties": {
               "text": ${property_type}
             },
