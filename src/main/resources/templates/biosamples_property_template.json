@@ -1,0 +1,11 @@
+        "${property}": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "text": ${property_type}
+            },
+            "required": [
+              "text"
+            ]
+          }
+        }
