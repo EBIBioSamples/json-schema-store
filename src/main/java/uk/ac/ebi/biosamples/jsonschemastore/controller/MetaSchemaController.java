@@ -20,7 +20,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping(value = "/api/v2/metaSchemas", produces = {"application/json"})
 public class MetaSchemaController {
-    private MetaSchemaService metaSchemaService;
+    private final MetaSchemaService metaSchemaService;
     private final SchemaValidationService schemaValidationService;
     private final SchemaResourceAssembler schemaResourceAssembler;
 
@@ -51,7 +51,7 @@ public class MetaSchemaController {
 
     @PostMapping
     public ResponseEntity<MetaSchema> createSchema(@RequestBody MetaSchema schema) {
-        SchemaObjectPopulator.populateSchemaRequestFields(schema);
+        SchemaObjectPopulator.populateSchema(schema);
         if (metaSchemaService.schemaExists(schema.getId())) {
             return ResponseEntity.badRequest().build();
         }

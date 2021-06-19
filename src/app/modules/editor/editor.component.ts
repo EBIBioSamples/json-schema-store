@@ -30,7 +30,7 @@ export class EditorComponent implements OnInit, OnDestroy {
                 private router: Router) {
         this.jsonEditorOptions = new JsonEditorOptions();
         this.jsonEditorOptions.modes = ['code', 'text', 'tree', 'view', 'form'];
-        this.jsonEditorOptions.onChange = () => this.jsonSchema = this.editor.get();
+        this.jsonEditorOptions.onChange = () => this.jsonSchema["schema"] = this.editor.get();
         // this.editorOptions.onValidate = () => this.validateSchema();
         this.jsonEditorOptions.navigationBar = true;
         this.jsonEditorOptions.schema = {};
@@ -49,7 +49,8 @@ export class EditorComponent implements OnInit, OnDestroy {
             this.getJsonSchema();
         } else {
             this.editorJsonSchema = INIT_SCHEMA;
-            this.jsonSchema = this.editorJsonSchema;
+            this.jsonSchema = {};
+            this.jsonSchema["schema"] = this.editorJsonSchema;
         }
         this.getAllMetaSchemas();
     }
@@ -75,8 +76,8 @@ export class EditorComponent implements OnInit, OnDestroy {
                 this.jsonEditorOptions.mode = 'view';
                 this.storeroomClient.getSchema(params.$id)
                     .subscribe((response) => {
-                        this.editorJsonSchema = response['schema'];
-                        this.jsonSchema = this.editorJsonSchema;
+                        this.jsonSchema = response;
+                        this.editorJsonSchema = this.jsonSchema['schema'];
                     });
             });
     }
@@ -84,7 +85,6 @@ export class EditorComponent implements OnInit, OnDestroy {
     createJsonSchema(): void {
         const schema = this.editor.get();
         const request = {
-            domain: 'placeholer',
             metaSchema: this.metaSchema["$id"],
             schema: schema
         };
@@ -99,13 +99,14 @@ export class EditorComponent implements OnInit, OnDestroy {
     updateJsonSchema(): void {
         const schema = this.editor.get();
         const request = {
-            domain: 'placeholer',
+            accession: this.jsonSchema["accession"],
             metaSchema: this.metaSchema["$id"],
             schema: schema
         };
         this.storeroomClient.updateSchema(request)
             .subscribe((response) => {
-                console.log(response);
+                this.jsonSchema = response;
+                this.editorJsonSchema = this.jsonSchema['schema'];
                 this.openSnackBar('Updated Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
             }, (error) => {
                 this.openSnackBar(error, {panelClass: 'snackbar-error'}, 'Close');
@@ -113,8 +114,8 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     deleteJsonSchema(): void {
-        this.jsonSchema = this.editor.get();
-        this.storeroomClient.deleteSchema(this.jsonSchema["$id"])
+        const schema = this.editor.get();
+        this.storeroomClient.deleteSchema(schema["$id"])
             .subscribe((response) => {
                 this.openSnackBar('Deleted Successfully!', {duration: 5000, panelClass: 'snackbar-success'});
             }, (error) => {
@@ -127,13 +128,10 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     private validateSchema(): IError[] {
-        console.log('start validating schema!');
-        console.log(this.jsonSchema);
         let error: IError[] = [];
-        if (this.jsonSchema) {
-            this.storeroomClient.validateSchema(this.jsonSchema)
+        if (this.jsonSchema['schema']) {
+            this.storeroomClient.validateSchema(this.jsonSchema['schema'])
                 .subscribe((response) => {
-                    console.log(response);
                     error = response.validationErrors;
                     return error;
                 });

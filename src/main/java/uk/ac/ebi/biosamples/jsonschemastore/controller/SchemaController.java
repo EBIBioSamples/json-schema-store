@@ -72,10 +72,18 @@ public class SchemaController {
 
     @PostMapping
     public ResponseEntity<JsonSchema> createSchema(@RequestBody JsonSchema schema) {
-        SchemaObjectPopulator.populateSchemaRequestFields(schema);
+        SchemaObjectPopulator.populateSchema(schema);
         if (schemaService.schemaIdExists(schema.getId())) {
             throw new MalformedSchemaException("Schema Id already exists");
         }
+        if (schema.getAccession() != null && !schema.getAccession().isEmpty()) {
+            throw new MalformedSchemaException("Schema accession should not be present at creation");
+        }
+        //todo if domain + name already exist can not create but should update
+        if (schemaService.schemaDomainAndNameExists(schema.getDomain(), schema.getName())) {
+            throw new MalformedSchemaException("Schema with same domain and name exists, use update endpoint to update schema");
+        }
+
         try {
             schemaValidationService.validate(schema);
         } catch (JsonSchemaServiceException e) {
@@ -87,10 +95,17 @@ public class SchemaController {
 
     @PutMapping
     public ResponseEntity<JsonSchema> updateSchema(@RequestParam("id") String id, @RequestBody JsonSchema schema) {
-        SchemaObjectPopulator.populateSchemaRequestFields(schema);
-        if (!schemaService.schemaIdExists(schema.getId())) {
-            return ResponseEntity.badRequest().build();
+        SchemaObjectPopulator.populateSchema(schema);
+        if(schema.getAccession() == null
+                || schema.getAccession().isEmpty()
+                || !schemaService.schemaAccessionExists(schema.getAccession())) {
+            throw new MalformedSchemaException("Accession must be present to update the schema");
         }
+
+        if (schemaService.schemaIdExists(schema.getId())) {
+            SchemaObjectPopulator.incrementAndPopulateSchema(schema);
+        }
+
         try {
             schemaValidationService.validate(schema);
         } catch (JsonSchemaServiceException e) {

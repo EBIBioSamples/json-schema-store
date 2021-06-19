@@ -75,7 +75,11 @@ public class SchemaService {
     }
 
     public JsonSchema saveSchema(@NonNull JsonSchema jsonSchema) {
-        populateAccession(jsonSchema);
+        String accession = jsonSchema.getAccession();
+        if (accession == null || accession.isEmpty()) {
+            populateAccession(jsonSchema);
+        }
+
         MongoJsonSchema mongoJsonSchema = modelConverter.jsonSchemaToMongoJsonSchema(jsonSchema);
         MongoJsonSchema mongoJsonSchemaResult = schemaRepository.save(mongoJsonSchema);
         return modelConverter.mongoJsonSchemaToJsonSchema(mongoJsonSchemaResult);
@@ -101,9 +105,14 @@ public class SchemaService {
         return schema.isPresent();
     }
 
-    public boolean schemaNameExists(String schemaName) {
-        //todo domain + name exists
-        return false;
+    public boolean schemaAccessionExists(String accession) {
+        Optional<MongoJsonSchema> schema = schemaRepository.findFirstByAccessionOrderByVersionDesc(accession);
+        return schema.isPresent();
+    }
+
+    public boolean schemaDomainAndNameExists(String domain, String name) {
+        Optional<MongoJsonSchema> schema = schemaRepository.findFirstByDomainAndNameOrderByVersionDesc(domain, name);
+        return schema.isPresent();
     }
 
     private void populateAccession(JsonSchema jsonSchema) {

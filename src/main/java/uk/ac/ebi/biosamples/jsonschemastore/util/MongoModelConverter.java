@@ -13,7 +13,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoMetaSchema;
 @Slf4j
 @Service
 public class MongoModelConverter {
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public MongoModelConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

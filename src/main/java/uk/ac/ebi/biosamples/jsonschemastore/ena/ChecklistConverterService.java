@@ -54,7 +54,7 @@ public class ChecklistConverterService {
         jsonSchema.setSchema(schema);
         jsonSchema.setAccession(checklistId);
         jsonSchema.setMetaSchema("https://schemablocks.org/meataschemas/jsonMetaSchema/1.0.1");
-        SchemaObjectPopulator.populateSchemaRequestFields(jsonSchema);
+        SchemaObjectPopulator.populateSchema(jsonSchema);
 
         schemaService.saveSchemaWithAccession(jsonSchema);
 
