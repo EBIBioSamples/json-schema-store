@@ -1,36 +1,24 @@
 <mat-card class="schema-card">
-    <mat-card-content>
-        <mat-card-title>{{schemaBlock.name}} <span>{{schemaBlock.version}}</span></mat-card-title>
-        <mat-card-subtitle>{{schemaBlock.id}}</mat-card-subtitle>
-        {{schemaBlock.title}}
-        <p>{{schemaBlock.description}}</p>
-        <button mat-stroked-button [queryParams]="{$id: schemaBlock.id}" routerLink="/editor">View</button>
+    <mat-card-content [queryParams]="{$id: schema.id}" routerLink="/editor" class="schema-card-content">
+        <mat-card-title class="schema-card-title">{{schema.name}}
+            <span class="vf-u-text-color--grey--light">v{{schema.version}}</span>
+            <span class="vf-u-float__right">{{schema.accession}}</span></mat-card-title>
+        <mat-card-subtitle>{{schema.id}}</mat-card-subtitle>
+        <p class="under">{{schema.title}}</p>
+        <p class="vf-u-text-color--grey--dark">{{schema.description}}</p>
     </mat-card-content>
     <mat-card-footer>
         <mat-expansion-panel (afterExpand)="onExpansionPanel()"
                              (closed)="panelOpenState = false"
                              (opened)="panelOpenState = true">
             <mat-expansion-panel-header>
-                <mat-panel-title>
-                    List of Versions
-                </mat-panel-title>
-                <mat-panel-description>
-                    Click to See more
-                </mat-panel-description>
+                <mat-panel-title>List of Versions</mat-panel-title>
+                <mat-panel-description>Click to See more</mat-panel-description>
             </mat-expansion-panel-header>
-            <!--content start -->
-            <mat-paginator (page)="onPageChange($event)"
-                           [length]="totalElements"
-                           [pageSizeOptions]="[3, 6, 9]"
-                           [pageSize]="3">
-            </mat-paginator>
-            <mat-list>
-                <mat-list-item *ngFor="let schema of schemaBlocks">
-                    <a [queryParams]="{$id: schema.$id}"
-                       routerLink="/editor">Version {{ schema.$id.substring(schema.$id.lastIndexOf('/') + 1) }}</a>
-                </mat-list-item>
-            </mat-list>
-            <!--content end -->
+            <div *ngFor="let v of schemaVersions">
+                <button class="version-button" mat-raised-button color="primary" [queryParams]="{$id: v.id}"
+                        routerLink="/editor">{{v.version}}</button>
+            </div>
         </mat-expansion-panel>
     </mat-card-footer>
 </mat-card>

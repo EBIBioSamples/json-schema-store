@@ -51,7 +51,7 @@ public class SchemaController {
     }
 
     @GetMapping("/search")
-    public PagedModel<EntityModel<JsonSchema>> getSchemaPage1(@RequestParam(value = "text", required = false) String text,
+    public PagedModel<EntityModel<JsonSchema>> getSchemaPage(@RequestParam(value = "text", required = false) String text,
                                                               @RequestParam(value = "page", required = false) Integer page,
                                                               @RequestParam(value = "size", required = false) Integer size) {
         text = Objects.requireNonNullElse(text, "");
@@ -123,5 +123,13 @@ public class SchemaController {
 
         schemaService.deleteSchema(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/list/versions/{accession}")
+    public PagedModel<EntityModel<SchemaOutline>> getSchemaList(@PathVariable(value = "accession") String accession) {
+        int page = 0;
+        int size = 10;
+        Page<SchemaOutline> schemaPage = schemaService.getAllVersionsByAccession(accession, page, size);
+        return schemaResourceAssembler.buildPageForSchemaOutline(schemaPage);
     }
 }

@@ -10,7 +10,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 @RestController
 @RequestMapping(value = "/registry/schemas", produces = {"application/json"})
 public class VanillaSchemaController {
-    private SchemaService schemaService;
+    private final SchemaService schemaService;
 
     public VanillaSchemaController(SchemaService schemaService) {
         this.schemaService = schemaService;
@@ -24,7 +24,7 @@ public class VanillaSchemaController {
     }
 
     @GetMapping("/{accession}")
-    public ResponseEntity<JsonNode> getSchemaByAccession(@PathVariable("accession") String accession) {
+    public ResponseEntity<JsonNode> getLatestSchemaByAccession(@PathVariable("accession") String accession) {
         return schemaService.getLatestSchemaByAccession(accession)
                 .map(r -> ResponseEntity.ok(r.getSchema()))
                 .orElseGet(() -> ResponseEntity.notFound().build());

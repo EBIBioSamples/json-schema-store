@@ -14,13 +14,15 @@ import {DefaultModule} from './layout/default/default.module';
 import {HttpErrorInterceptor} from './interceptors/http-error.interceptor';
 import { AboutComponent } from './modules/about/about.component';
 import { LoginComponent } from './modules/login/login.component';
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { ChecklistEditorComponent } from './modules/checklist-editor/checklist-editor.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         AboutComponent,
-        LoginComponent
+        LoginComponent,
+        ChecklistEditorComponent
     ],
     imports: [
         BrowserModule,
@@ -31,7 +33,8 @@ import {FormsModule} from "@angular/forms";
         NgJsonEditorModule,
         HttpClientModule,
         DefaultModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
     ],
     providers: [
         StoreRoomService,

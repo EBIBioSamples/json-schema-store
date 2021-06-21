@@ -14,6 +14,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -61,6 +62,15 @@ public class ChecklistConverterService {
         return checklist;
     }
 
+    public List<String> getAndSaveAllSchema() {
+        List<String> enaChecklists = getEnaChecklists();
+        for (String checklist : enaChecklists) {
+            saveSchema(checklist);
+        }
+
+        return enaChecklists;
+    }
+
     private EnaChecklist getEnaChecklist(String checklistId) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new EnaErrorHandler());
@@ -69,6 +79,24 @@ public class ChecklistConverterService {
         Objects.requireNonNull(enaChecklist, "Failed to retrieve ENA checklist");
 
         return enaChecklist;
+    }
+
+    private List<String> getEnaChecklists() {
+        List<String> enaChecklists = new ArrayList<>();
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setErrorHandler(new EnaErrorHandler());
+        URI uri = URI.create("https://www.ebi.ac.uk/ena/browser/api/summary/ERC000001-ERC999999?offset=0&limit=100");
+        JsonNode allChecklistsJson = restTemplate.getForObject(uri, JsonNode.class);
+        Objects.requireNonNull(allChecklistsJson, "Failed to retrieve ENA checklist");
+
+        JsonNode checklistsJson = allChecklistsJson.get("summaries");
+        if (checklistsJson.isArray()) {
+            for (JsonNode n : checklistsJson) {
+                enaChecklists.add(n.get("accession").textValue());
+            }
+        }
+
+        return enaChecklists;
     }
 
     private String getSchemaId(EnaChecklist enaChecklist) {
@@ -82,7 +110,7 @@ public class ChecklistConverterService {
                 flatMap(group -> group.getFields().stream())
                 .map(f -> Map.of("property", f.getName(),
                         "property_type", getTypedTemplate(f),
-                        "property_description", f.getDescription(),
+                        "property_description", f.getDescription() == null ? "" : f.getDescription(),
                         "requirement", f.getMandatory()))
                 .collect(Collectors.toList());
     }

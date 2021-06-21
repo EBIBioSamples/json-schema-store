@@ -19,7 +19,7 @@
                            (page)="onPageChange($event)">
             </mat-paginator>
             <app-json-schema-card *ngFor="let schema of schemas"
-                                  [schemaBlock]="schema"></app-json-schema-card>
+                                  [schema]="schema"></app-json-schema-card>
         </div>
     </div>
 </div>

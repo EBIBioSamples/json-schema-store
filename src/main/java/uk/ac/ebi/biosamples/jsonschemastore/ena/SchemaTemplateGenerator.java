@@ -35,7 +35,7 @@ public class SchemaTemplateGenerator {
             VelocityContext ctx = new VelocityContext();
             ctx.put("property", p.get("property"));
             ctx.put("property_type", p.get("property_type"));
-            ctx.put("property_description", p.get("property_description"));
+            ctx.put("property_description", p.get("property_description").replace("\"", "'"));
             template.merge(ctx, wrt);
             wrt.append(",\n");
 

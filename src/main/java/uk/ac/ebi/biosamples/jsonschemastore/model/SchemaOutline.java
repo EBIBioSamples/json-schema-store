@@ -8,6 +8,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Relation(collectionRelation = "schemas")
 public class SchemaOutline extends RepresentationModel<SchemaOutline> {
     protected String id;
+    protected String accession;
     protected String name;
     protected String version;
     protected String title;

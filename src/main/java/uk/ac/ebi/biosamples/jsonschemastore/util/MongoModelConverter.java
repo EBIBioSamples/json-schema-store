@@ -88,6 +88,7 @@ public class MongoModelConverter {
     public SchemaOutline mongoJsonSchemaToSchemaOutline(MongoJsonSchema mongoJsonSchema) {
         SchemaOutline schema = new SchemaOutline();
         schema.setId(mongoJsonSchema.getId());
+        schema.setAccession(mongoJsonSchema.getAccession());
         schema.setName(mongoJsonSchema.getName());
         schema.setVersion(mongoJsonSchema.getVersion());
         schema.setTitle(mongoJsonSchema.getTitle());

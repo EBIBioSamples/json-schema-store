@@ -13,6 +13,8 @@ public interface SchemaRepository extends MongoRepository<MongoJsonSchema, Strin
 
     Page<MongoJsonSchema> findByNameOrderByVersionDesc(String schemaName, Pageable pageable);
 
+    Page<MongoJsonSchema> findByAccessionOrderByVersionDesc(String accession, Pageable pageable);
+
     Optional<MongoJsonSchema> findFirstByNameOrderByVersionDesc(String schemaName);
 
     Optional<MongoJsonSchema> findFirstByNameAndVersionOrderByVersionDesc(String schemaName, String version);

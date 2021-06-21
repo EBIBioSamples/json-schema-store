@@ -13,6 +13,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,6 +49,15 @@ public class SchemaService {
     public Optional<JsonSchema> getSchemaById(@NonNull String id) {
         Optional<MongoJsonSchema> optionalSchema = schemaRepository.findById(id);
         return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);
+    }
+
+    public Page<SchemaOutline> getAllVersionsByAccession(@NotNull String accession, int page, int size) {
+        Page<MongoJsonSchema> mongoSchemas = schemaRepository.findByAccessionOrderByVersionDesc(accession, PageRequest.of(page, size));
+
+        List<SchemaOutline> schemas = mongoSchemas.stream()
+                .map(modelConverter::mongoJsonSchemaToSchemaOutline)
+                .collect(Collectors.toList());
+        return new PageImpl<>(schemas, PageRequest.of(page, size), mongoSchemas.getTotalElements());
     }
 
     public Page<JsonSchema> getSchemaPage(String text, int page, int size) {
