@@ -2,12 +2,12 @@ package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.MetaSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Schema;
@@ -21,12 +21,12 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class SchemaValidationService {
-    private final Environment environment;
     private final MetaSchemaService metaSchemaService;
+    private final SchemaStoreProperties properties;
 
-    public SchemaValidationService(MetaSchemaService metaSchemaService, Environment environment) {
+    public SchemaValidationService(MetaSchemaService metaSchemaService, SchemaStoreProperties properties) {
         this.metaSchemaService = metaSchemaService;
-        this.environment = environment;
+        this.properties = properties;
     }
 
     public ValidationResponse validate(Schema schema) throws JsonSchemaServiceException {
@@ -54,7 +54,7 @@ public class SchemaValidationService {
     }
 
     private ValidationResponse postToValidator(@NonNull ValidationRequest validatorRequest) {
-        String validatorUrl = Objects.requireNonNull(environment.getProperty("elixirValidator.hostUrl"));
+        String validatorUrl = Objects.requireNonNull(properties.getValidatorUrl());
         ValidationResponse validationResponse;
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -62,7 +62,7 @@ public class SchemaValidationService {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<ValidationRequest> entity = new HttpEntity<>(validatorRequest ,headers);
+            HttpEntity<ValidationRequest> entity = new HttpEntity<>(validatorRequest, headers);
             validationResponse = restTemplate.postForEntity(uri, entity, ValidationResponse.class).getBody();
         } catch (Exception e) {
             log.error("Error occurred while validating JSON Object!", e);

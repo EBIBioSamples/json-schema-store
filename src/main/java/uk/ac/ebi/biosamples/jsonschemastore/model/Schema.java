@@ -15,4 +15,5 @@ public abstract class Schema extends RepresentationModel<Schema> {
     protected String domain;
     protected String metaSchema;
     protected JsonNode schema;
+    protected String authority;
 }

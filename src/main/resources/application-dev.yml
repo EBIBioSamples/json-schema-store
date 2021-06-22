@@ -15,5 +15,6 @@ management:
         include: "*"
 
 # Elixir Validator
-elixirValidator:
-  hostUrl: http://localhost:3020/validate
+schemastore:
+  validator:
+    url: http://localhost:3020/validate

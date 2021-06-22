@@ -19,7 +19,7 @@ services:
       - validator
     environment:
       - spring.data.mongodb.uri=mongodb://mongodb:27017/schemastore
-      - elixirValidator.hostUrl=http://validator:3020/validate
+      - schemastore.validator.url=http://validator:3020/validate
 #networks:
 #  default:
 #    ipam:

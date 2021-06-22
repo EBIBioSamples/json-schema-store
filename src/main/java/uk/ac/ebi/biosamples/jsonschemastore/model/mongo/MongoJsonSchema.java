@@ -27,4 +27,5 @@ public class MongoJsonSchema {
     private String name;
     private String version;
     private String domain;
+    private String authority;
 }

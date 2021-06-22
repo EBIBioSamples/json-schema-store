@@ -30,6 +30,7 @@ public class MongoModelConverter {
         mongoJsonSchema.setDomain(jsonSchema.getDomain());
         mongoJsonSchema.setMetaSchema(jsonSchema.getMetaSchema());
         mongoJsonSchema.setSchema(jsonSchema.getSchema().toString());
+        mongoJsonSchema.setAuthority(jsonSchema.getAuthority());
 
         return mongoJsonSchema;
     }
@@ -44,6 +45,7 @@ public class MongoModelConverter {
         jsonSchema.setDescription(mongoJsonSchema.getDescription());
         jsonSchema.setDomain(mongoJsonSchema.getDomain());
         jsonSchema.setMetaSchema(mongoJsonSchema.getMetaSchema());
+        jsonSchema.setAuthority(mongoJsonSchema.getAuthority());
         try {
             jsonSchema.setSchema(objectMapper.readTree(mongoJsonSchema.getSchema()));
         } catch (JsonProcessingException e) {

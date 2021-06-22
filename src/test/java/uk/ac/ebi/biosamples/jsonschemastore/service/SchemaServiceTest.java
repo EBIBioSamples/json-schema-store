@@ -35,7 +35,7 @@ class SchemaServiceTest {
         JsonSchema jsonSchemaTest = SchemaHelper.getJsonSchema_test_2();
         when(schemaRepository.findFirstByNameAndVersionOrderByVersionDesc("test_schema_2", "0.0.1"))
                 .thenReturn(Optional.of(mongoJsonSchemaTest));
-        when(schemaRepository.findFirstByAccessionAndVersionOrderByVersionDesc("ERC100002", "0.0.1"))
+        when(schemaRepository.findFirstByAccessionAndVersionOrderByVersionDesc("BSDC00002", "0.0.1"))
                 .thenReturn(Optional.of(mongoJsonSchemaTest));
         when(schemaRepository.save(mongoJsonSchemaTest)).thenReturn(mongoJsonSchemaTest);
         when(modelConverter.mongoJsonSchemaToJsonSchema(mongoJsonSchemaTest)).thenReturn(jsonSchemaTest);

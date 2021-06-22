@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  storeroom_api: 'http://scooby.ebi.ac.uk:8080/api/v1'
+  storeroom_api: '/api/v2'
 };

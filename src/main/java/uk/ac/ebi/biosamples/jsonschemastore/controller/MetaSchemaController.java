@@ -23,12 +23,14 @@ public class MetaSchemaController {
     private final MetaSchemaService metaSchemaService;
     private final SchemaValidationService schemaValidationService;
     private final SchemaResourceAssembler schemaResourceAssembler;
+    private final SchemaObjectPopulator populator;
 
     public MetaSchemaController(MetaSchemaService metaSchemaService, SchemaValidationService schemaValidationService,
-                                SchemaResourceAssembler schemaResourceAssembler) {
+                                SchemaResourceAssembler schemaResourceAssembler, SchemaObjectPopulator populator) {
         this.metaSchemaService = metaSchemaService;
         this.schemaValidationService = schemaValidationService;
         this.schemaResourceAssembler = schemaResourceAssembler;
+        this.populator = populator;
     }
 
     @GetMapping
@@ -51,7 +53,7 @@ public class MetaSchemaController {
 
     @PostMapping
     public ResponseEntity<MetaSchema> createSchema(@RequestBody MetaSchema schema) {
-        SchemaObjectPopulator.populateSchema(schema);
+        populator.populateSchema(schema);
         if (metaSchemaService.schemaExists(schema.getId())) {
             return ResponseEntity.badRequest().build();
         }

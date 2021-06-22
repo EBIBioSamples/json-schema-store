@@ -33,10 +33,10 @@ public class SchemaHelper {
         ObjectMapper mapper = new ObjectMapper();
         JsonSchema schema = new JsonSchema();
         schema.setId("http://www.ebi.ac.uk/biosamples/schema/test_schema_2/0.0.1");
-        schema.setAccession("ERC100002");
+        schema.setAccession("BSDC00002");
         schema.setName("test_schema_2");
         schema.setVersion("0.0.1");
-        schema.setMetaSchema("jsonMetaSchema");
+        schema.setMetaSchema("json-schema-draft-07");
         try {
             schema.setSchema(mapper.readTree("{\"k1\":\"v1\"}"));
         } catch (JsonProcessingException e) {
@@ -51,7 +51,7 @@ public class SchemaHelper {
         schema.setId("http://www.ebi.ac.uk/biosamples/schema/test_schema_2/0.0.1");
         schema.setName("test_schema_2");
         schema.setVersion("0.0.1");
-        schema.setMetaSchema("jsonMetaSchema");
+        schema.setMetaSchema("json-schema-draft-07");
         try {
             schema.setSchema(mapper.readTree("{\"k1\":\"v1\"}"));
         } catch (JsonProcessingException e) {
@@ -63,10 +63,10 @@ public class SchemaHelper {
     public static MongoJsonSchema getMongoJsonSchema_test_2() {
         MongoJsonSchema schema = new MongoJsonSchema();
         schema.setId("http://www.ebi.ac.uk/biosamples/schema/test_schema_2/0.0.1");
-        schema.setAccession("ERC100002");
+        schema.setAccession("BSDC00002");
         schema.setName("test_schema_2");
         schema.setVersion("0.0.1");
-        schema.setMetaSchema("jsonMetaSchema");
+        schema.setMetaSchema("json-schema-draft-07");
         schema.setSchema("{\"k1\":\"v1\"}");
         return schema;
     }
@@ -76,7 +76,7 @@ public class SchemaHelper {
         schema.setId("http://www.ebi.ac.uk/biosamples/schema/test_schema_2/0.0.1");
         schema.setName("test_schema_2");
         schema.setVersion("0.0.1");
-        schema.setMetaSchema("jsonMetaSchema");
+        schema.setMetaSchema("json-schema-draft-07");
         schema.setSchema("{\"k1\":\"v1\"}");
         return schema;
     }
@@ -84,7 +84,7 @@ public class SchemaHelper {
     public static SchemaOutline getSchemaOutline_test_2() {
         SchemaOutline schema = new SchemaOutline();
         schema.setId("http://www.ebi.ac.uk/biosamples/schema/test_schema_2/0.0.1");
-//        schema.setAccession("ERC100002");
+        schema.setAccession("BSDC00002");
         schema.setName("test_schema_2");
         schema.setVersion("0.0.1");
         return schema;

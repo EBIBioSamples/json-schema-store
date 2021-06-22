@@ -26,9 +26,11 @@ public class ChecklistConverterService {
     String enaChecklistBaseUrl = "https://www.ebi.ac.uk/ena/browser/api/xml/";
 
     private final SchemaService schemaService;
+    private final SchemaObjectPopulator populator;
 
-    public ChecklistConverterService(SchemaService schemaService) {
+    public ChecklistConverterService(SchemaService schemaService, SchemaObjectPopulator populator) {
         this.schemaService = schemaService;
+        this.populator = populator;
     }
 
     public String getChecklist(String checklistId) {
@@ -53,9 +55,10 @@ public class ChecklistConverterService {
 
         JsonSchema jsonSchema = new JsonSchema();
         jsonSchema.setSchema(schema);
+        jsonSchema.setAuthority("ENA");
         jsonSchema.setAccession(checklistId);
-        jsonSchema.setMetaSchema("https://schemablocks.org/meataschemas/jsonMetaSchema/1.0.1");
-        SchemaObjectPopulator.populateSchema(jsonSchema);
+        jsonSchema.setMetaSchema("https://schemablocks.org/metaschemas/json-schema-draft-07/1.0.1");
+        populator.populateSchema(jsonSchema);
 
         schemaService.saveSchemaWithAccession(jsonSchema);
 

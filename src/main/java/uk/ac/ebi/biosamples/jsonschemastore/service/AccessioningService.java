@@ -4,6 +4,7 @@ import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.ApplicationStateException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
@@ -12,9 +13,11 @@ import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 @Service
 public class AccessioningService {
     private final SchemaRepository schemaRepository;
+    private final SchemaStoreProperties properties;
 
-    public AccessioningService(SchemaRepository schemaRepository) {
+    public AccessioningService(SchemaRepository schemaRepository, SchemaStoreProperties properties) {
         this.schemaRepository = schemaRepository;
+        this.properties = properties;
     }
 
     public String getSchemaAccession(final String schemaId) {
@@ -25,9 +28,9 @@ public class AccessioningService {
 
     //handle distributed accession generation
     private String createNewAccession(String schemaId, int retries) {
-        String latestAccession = schemaRepository.findFirstByOrderByAccessionDesc()
+        String latestAccession = schemaRepository.findFirstByAuthorityOrderByAccessionDesc(properties.getDefaultAuthority())
                 .map(MongoJsonSchema::getAccession)
-                .orElse("ERC100001");
+                .orElse("BSDC00000");
         String accession = incrementAccession(latestAccession);
         MongoJsonSchema mongoJsonSchema = new MongoJsonSchema();
         mongoJsonSchema.setId(schemaId);
@@ -51,10 +54,7 @@ public class AccessioningService {
     }
 
     private String incrementAccession(String accession) {
-        int accessionNumber = Integer.parseInt(accession.split("ERC")[1]);
-        if (accessionNumber < 100001 || accessionNumber > 199999) {//Assigned range of ERC IDs ERC100001-ERC199999
-            throw new ApplicationStateException("Accession out of bound, should be in the range ERC100001-ERC199999");
-        }
-        return "ERC" + ++accessionNumber;
+        int accessionNumber = Integer.parseInt(accession.split("BSDC")[1]);
+        return "BSDC" + String.format("%05d", ++accessionNumber);
     }
 }

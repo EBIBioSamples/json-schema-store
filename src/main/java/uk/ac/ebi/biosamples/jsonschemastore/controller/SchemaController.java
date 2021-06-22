@@ -25,12 +25,14 @@ public class SchemaController {
     private final SchemaService schemaService;
     private final SchemaValidationService schemaValidationService;
     private final SchemaResourceAssembler schemaResourceAssembler;
+    private final SchemaObjectPopulator populator;
 
     public SchemaController(SchemaService schemaService, SchemaValidationService schemaValidationService,
-                            SchemaResourceAssembler schemaResourceAssembler) {
+                            SchemaResourceAssembler schemaResourceAssembler, SchemaObjectPopulator populator) {
         this.schemaService = schemaService;
         this.schemaValidationService = schemaValidationService;
         this.schemaResourceAssembler = schemaResourceAssembler;
+        this.populator = populator;
     }
 
     @GetMapping
@@ -72,7 +74,7 @@ public class SchemaController {
 
     @PostMapping
     public ResponseEntity<JsonSchema> createSchema(@RequestBody JsonSchema schema) {
-        SchemaObjectPopulator.populateSchema(schema);
+        populator.populateSchema(schema);
         if (schemaService.schemaIdExists(schema.getId())) {
             throw new MalformedSchemaException("Schema Id already exists");
         }
@@ -95,7 +97,7 @@ public class SchemaController {
 
     @PutMapping
     public ResponseEntity<JsonSchema> updateSchema(@RequestParam("id") String id, @RequestBody JsonSchema schema) {
-        SchemaObjectPopulator.populateSchema(schema);
+        populator.populateSchema(schema);
         if(schema.getAccession() == null
                 || schema.getAccession().isEmpty()
                 || !schemaService.schemaAccessionExists(schema.getAccession())) {
@@ -103,7 +105,7 @@ public class SchemaController {
         }
 
         if (schemaService.schemaIdExists(schema.getId())) {
-            SchemaObjectPopulator.incrementAndPopulateSchema(schema);
+            populator.incrementAndPopulateSchema(schema);
         }
 
         try {
