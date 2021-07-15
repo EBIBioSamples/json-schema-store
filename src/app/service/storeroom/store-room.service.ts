@@ -12,7 +12,7 @@ import { catchError, retry } from 'rxjs/operators';
 })
 export class StoreRoomService {
     public page: SchemaPage;
-    private storeroomApi = environment.storeroom_api;
+    private storeroomApi = environment.schema_store_api;
 
     constructor(private http: HttpClient) {
     }

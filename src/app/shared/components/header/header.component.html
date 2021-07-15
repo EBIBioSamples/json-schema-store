@@ -25,7 +25,8 @@
             </nav>
         </div>
         <div fxFlex fxLayoutAlign="flex-end center">
-            <a routerLink="/login" class="vf-navigation__link login-nav-link" mat-button>LOGIN</a>
+            <a *ngIf = "!loggedIn" routerLink="/login" class="vf-navigation__link login-nav-link" mat-button>LOGIN</a>
+            <a *ngIf = "loggedIn" (click)="logout()" class="vf-navigation__link login-nav-link" mat-button>LOGOUT</a>
         </div>
     </mat-toolbar-row>
 </mat-toolbar>

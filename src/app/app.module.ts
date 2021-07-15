@@ -12,10 +12,11 @@ import {AppComponent} from './app.component';
 import {StoreRoomService} from './service/storeroom/store-room.service';
 import {DefaultModule} from './layout/default/default.module';
 import {HttpErrorInterceptor} from './interceptors/http-error.interceptor';
-import { AboutComponent } from './modules/about/about.component';
-import { LoginComponent } from './modules/login/login.component';
+import {AboutComponent} from './modules/about/about.component';
+import {LoginComponent} from './modules/login/login.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import { ChecklistEditorComponent } from './modules/checklist-editor/checklist-editor.component';
+import {ChecklistEditorComponent} from './modules/checklist-editor/checklist-editor.component';
+import {TokenInterceptor} from "./interceptors/token.interceptor";
 
 @NgModule({
     declarations: [
@@ -38,6 +39,11 @@ import { ChecklistEditorComponent } from './modules/checklist-editor/checklist-e
     ],
     providers: [
         StoreRoomService,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true
+        },
         {
             provide: HTTP_INTERCEPTORS,
             useClass: HttpErrorInterceptor,

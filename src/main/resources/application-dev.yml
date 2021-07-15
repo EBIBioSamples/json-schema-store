@@ -18,3 +18,9 @@ management:
 schemastore:
   validator:
     url: http://localhost:3020/validate
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

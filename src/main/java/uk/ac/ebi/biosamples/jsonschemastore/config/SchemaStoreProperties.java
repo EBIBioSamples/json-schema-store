@@ -13,4 +13,10 @@ public class SchemaStoreProperties {
 
     @Value("${schemastore.validator.url:http://localhost:3020/validate}")
     private String validatorUrl;
+
+    @Value("${schemastore.admin.username:admin}")
+    private String adminUsername;
+
+    @Value("${schemastore.admin.password:password}")
+    private String adminPassword;
 }
