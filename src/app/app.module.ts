@@ -17,13 +17,15 @@ import {LoginComponent} from './modules/login/login.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ChecklistEditorComponent} from './modules/checklist-editor/checklist-editor.component';
 import {TokenInterceptor} from "./interceptors/token.interceptor";
+import { ChecklistFieldComponent } from './modules/checklist-field/checklist-field.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         AboutComponent,
         LoginComponent,
-        ChecklistEditorComponent
+        ChecklistEditorComponent,
+        ChecklistFieldComponent
     ],
     imports: [
         BrowserModule,

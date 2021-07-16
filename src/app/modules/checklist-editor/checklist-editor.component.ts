@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {ChecklistFieldComponent} from "../checklist-field/checklist-field.component";
+import {stringify} from "@angular/compiler/src/util";
 
 @Component({
   selector: 'app-checklist-editor',
   templateUrl: './checklist-editor.component.html',
   styleUrls: ['./checklist-editor.component.scss']
 })
-export class ChecklistEditorComponent implements OnInit {
+export class ChecklistEditorComponent implements OnInit, AfterViewInit {
   public values;
+  // @ViewChild(ChecklistFieldComponent) checklistFieldComponent: ChecklistFieldComponent;
 
   checklistForm = this.fb.group({
     schemaId: ['', Validators.required],
@@ -30,8 +33,17 @@ export class ChecklistEditorComponent implements OnInit {
     this.values = [];
   }
 
+  ngAfterViewInit() {
+    // this.checklistFields.push(this.checklistFieldComponent.checklistFieldGroup);
+    // this.checklistFieldComponent.checklistFieldGroup.setParent(this.checklistFields);
+  }
+
   get checklistFields() {
     return this.checklistForm.get('checklistFields') as FormArray;
+  }
+
+  getFormGroupFromIndex(i : number) {
+    return this.checklistFields.get(String(i)) as FormGroup;
   }
 
   addField() {

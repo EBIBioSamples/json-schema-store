@@ -1,0 +1,36 @@
+<div [formGroup]="parentForm">
+<!--<div [formGroupName]="formGroupIndex">-->
+
+    <label for="field-name" class="hidden">Field</label>
+    <input id="field-name" type="text" formControlName="fieldName" placeholder="Field Name" class="vf-form__input field-name">
+
+    <label for="field-type" class="hidden">Field</label>
+    <select id="field-type" formControlName="fieldType" class="vf-form__select field-type" (change)='onChecklistTypeChange("")'>
+        <option value="" disabled selected>Type</option>
+        <option value="string">String</option>
+        <option value="number">Number</option>
+        <option value="integer">Integer</option>
+        <option value="enum">Enum</option>
+        <option value="boolean">Boolean</option>
+    </select>
+
+    <label for="string-pattern" class="hidden">Field</label>
+    <input id="string-pattern" type="text" formControlName="stringPattern" placeholder="Regex" class="vf-form__input string-pattern">
+
+    <label for="string-format" class="hidden">Field</label>
+    <select id="string-format" formControlName="stringFormat" class="vf-form__select string-format" (change)='onChecklistTypeChange("")'>
+        <option value="" disabled selected>Format</option>
+        <option value="date-time">Date Time</option>
+        <option value="email">Email</option>
+        <option value="hostname">Hostname</option>
+        <option value="ipv4">IP Address</option>
+        <option value="uri">URI</option>
+    </select>
+
+    <label for="number-min" class="hidden">Field</label>
+    <input id="number-min" type="text" formControlName="numberMin" placeholder="Regex" class="vf-form__input number-min">
+    <label for="number-max" class="hidden">Field</label>
+    <input id="number-max" type="text" formControlName="numberMax" placeholder="Regex" class="vf-form__input number-max">
+
+<!--</div>-->
+</div>

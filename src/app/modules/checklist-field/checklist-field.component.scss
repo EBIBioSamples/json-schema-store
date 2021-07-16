@@ -1,0 +1,57 @@
+.checklist-field-label {
+  width: 100%;
+  float: left;
+  font-size: 17px;
+  margin-top: 20px;
+}
+
+.field-name {
+  width: 20%;
+  float: left;
+  margin: 5px 5px 5px 0;
+}
+
+.field-type {
+  width: 15%;
+  float: left;
+  margin: 5px 5px 5px 5px;
+  padding: 8px 24px;
+}
+
+.string-pattern {
+  width: 20%;
+  float: left;
+  margin: 5px 5px 5px 5px;
+}
+
+.string-format {
+  width: 15%;
+  float: left;
+  margin: 5px 5px 5px 5px;
+  padding: 8px 24px;
+}
+
+.number-min {
+  width: 5%;
+  float: left;
+  margin: 5px 5px 5px 5px;
+  padding: 8px 24px;
+}
+
+.number-max {
+  width: 5%;
+  float: left;
+  margin: 5px 5px 5px 5px;
+  padding: 8px 24px;
+}
+
+.hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
