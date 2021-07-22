@@ -1,48 +1,55 @@
-.checklist-field-label {
+.checklist-field-group {
+  overflow: auto;
+  display: block;
   width: 100%;
-  float: left;
-  font-size: 17px;
-  margin-top: 20px;
+  background-color: #f1f0f0;
+  margin: 1px;
+  border-bottom: 1px solid #cecece;
 }
 
-.field-name {
-  width: 20%;
+.checklist-field {
   float: left;
   margin: 5px 5px 5px 0;
 }
 
+.field-name {
+  width: 20%;
+}
+
 .field-type {
-  width: 15%;
-  float: left;
-  margin: 5px 5px 5px 5px;
+  width: 10%;
   padding: 8px 24px;
 }
 
 .string-pattern {
   width: 20%;
-  float: left;
-  margin: 5px 5px 5px 5px;
 }
 
 .string-format {
-  width: 15%;
-  float: left;
-  margin: 5px 5px 5px 5px;
+  width: 10%;
   padding: 8px 24px;
 }
 
-.number-min {
-  width: 5%;
+.numeric-value {
+  width: 10%;
   float: left;
-  margin: 5px 5px 5px 5px;
-  padding: 8px 24px;
 }
 
-.number-max {
-  width: 5%;
+.enum-list {
+  width: 40%;
+}
+
+.const {
+  width: 40%;
+}
+
+.description {
+  width: 40%;
+}
+
+.field-checkbox {
   float: left;
-  margin: 5px 5px 5px 5px;
-  padding: 8px 24px;
+  margin: 16px 5px 0 5px;
 }
 
 .hidden {

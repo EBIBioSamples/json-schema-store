@@ -4,20 +4,28 @@
   clear: both;
 }
 
-.schema-id-wrapper {
-  width: 100%;
+.checklist-editor {
   margin-top: 30px;
 }
 
-.schema-id-label {
+.schema-field-wrapper {
+  overflow: auto;
+  display: block;
   float: left;
-  margin: 20px 5px 0 0;
+  padding-right: 1%;
+  margin: 5px 0 5px 0;
+}
+
+.schema-field-label {
+  float: left;
+  //margin: 20px 5px 0 0;
   font-size: 17px;
 }
 
-.schema-id {
+.schema-input {
   float: left;
   margin: 5px 5px 5px 0;
+  width: 100%;
 }
 
 .checklist-field-label {
@@ -27,43 +35,9 @@
   margin-top: 20px;
 }
 
-.field-name {
-  width: 20%;
+.meta-schema {
   float: left;
   margin: 5px 5px 5px 0;
-}
-
-.field-type {
-  width: 15%;
-  float: left;
-  margin: 5px 5px 5px 5px;
-  padding: 8px 24px;
-}
-
-.string-pattern {
-  width: 20%;
-  float: left;
-  margin: 5px 5px 5px 5px;
-}
-
-.string-format {
-  width: 15%;
-  float: left;
-  margin: 5px 5px 5px 5px;
-  padding: 8px 24px;
-}
-
-.number-min {
-  width: 5%;
-  float: left;
-  margin: 5px 5px 5px 5px;
-  padding: 8px 24px;
-}
-
-.number-max {
-  width: 5%;
-  float: left;
-  margin: 5px 5px 5px 5px;
   padding: 8px 24px;
 }
 
@@ -107,4 +81,36 @@
   padding: 0;
   position: absolute;
   width: 1px;
+}
+
+.width-15 {
+  width: 15%;
+}
+
+.width-20 {
+  width: 20%;
+}
+
+.width-30 {
+  width: 30%;
+}
+
+.width-40 {
+  width: 40%;
+}
+
+.width-45 {
+  width: 45%;
+}
+
+.width-50{
+  width: 50%;
+}
+
+.width-60{
+  width: 58%;
+}
+
+.width-100 {
+  width: 100%;
 }

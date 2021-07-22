@@ -1,51 +1,63 @@
 <div class="vf-form checklist-editor-wrapper">
 
-    <form [formGroup]="checklistForm"  (ngSubmit)="onSubmitChecklist()" class="checklist">
-        <div class="schema-id-wrapper">
-            <label for="schema-id" class="schema-id-label">Schema ID</label>
-            <input id="schema-id" type="text" formControlName="schemaId"
-                   placeholder="https://www.ebi.ac.uk/biosamples/schemas/my-sample-checklist/1.0.0"
-                   class="vf-form__input schema-id">
+    <form [formGroup]="checklistForm" class="checklist">
+
+        <div class="checklist-editor">
+            <div class="schema-field-wrapper width-20">
+                <label for="schema-name" class="schema-field-label">Name</label>
+                <input id="schema-name" type="text" formControlName="schemaName"
+                       placeholder="my-sample-checklist" class="vf-form__input schema-input" (change)="onChangeSchemaIdFields()">
+            </div>
+            <div class="schema-field-wrapper width-20">
+                <label for="schema-version" class="schema-field-label">Version</label>
+                <input id="schema-version" type="text" formControlName="schemaVersion"
+                       placeholder="1.0.0" class="vf-form__input schema-input" (change)="onChangeSchemaIdFields()">
+            </div>
+            <div class="schema-field-wrapper width-30">
+                <label for="schema-domain" class="schema-field-label">Domain</label>
+                <input id="schema-domain" type="text" formControlName="schemaDomain"
+                       placeholder="https://www.ebi.ac.uk/biosamples/schemas" class="vf-form__input schema-input" (change)="onChangeSchemaIdFields()">
+            </div>
+
+            <div class="schema-field-wrapper width-20">
+                <label for="meta-schema" class="schema-field-label">Meta-Schema</label>
+                <select id="meta-schema" formControlName="metaSchema" class="vf-form__select meta-schema">
+<!--                    <option value="" disabled selected>Format</option>-->
+                    <option value="draft-07" selected>draft-07</option>
+                    <option value="biosamples-schema">biosamples-schema</option>
+                </select>
+            </div>
+
+            <div class="schema-field-wrapper width-40">
+                <label for="schema-title" class="schema-field-label">Title</label>
+                <input id="schema-title" type="text" formControlName="schemaTitle"
+                       placeholder="Title of schema" class="vf-form__input schema-input">
+            </div>
+
+            <div class="schema-field-wrapper width-60">
+                <label for="schema-description" class="schema-field-label">Description</label>
+                <input id="schema-description" type="text" formControlName="schemaDescription"
+                       placeholder="Description of schema" class="vf-form__input schema-input">
+            </div>
+
+            <div class="schema-field-wrapper width-50">
+                <label for="schema-id" class="schema-field-label">Schema ID</label>
+                <input id="schema-id" type="text" formControlName="schemaId"
+                       placeholder="https://www.ebi.ac.uk/biosamples/schemas/my-sample-checklist/1.0.0"
+                       class="vf-form__input schema-input">
+            </div>
+            <div class="schema-field-wrapper width-20">
+                <label for="schema-accession" class="schema-field-label">Accession</label>
+                <input id="schema-accession" type="text" formControlName="schemaAccession"
+                       placeholder="BSDC00001" class="vf-form__input schema-input">
+            </div>
         </div>
 
         <div formArrayName="checklistFields" class="checklist-field-group">
             <div class="checklist-field-label">Checklist Fields</div>
             <div *ngFor="let checklistField of checklistFields.controls; let i=index">
                 <div [formGroupName]="i">
-
                     <app-checklist-field [parentForm]="getFormGroupFromIndex(i)"></app-checklist-field>
-
-<!--                    <label for="field-name" class="hidden">Field</label>-->
-<!--                    <input id="field-name" type="text" formControlName="fieldName" placeholder="Field Name" class="vf-form__input field-name">-->
-
-<!--                    <label for="field-type" class="hidden">Field</label>-->
-<!--                    <select id="field-type" formControlName="fieldType" class="vf-form__select field-type" (change)='onChecklistTypeChange("")'>-->
-<!--                        <option value="" disabled selected>Type</option>-->
-<!--                        <option value="string">String</option>-->
-<!--                        <option value="number">Number</option>-->
-<!--                        <option value="integer">Integer</option>-->
-<!--                        <option value="enum">Enum</option>-->
-<!--                        <option value="boolean">Boolean</option>-->
-<!--                    </select>-->
-
-<!--                    <label for="string-pattern" class="hidden">Field</label>-->
-<!--                    <input id="string-pattern" type="text" formControlName="stringPattern" placeholder="Regex" class="vf-form__input string-pattern">-->
-
-<!--                    <label for="string-format" class="hidden">Field</label>-->
-<!--                    <select id="string-format" formControlName="stringFormat" class="vf-form__select string-format" (change)='onChecklistTypeChange("")'>-->
-<!--                        <option value="" disabled selected>Format</option>-->
-<!--                        <option value="date-time">Date Time</option>-->
-<!--                        <option value="email">Email</option>-->
-<!--                        <option value="hostname">Hostname</option>-->
-<!--                        <option value="ipv4">IP Address</option>-->
-<!--                        <option value="uri">URI</option>-->
-<!--                    </select>-->
-
-<!--                    <label for="number-min" class="hidden">Field</label>-->
-<!--                    <input id="number-min" type="text" formControlName="numberMin" placeholder="Regex" class="vf-form__input number-min">-->
-<!--                    <label for="number-max" class="hidden">Field</label>-->
-<!--                    <input id="number-max" type="text" formControlName="numberMax" placeholder="Regex" class="vf-form__input number-max">-->
-
                 </div>
             </div>
         </div>
@@ -54,7 +66,7 @@
 
         <div class="action-buttons">
             <button (click)="updateChecklist()" class="vf-button vf-button--tertiary update-button">Update</button>
-            <button type="submit" class="vf-button vf-button--secondary create-button">Create</button>
+            <button (click)="onSubmitChecklist()" class="vf-button vf-button--secondary create-button">Create</button>
         </div>
     </form>
 

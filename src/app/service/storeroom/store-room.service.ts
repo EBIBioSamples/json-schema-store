@@ -65,4 +65,13 @@ export class StoreRoomService {
     public getMetaSchema(): Observable<any> {
         return this.http.get(this.storeroomApi + '/metaSchemas/search');
     }
+
+    // checklist API methods
+    public createChecklist(jsonSchema: object): Observable<any> {
+        return this.http.post(this.storeroomApi + '/checklist', jsonSchema);
+    }
+
+    public updateChecklist(jsonSchema: object): Observable<any> {
+        return this.http.put(this.storeroomApi + '/checklist?id=' + jsonSchema['schema']['$id'] , jsonSchema);
+    }
 }

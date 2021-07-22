@@ -3,34 +3,44 @@ import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {ChecklistEditorComponent} from "../checklist-editor/checklist-editor.component";
 
 @Component({
-  selector: 'app-checklist-field',
-  templateUrl: './checklist-field.component.html',
-  styleUrls: ['./checklist-field.component.scss']
+    selector: 'app-checklist-field',
+    templateUrl: './checklist-field.component.html',
+    styleUrls: ['./checklist-field.component.scss']
 })
 export class ChecklistFieldComponent implements OnInit {
-  @Input() parentForm: FormGroup;
-  public formGroupIndex = "1";
-  public checklistFieldGroup = this.fb.group({
-    fieldName:[''],
-    fieldType:[''],
-    stringPattern:[''],
-    stringFormat:[''],
-    numberMax:[''],
-    numberMin:['']
-  });
+    @Input() parentForm: FormGroup;
+    private static checklistFieldGroup = {
+        fieldName: [''],
+        fieldDescription: [''],
+        fieldType: ['string'],
+        stringFormat: [''],
+        stringPattern: [''],
+        stringMinLength: [''],
+        stringMaxLength: [''],
+        numberMin: [''],
+        numberMax: [''],
+        numberMultiples: [''],
+        enumList: [''],
+        const: [''],
+        fieldRequired: [''],
+        fieldRecommended: ['']
+    };
 
-  constructor(private fb: FormBuilder) { }
+    public fieldType: string;
 
-  ngOnInit(): void {
+    constructor(private fb: FormBuilder) {
+    }
 
-  }
+    ngOnInit(): void {
+        this.fieldType = 'string';
+    }
 
-  addField() {
+    public static getChecklistFieldGroupTemplate() {
+        return ChecklistFieldComponent.checklistFieldGroup;
+    }
 
-  }
-
-  onChecklistTypeChange(type) {
-
-  }
+    onChecklistTypeChange(event) {
+        this.fieldType = event.value;
+    }
 
 }

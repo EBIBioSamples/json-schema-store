@@ -1,25 +1,22 @@
-<div [formGroup]="parentForm">
-<!--<div [formGroupName]="formGroupIndex">-->
+<div [formGroup]="parentForm" class="checklist-field-group">
 
     <label for="field-name" class="hidden">Field</label>
-    <input id="field-name" type="text" formControlName="fieldName" placeholder="Field Name" class="vf-form__input field-name">
+    <input id="field-name" type="text" formControlName="fieldName" placeholder="Field Name checklist-field" class="vf-form__input field-name checklist-field">
 
     <label for="field-type" class="hidden">Field</label>
-    <select id="field-type" formControlName="fieldType" class="vf-form__select field-type" (change)='onChecklistTypeChange("")'>
-        <option value="" disabled selected>Type</option>
+    <select id="field-type" formControlName="fieldType" class="vf-form__select field-type checklist-field" #fieldTypeValue (change)='onChecklistTypeChange(fieldTypeValue)'>
         <option value="string">String</option>
         <option value="number">Number</option>
         <option value="integer">Integer</option>
         <option value="enum">Enum</option>
         <option value="boolean">Boolean</option>
+        <option value="const">Constant</option>
     </select>
 
-    <label for="string-pattern" class="hidden">Field</label>
-    <input id="string-pattern" type="text" formControlName="stringPattern" placeholder="Regex" class="vf-form__input string-pattern">
-
     <label for="string-format" class="hidden">Field</label>
-    <select id="string-format" formControlName="stringFormat" class="vf-form__select string-format" (change)='onChecklistTypeChange("")'>
+    <select *ngIf="fieldType=='string'" id="string-format" formControlName="stringFormat" class="vf-form__select string-format checklist-field">
         <option value="" disabled selected>Format</option>
+        <option value=""></option>
         <option value="date-time">Date Time</option>
         <option value="email">Email</option>
         <option value="hostname">Hostname</option>
@@ -27,10 +24,38 @@
         <option value="uri">URI</option>
     </select>
 
-    <label for="number-min" class="hidden">Field</label>
-    <input id="number-min" type="text" formControlName="numberMin" placeholder="Regex" class="vf-form__input number-min">
-    <label for="number-max" class="hidden">Field</label>
-    <input id="number-max" type="text" formControlName="numberMax" placeholder="Regex" class="vf-form__input number-max">
+    <label for="string-pattern" class="hidden">Field</label>
+    <input *ngIf="fieldType=='string'" id="string-pattern" type="text" formControlName="stringPattern" placeholder="Regex" class="vf-form__input string-pattern checklist-field">
 
-<!--</div>-->
+    <label for="string-min-length" class="hidden">Field</label>
+    <input *ngIf="fieldType=='string'" id="string-min-length" type="text" formControlName="stringMinLength" placeholder="Min length" class="vf-form__input numeric-value checklist-field">
+    <label for="string-max-length" class="hidden">Field</label>
+    <input *ngIf="fieldType=='string'" id="string-max-length" type="text" formControlName="stringMaxLength" placeholder="Max length" class="vf-form__input numeric-value checklist-field">
+
+    <label for="number-min" class="hidden">Field</label>
+    <input *ngIf="fieldType=='number' || fieldType=='integer'" id="number-min" type="text" formControlName="numberMin" placeholder="Min" class="vf-form__input numeric-value checklist-field">
+    <label for="number-max" class="hidden">Field</label>
+    <input *ngIf="fieldType=='number' || fieldType=='integer'" id="number-max" type="text" formControlName="numberMax" placeholder="Max" class="vf-form__input numeric-value checklist-field">
+    <label for="number-multiples" class="hidden">Field</label>
+    <input *ngIf="fieldType=='number' || fieldType=='integer'" id="number-multiples" type="text" formControlName="numberMultiples" placeholder="Multiple of" class="vf-form__input numeric-value checklist-field">
+
+    <label for="string-pattern" class="hidden">Field</label>
+    <input *ngIf="fieldType=='enum'" id="enum-list" type="text" formControlName="enumList" placeholder="Comma separated enums" class="vf-form__input enum-list checklist-field">
+
+    <label for="const" class="hidden">Field</label>
+    <input *ngIf="fieldType=='const'" id="const" type="text" formControlName="const" placeholder="Constant value" class="vf-form__input const checklist-field">
+
+    <label for="field-description" class="hidden">Field</label>
+    <input id="field-description" type="text" formControlName="fieldDescription" placeholder="Description" class="vf-form__input description checklist-field">
+
+    <div class="vf-form__item vf-form__item--checkbox field-checkbox">
+        <input type="checkbox" name="field-required" value="field-required" id="field-required" formControlName="fieldRequired" class="vf-form__checkbox">
+        <label for="field-required" class="vf-form__label">Required</label>
+    </div>
+
+    <div class="vf-form__item vf-form__item--checkbox field-checkbox">
+        <input type="checkbox" name="field-recommended" value="field-recommended" id="field-recommended" formControlName="fieldRecommended"  class="vf-form__checkbox">
+        <label for="field-recommended" class="vf-form__label">Recommended</label>
+    </div>
+
 </div>

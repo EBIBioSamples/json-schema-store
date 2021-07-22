@@ -2,40 +2,35 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ChecklistFieldComponent} from "../checklist-field/checklist-field.component";
 import {stringify} from "@angular/compiler/src/util";
+import {StoreRoomService} from "../../service/storeroom/store-room.service";
 
 @Component({
   selector: 'app-checklist-editor',
   templateUrl: './checklist-editor.component.html',
   styleUrls: ['./checklist-editor.component.scss']
 })
-export class ChecklistEditorComponent implements OnInit, AfterViewInit {
+export class ChecklistEditorComponent implements OnInit {
   public values;
-  // @ViewChild(ChecklistFieldComponent) checklistFieldComponent: ChecklistFieldComponent;
 
   checklistForm = this.fb.group({
-    schemaId: ['', Validators.required],
+    schemaName: ['', Validators.required],
+    schemaVersion: ['', Validators.required],
+    schemaDomain: ['', Validators.required],
+    schemaId: [{value: '', disabled: true}, Validators.required],
+    schemaAccession: [{value: '', disabled: true}, Validators.required],
+    schemaTitle: ['', Validators.required],
+    schemaDescription: ['', Validators.required],
+    metaSchema: ['', Validators.required],
     checklistFields: this.fb.array([
-        this.fb.group({
-          fieldName:[''],
-          fieldType:[''],
-          stringPattern:[''],
-          stringFormat:[''],
-          numberMax:[''],
-          numberMin:['']
-        })
+        this.fb.group(ChecklistFieldComponent.getChecklistFieldGroupTemplate())
     ])
   });
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private storeroomClient: StoreRoomService) {
   }
 
   ngOnInit(): void {
     this.values = [];
-  }
-
-  ngAfterViewInit() {
-    // this.checklistFields.push(this.checklistFieldComponent.checklistFieldGroup);
-    // this.checklistFieldComponent.checklistFieldGroup.setParent(this.checklistFields);
   }
 
   get checklistFields() {
@@ -47,14 +42,17 @@ export class ChecklistEditorComponent implements OnInit, AfterViewInit {
   }
 
   addField() {
-    this.checklistFields.push(this.fb.group({
-      fieldName:[''],
-      fieldType:[''],
-      stringPattern:[''],
-      stringFormat:[''],
-      numberMax:[''],
-      numberMin:['']
-    }));
+    this.checklistFields.push(this.fb.group(ChecklistFieldComponent.getChecklistFieldGroupTemplate()));
+  }
+
+  onChangeSchemaIdFields() {
+    const schemaDomain = this.checklistForm.get("schemaDomain").value;
+    const schemaName = this.checklistForm.get("schemaName").value;
+    const schemaVersion = this.checklistForm.get("schemaVersion").value;
+    const schemaId =  `${schemaDomain}/${schemaName}/${schemaVersion}`
+    this.checklistForm.patchValue({
+      schemaId: schemaId
+    });
   }
 
   updateChecklist() {
@@ -74,29 +72,52 @@ export class ChecklistEditorComponent implements OnInit, AfterViewInit {
   }
 
   onSubmitChecklist() {
+    const checklistFields = [];
       this.checklistForm.get('checklistFields').value.forEach((formGroup: FormGroup, i: number) => {
-        console.log(formGroup['fieldName']);
-
         const checklistField = {}
-        checklistField['fieldName'] = formGroup['fieldName'];
-        checklistField['fieldType'] = formGroup['fieldType'];
-        checklistField['stringPattern'] = formGroup['stringPattern'];
-        checklistField['stringFormat'] = formGroup['stringFormat'];
-        checklistField['numberMax'] = formGroup['numberMax'];
-        checklistField['numberMin'] = formGroup['numberMin'];
+        checklistField['name'] = formGroup['fieldName'];
+        checklistField['description'] = formGroup['fieldDescription'];
+        checklistField['type'] = formGroup['fieldType'];
+        checklistField['format'] = formGroup['stringFormat'];
+        checklistField['pattern'] = formGroup['stringPattern'];
+        checklistField['minLength'] = formGroup['stringMinLength'];
+        checklistField['maxLength'] = formGroup['stringMaxLength'];
+        checklistField['min'] = formGroup['numberMin'];
+        checklistField['max'] = formGroup['numberMax'];
+        checklistField['multiples'] = formGroup['numberMultiples'];
+        checklistField['enums'] = formGroup['enumList'];
+        checklistField['constant'] = formGroup['const'];
+        checklistField['required'] = formGroup['fieldRequired'];
+        checklistField['recommended'] = formGroup['fieldRecommended'];
 
-        console.log(checklistField);
+        checklistFields.push(checklistField);
       });
 
+      const checklist = {
+        schemaId: this.checklistForm.get("schemaId").value,
+        accession: this.checklistForm.get("schemaAccession").value,
+        title: this.checklistForm.get("schemaTitle").value,
+        description: this.checklistForm.get("schemaDescription").value,
+        metaSchema: this.checklistForm.get("metaSchema").value,
+        fields: checklistFields
+      };
 
+      console.log(checklist);
+
+      this.createChecklist(checklist);
+  }
+
+  createChecklist(checklist) {
+    this.storeroomClient.createChecklist(checklist)
+        .subscribe((response) => {
+          console.log("Checklist created successfully")
+        }, (error) => {
+          console.log("Failed to create checklist")
+        });
   }
 
   onSubmit() {
     // TODO: Use EventEmitter with form value
-  }
-
-  onChecklistTypeChange(type) {
-
   }
 
 }
