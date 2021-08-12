@@ -1,0 +1,24 @@
+<mat-card class="schema-card">
+    <mat-card-content [queryParams]="{$id: schema.id}" routerLink="/editor" class="schema-card-content">
+        <mat-card-title class="schema-card-title">{{schema.name}}
+            <span class="vf-u-text-color--grey--light">v{{schema.version}}</span>
+            <span class="vf-u-float__right">{{schema.accession}}</span></mat-card-title>
+        <mat-card-subtitle>{{schema.id}}</mat-card-subtitle>
+        <p class="under">{{schema.title}}</p>
+        <p class="vf-u-text-color--grey--dark">{{schema.description}}</p>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-expansion-panel (afterExpand)="onExpansionPanel()"
+                             (closed)="panelOpenState = false"
+                             (opened)="panelOpenState = true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>List of Versions</mat-panel-title>
+                <mat-panel-description>Click to See more</mat-panel-description>
+            </mat-expansion-panel-header>
+            <div *ngFor="let v of schemaVersions">
+                <button class="version-button" mat-raised-button color="primary" [queryParams]="{$id: v.id}"
+                        routerLink="/editor">{{v.version}}</button>
+            </div>
+        </mat-expansion-panel>
+    </mat-card-footer>
+</mat-card>

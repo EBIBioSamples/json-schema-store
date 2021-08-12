@@ -1,0 +1,33 @@
+<mat-toolbar>
+    <mat-toolbar-row fxLayoutAlign="space-between center">
+        <div fxLayout="row">
+            <button mat-button>
+                <span class="vf-navigation__item">SCHEMA STORE</span>
+            </button>
+            <nav class="vf-navigation vf-navigation--main | vf-cluster">
+                <ul class="vf-navigation__list | vf-list--inline | vf-cluster__inner">
+                    <li class="vf-navigation__item">
+                        <a routerLink="/" class="vf-navigation__link" aria-current="page">HOME</a>
+                    </li>
+                    <li class="vf-navigation__item">
+                        <a routerLink="/schemas" class="vf-navigation__link">SEARCH</a>
+                    </li>
+                    <li class="vf-navigation__item">
+                        <a routerLink="/editor" class="vf-navigation__link">EDITOR</a>
+                    </li>
+                    <li class="vf-navigation__item">
+                        <a routerLink="/editor/checklist" class="vf-navigation__link">CHECKLIST</a>
+                    </li>
+                    <li class="vf-navigation__item">
+                        <a routerLink="/about" class="vf-navigation__link">ABOUT</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div fxFlex fxLayoutAlign="flex-end center">
+            <a *ngIf = "!loggedIn" routerLink="/login" class="vf-navigation__link login-nav-link" mat-button>LOGIN</a>
+            <a *ngIf = "loggedIn" (click)="logout()" class="vf-navigation__link login-nav-link" mat-button>LOGOUT</a>
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>
+

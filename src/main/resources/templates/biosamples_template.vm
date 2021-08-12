@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "${schema_id}",
+  "title": "${schema_title}",
+  "description": "${schema_description}",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "accession": {
+      "type": "string"
+    },
+    "characteristics": {
+      "type": "object",
+      "required": ${required},
+      "recommended": ${recommended},
+      "properties": {
+${properties}
+      }
+    }
+  },
+  "required": [
+    "name",
+    "characteristics"
+  ]
+}

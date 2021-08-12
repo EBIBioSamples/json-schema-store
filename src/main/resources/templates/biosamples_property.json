@@ -1,0 +1,16 @@
+{
+  "$property": {
+    "type": "array",
+    "items": {
+      "properties": {
+        "text": {
+          "type": "$property_type",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "text"
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: dev
+#  data:
+#    mongodb:
+#      auto-index-creation: false

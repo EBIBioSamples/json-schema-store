@@ -1,0 +1,59 @@
+<div class="vf-form checklist-editor-wrapper">
+
+    <form [formGroup]="checklistForm"  (ngSubmit)="onSubmitChecklist()" class="checklist">
+        <div class="schema-id-wrapper">
+            <label for="schema-id" class="schema-id-label">Schema ID</label>
+            <input id="schema-id" type="text" formControlName="schemaId"
+                   placeholder="https://www.ebi.ac.uk/biosamples/schemas/my-sample-checklist/1.0.0"
+                   class="vf-form__input schema-id">
+        </div>
+
+        <div formArrayName="checklistFields" class="checklist-field-group">
+            <div class="checklist-field-label">Checklist Fields</div>
+            <div *ngFor="let checklistField of checklistFields.controls; let i=index">
+                <div [formGroupName]="i">
+
+                    <label for="field-name" class="hidden">Field</label>
+                    <input id="field-name" type="text" formControlName="fieldName" placeholder="Field Name" class="vf-form__input field-name">
+
+                    <label for="field-type" class="hidden">Field</label>
+                    <select id="field-type" formControlName="fieldType" class="vf-form__select field-type" (change)='onChecklistTypeChange("")'>
+                        <option value="" disabled selected>Type</option>
+                        <option value="string">String</option>
+                        <option value="number">Number</option>
+                        <option value="integer">Integer</option>
+                        <option value="enum">Enum</option>
+                        <option value="boolean">Boolean</option>
+                    </select>
+
+                    <label for="string-pattern" class="hidden">Field</label>
+                    <input id="string-pattern" type="text" formControlName="stringPattern" placeholder="Regex" class="vf-form__input string-pattern">
+
+                    <label for="string-format" class="hidden">Field</label>
+                    <select id="string-format" formControlName="stringFormat" class="vf-form__select string-format" (change)='onChecklistTypeChange("")'>
+                        <option value="" disabled selected>Format</option>
+                        <option value="date-time">Date Time</option>
+                        <option value="email">Email</option>
+                        <option value="hostname">Hostname</option>
+                        <option value="ipv4">IP Address</option>
+                        <option value="uri">URI</option>
+                    </select>
+
+                    <label for="number-min" class="hidden">Field</label>
+                    <input id="number-min" type="text" formControlName="numberMin" placeholder="Regex" class="vf-form__input number-min">
+                    <label for="number-max" class="hidden">Field</label>
+                    <input id="number-max" type="text" formControlName="numberMax" placeholder="Regex" class="vf-form__input number-max">
+
+                </div>
+            </div>
+        </div>
+
+        <button (click)="addField()" class="add-field-button">+ Add Field</button>
+
+        <div class="action-buttons">
+            <button (click)="updateChecklist()" class="vf-button vf-button--tertiary update-button">Update</button>
+            <button type="submit" class="vf-button vf-button--secondary create-button">Create</button>
+        </div>
+    </form>
+
+</div>

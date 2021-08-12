@@ -1,0 +1,22 @@
+.schema-card {
+  margin: 0px 5px 5px 0px;
+  border: 1px solid darkgray;
+}
+
+.schema-card-content {
+  cursor: pointer;
+}
+
+.schema-card-content:hover .schema-card-title{
+  cursor: pointer;
+  color: #3b6fb6;
+}
+
+.schema-card-title {
+
+}
+
+.version-button {
+  float: left;
+  margin-right: 5px;
+}
