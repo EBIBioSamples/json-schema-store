@@ -15,7 +15,7 @@ public class AuthService {
     }
 
     public boolean login(String username, String password) {
-        return (properties.getAdminUsername().equals(username) && properties.getAdminPassword().equals(password));
+        return properties.getAdminUsername().equals(username) && properties.getAdminPassword().equals(password);
     }
 
     public boolean logout() {
