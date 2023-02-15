@@ -42,3 +42,13 @@ deploy:
     - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d "~/config/start.sh"
 #  only:
 #    - master
+
+deploy-dev-json-schema-store-k8:
+  image: dtzar/helm-kubectl
+  stage: deploy
+  script:
+    - sed -i s#%DOCKER_IMAGE%#$CI_REGISTRY_IMAGE\:$CI_COMMIT_SHA#g Kubernetes-dev-deployment.yaml
+    - kubectl delete secret gitlab --namespace=bsd-dev
+    - kubectl create secret docker-registry gitlab --docker-server=$CI_REGISTRY --docker-username=$DOCKER_USER --docker-password=$DOCKER_PASSWORD --docker-email=$DOCKER_EMAIL --namespace=bsd-dev
+    - kubectl apply -f Kubernetes-dev-deployment.yaml --namespace=bsd-dev
+  when: manual

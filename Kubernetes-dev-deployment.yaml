@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: json-schema-store
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: json-schema-store
+  template:
+    metadata:
+      labels:
+        app: json-schema-store
+    spec:
+      containers:
+        - name: json-schema-store
+          image: %DOCKER_IMAGE%
+          imagePullPolicy: IfNotPresent
+          args: ["--spring.profiles.active=docker"]
+          ports:
+            - containerPort: 8110
+          livenessProbe:
+            httpGet:
+              path: <enter_health_path_here>
+              port: 8110
+            initialDelaySeconds: 100
+            timeoutSeconds: 15
+            periodSeconds: 10
+            failureThreshold: 2
+      imagePullSecrets:
+        - name: gitlab
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: json-schema-store
+spec:
+  ports:
+    - port: 8110
+      targetPort: 8110
+  selector:
+    app: json-schema-store
+  type: NodePort
+  externalTrafficPolicy: Local
