@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping(value = "/checklist/converter", produces = {"application/json"})
@@ -19,20 +17,20 @@ public class ChecklistConverterController {
 
     @GetMapping("/{checklist}")
     public ResponseEntity<String> convertChecklist(@PathVariable("checklist") String checklist) {
-        String jsonSchema = checklistConverterService.getChecklist(checklist);
+        String jsonSchema = checklistConverterService.convertEnaChecklist(checklist);
         return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
     }
 
     @PostMapping("/{checklist}")
     public ResponseEntity<String> convertAndSaveChecklist(@PathVariable("checklist") String checklist) {
-        String jsonSchema = checklistConverterService.saveSchema(checklist);
+        String jsonSchema = checklistConverterService.persistEnaChecklist(checklist);
         return new ResponseEntity<>(jsonSchema, HttpStatus.CREATED);
     }
 
     @PostMapping("/convert/all")
     public ResponseEntity<String> convertAndSaveAllEnaChecklists() {
-        List<String> enaChecklists = checklistConverterService.getAndSaveAllSchema();
+        String enaChecklists = checklistConverterService.persistEnaChecklists();
 
-        return new ResponseEntity<>(enaChecklists.toString(), HttpStatus.CREATED);
+        return new ResponseEntity<>(enaChecklists, HttpStatus.CREATED);
     }
 }
