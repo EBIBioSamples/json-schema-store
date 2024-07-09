@@ -128,7 +128,7 @@ public class ChecklistConverterService {
         return enaChecklist;
     }
 
-    private List<String> getEnaChecklists() {
+    private static List<String> getEnaChecklists() {
         List<String> enaChecklists = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new EnaErrorHandler());
@@ -169,7 +169,7 @@ public class ChecklistConverterService {
 
         @Override
         public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
-            throw new ApplicationStateException("Could not retrieve checklist: " + clientHttpResponse.getStatusText());
+            throw new ApplicationStateException("Could not retrieve checklist: " + clientHttpResponse);
         }
     }
 }
