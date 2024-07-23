@@ -58,7 +58,7 @@ curl -u <user>:<pass> 'http://localhost:8080/api/v2/schemas' -i -X POST -H "Cont
 ```
 
 ### DB Structure
-`schema-store` has two collections: `schema` and `metascham`. Both of these collections have similar document structure. 
+`schema-store` has two collections: `schema` and `metaschema`. Both of these collections have similar document structure. 
 #### Document structure of `schema` collection 
 ```mermaid
 erDiagram
