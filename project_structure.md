@@ -60,17 +60,19 @@ curl -u <user>:<pass> 'http://localhost:8080/api/v2/schemas' -i -X POST -H "Cont
 ### DB Structure
 `schema-store` has two collections: `schema` and `metascham`. Both of these collections have similar document structure. 
 #### Document structure of `schema` collection 
-```yaml
-_id : [$id field of the schema is copied to the top level _id field],
-"accession" : [Auto-generated field. Starting from prefix 'BSDC'. ENA checklists are imported with 'ERC' prefix],
-"title" : [Title of the schema],
-"description" : [Schema description],
-"metaSchema" : [Meta-schema to validate against],
-"schema" : [Schema to be stored. Schema is stored as a string field in the database],
-"version" : [version],
-"domain" : [Placeholder for AAP domain. But this field is no longer neede],
-"authority" : [Field to mark the origin of the schema. Current values 'BIOSAMPLES', 'ENA']
-```
+```mermaid
+erDiagram
+schema {
+        string _id PK "$id field of the schema is copied to the top level _id field"
+        string accession " [Auto-generated field. Starting from prefix 'BSDC'. ENA checklists are imported with 'ERC' prefix]"
+        string title "Title of the schema"
+        string description "Schema description"
+        string metaSchema "Meta-schema to validate against"
+        string schema "Schema to be stored. Schema is stored as a string field in the database"
+        string version "version"
+        string domain "Placeholder for AAP domain. But this field is no longer needed"
+        string authority "Field to mark the origin of the schema. Current values 'BIOSAMPLES', 'ENA'"
+    } 'ENA']
 #### Example
 ```json
 {
