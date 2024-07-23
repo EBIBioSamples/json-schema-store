@@ -16,7 +16,7 @@
 |--------------------|-------------------------------------|--------|----------|
 | Get schema         | `api/v2/schemas/ERC000022?id=<$id>` | GET    |          |
 | Get schema version | `api/v2/schemas/ERC000022/1.0.0`    | GET    |          |
-| Create schema      | `api/v2/schemas`                    | POST   | [SCHEMA] |
+| Create schema      | `api/v2/schemas`                    | POST   | [SCHEMA with metadata] |
 | Update schema      | `api/v2/schemas?id=<$id>`           | PUT    | [SCHEMA] |
 | Delete schema      | `api/v2/schemas?id=<$id>`           | DELETE |          |
 | Get all schema     | `/api/v2/schemas/search`            | GET    |          | 
