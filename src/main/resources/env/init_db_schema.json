@@ -1,5 +1,11 @@
 [
   {
+    "_id" : "66a785da40d6a37a7c685f68",
+    "username" : "admin",
+    "password" : "$2a$10$PCU5Vqixq/d6m.pPrtHTYeuCyiifoM/yjyZ1psSeY2N0dhAZWnOaW",
+    "_class" : "uk.ac.ebi.biosamples.jsonschemastore.model.User"
+  },
+  {
     "id" : "https://schemablocks.org/metaschemas/json-schema-draft-07/1.0.1",
     "name" : "json-schema-draft-07",
     "version" : "1.0.1",
