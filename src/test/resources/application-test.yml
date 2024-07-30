@@ -2,7 +2,7 @@
 spring:
   data:
     mongodb:
-      port: 27017
+      port: ${mongodb.container.port}
       host: localhost
       database: schemastore
       repositories:
