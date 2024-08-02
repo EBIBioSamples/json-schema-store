@@ -13,7 +13,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureDataMongo
 @SpringBootTest
 @Testcontainers
-//@ContextConfiguration(classes = MongodbTestcontainerConfig.class)
 @ActiveProfiles("test")
 public class JsonSchemaStoreApplicationTest {
 

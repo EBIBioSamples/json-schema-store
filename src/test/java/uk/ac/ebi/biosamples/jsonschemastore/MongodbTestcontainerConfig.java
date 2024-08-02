@@ -15,7 +15,6 @@ public class MongodbTestcontainerConfig {
   static {
     mongoDBContainer.start();
     var mappedPort = mongoDBContainer.getMappedPort(27017);
-    System.setProperty("mongodb.container.port", String.valueOf(mappedPort));
-    System.out.println("======================================= mongo port = " + mappedPort + " =====================");
+    System.setProperty("spring.data.mongodb.port", String.valueOf(mappedPort));
   }
 }

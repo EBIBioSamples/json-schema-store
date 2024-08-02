@@ -101,7 +101,7 @@ public class SchemaController {
         if(schema.getAccession() == null
                 || schema.getAccession().isEmpty()
                 || !schemaService.schemaAccessionExists(schema.getAccession())) {
-            throw new MalformedSchemaException("Accession must be present to update the schema");
+            throw new MalformedSchemaException("Accession must be present to update the schema id: " + id);
         }
 
         if (schemaService.schemaIdExists(schema.getId())) {

@@ -26,6 +26,7 @@ public class SecurityConfig {
     http.authorizeHttpRequests(authorize -> authorize
         .requestMatchers(HttpMethod.POST, "/api/v2/schemas").authenticated()
         .requestMatchers(HttpMethod.PUT, "/api/v2/schemas").authenticated()
+        .requestMatchers(HttpMethod.DELETE, "/api/v2/schemas").authenticated()
         .anyRequest().permitAll());
     http.httpBasic(Customizer.withDefaults());
     http.csrf(csrf -> csrf.disable());
