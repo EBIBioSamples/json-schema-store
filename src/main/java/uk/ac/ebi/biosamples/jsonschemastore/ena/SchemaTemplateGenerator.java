@@ -10,66 +10,55 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.util.CollectionUtils;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.MalformedSchemaException;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Property;
 
 import java.io.StringWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class SchemaTemplateGenerator {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public static String getBioSamplesSchema(String schemaId, String title,
-                                             String description, List<Map<String, String>> propertyList) {
+                                             String description, List<Property> propertyList) {
         VelocityEngine vEngine = new VelocityEngine();
         vEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         vEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         vEngine.init();
 
         // Collect all the attributes with requirements
-        List<String> required = new ArrayList<>();
-        List<String> recommended = new ArrayList<>();
-        StringWriter wrt = new StringWriter();
-        Template template = vEngine.getTemplate("templates/biosamples_property_template.json");
-        for (Map<String, String> p : propertyList) {
-            VelocityContext ctx = new VelocityContext();
-            ctx.put("property", p.get("property"));
-            ctx.put("property_type", p.get("property_type"));
-            ctx.put("property_description", p.get("property_description").replace("\"", "'"));
-            template.merge(ctx, wrt);
-            wrt.append(",\n");
-
-            if (p.get("requirement").equalsIgnoreCase("mandatory")) {
-                required.add(p.get("property"));
-            } else if (p.get("requirement").equalsIgnoreCase("recommended")) {
-                required.add(p.get("property"));
-            }
-        }
-        String properties = wrt.toString();
-        properties = properties.substring(0, properties.length() - 2); //remove last comma
+        List<Set<String>> required = propertyList.stream()
+            .filter(p -> p.cardinality() == Property.AttributeCardinality.MANDATORY)
+            .map(p -> {
+                Set<String> s = new HashSet<>();
+                s.add(p.name());
+                if (!CollectionUtils.isEmpty(p.synonyms())) {
+                    s.addAll(p.synonyms());
+                }
+                return s;
+            })
+            .collect(Collectors.toList());
+        List<List<String>> recommended = propertyList.stream()
+            .filter(p -> p.cardinality() == Property.AttributeCardinality.RECOMMENDED)
+            .map(Property::synonyms)
+            .collect(Collectors.toList());
 
         // Write everything to main template
-        wrt = new StringWriter();
-        template = vEngine.getTemplate("templates/biosamples_template.vm");
+        StringWriter schemaWriter = new StringWriter();
+        Template template = vEngine.getTemplate("templates/biosamples_template.vm");
         VelocityContext ctx = new VelocityContext();
         ctx.put("schema_id", schemaId);
         ctx.put("schema_title", title);
         ctx.put("schema_description", description);
-        ctx.put("properties", properties);
-        ctx.put("required", new JSONArray(required));
-        ctx.put("recommended", new JSONArray(recommended));
-        template.merge(ctx, wrt);
+        ctx.put("properties", propertyList);
+        ctx.put("required", required);
+        ctx.put("recommended", recommended);
+        template.merge(ctx, schemaWriter);
 
-        // Enable pretty print
-        String jsonSchema = wrt.toString();
-        try {
-            Object o = mapper.readValue(jsonSchema, Object.class);
-            jsonSchema = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return jsonSchema;
+        return prettyPrintJson(schemaWriter.toString());
     }
 
     public static String getStringTemplate(String regex, int minLength, int maxLength, String format) {
@@ -132,5 +121,17 @@ public class SchemaTemplateGenerator {
             throw new MalformedSchemaException("Failed to write string to JSON, " + e.getMessage());
         }
         return jsonNode;
+    }
+
+    public static String prettyPrintJson(String jsonString) {
+        String prttyJsonString;
+        try {
+            Object o = mapper.readValue(jsonString, Object.class);
+            prttyJsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse string, malformed JSON", e);
+            throw new MalformedSchemaException("Failed to parse JSON, " + e.getMessage());
+        }
+        return prttyJsonString;
     }
 }

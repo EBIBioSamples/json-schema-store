@@ -2,8 +2,7 @@
 spring:
   data:
     mongodb:
-      port: 27017
-      host: localhost
+      uri: mongodb://localhost:27017/schemastore
       database: schemastore
       repositories:
         type: auto

@@ -5,34 +5,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping(value = "/checklist/converter", produces = {"application/json"})
 public class ChecklistConverterController {
-    private final ChecklistConverterService checklistConverterService;
+  private final ChecklistConverterService checklistConverterService;
 
-    public ChecklistConverterController(ChecklistConverterService checklistConverterService) {
-        this.checklistConverterService = checklistConverterService;
-    }
+  public ChecklistConverterController(ChecklistConverterService checklistConverterService) {
+    this.checklistConverterService = checklistConverterService;
+  }
 
-    @GetMapping("/{checklist}")
-    public ResponseEntity<String> convertChecklist(@PathVariable("checklist") String checklist) {
-        String jsonSchema = checklistConverterService.getChecklist(checklist);
-        return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
-    }
+  @GetMapping("/{checklist}")
+  public ResponseEntity<String> convertChecklist(@PathVariable("checklist") String checklist) {
+    String jsonSchema = checklistConverterService.convertEnaChecklist(checklist);
+    return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
+  }
 
-    @PostMapping("/{checklist}")
-    public ResponseEntity<String> convertAndSaveChecklist(@PathVariable("checklist") String checklist) {
-        String jsonSchema = checklistConverterService.saveSchema(checklist);
-        return new ResponseEntity<>(jsonSchema, HttpStatus.CREATED);
-    }
+  @PutMapping("/{checklist}")
+  public ResponseEntity<String> convertAndSaveChecklist(@PathVariable("checklist") String checklist) {
+    String jsonSchema = checklistConverterService.persistEnaChecklist(checklist);
+    return new ResponseEntity<>(jsonSchema, HttpStatus.CREATED);
+  }
 
-    @PostMapping("/convert/all")
-    public ResponseEntity<String> convertAndSaveAllEnaChecklists() {
-        List<String> enaChecklists = checklistConverterService.getAndSaveAllSchema();
+  @PutMapping("/convert/all")
+  public ResponseEntity<String> convertAndSaveAllEnaChecklists() {
+    String enaChecklists = checklistConverterService.persistEnaChecklists();
 
-        return new ResponseEntity<>(enaChecklists.toString(), HttpStatus.CREATED);
-    }
+    return new ResponseEntity<>(enaChecklists, HttpStatus.CREATED);
+  }
 }
