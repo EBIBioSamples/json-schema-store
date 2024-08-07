@@ -20,7 +20,7 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v2/schemas", produces = {"application/json"})
+@RequestMapping(value = "/schemas", produces = {"application/json"})
 public class SchemaController {
     private final SchemaService schemaService;
     private final SchemaValidationService schemaValidationService;
