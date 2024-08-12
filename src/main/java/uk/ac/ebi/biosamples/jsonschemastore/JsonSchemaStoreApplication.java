@@ -12,22 +12,11 @@ import java.util.List;
 
 @Slf4j
 @SpringBootApplication
-public class JsonSchemaStoreApplication
-        implements CommandLineRunner {
-
+public class JsonSchemaStoreApplication {
     @Autowired
     FieldRepository fieldRepository;
     public static void main(String[] args) {
         SpringApplication.run(JsonSchemaStoreApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        ChoiceField f = ChoiceField.builder()
-                .id("field1")
-                .label("some label")
-                .choices(List.of("opt1", "opt2"))
-                .build();
-        fieldRepository.save(f);
-    }
 }

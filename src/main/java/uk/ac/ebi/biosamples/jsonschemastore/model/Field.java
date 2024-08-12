@@ -1,5 +1,7 @@
 package uk.ac.ebi.biosamples.jsonschemastore.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -15,6 +17,16 @@ import org.springframework.lang.NonNull;
 @Document(collection = "fields")
 @SuperBuilder
 @NoArgsConstructor
+@JsonTypeInfo(
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        property = "type",
+        use = JsonTypeInfo.Id.NAME,
+        visible = true
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ChoiceField.class, name = "choice"),
+        @JsonSubTypes.Type(value = PatternField.class, name = "pattern")
+})
 public class Field
 {
     @Id
@@ -22,5 +34,6 @@ public class Field
     protected String label;
     protected String description;
     protected List<String> usedBySchemas;
+    protected String type;
 }
 
