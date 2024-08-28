@@ -24,7 +24,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ChecklistConverterService {
-    String enaChecklistBaseUrl = "https://www.ebi.ac.uk/ena/browser/api/xml/";
+    private static final String enaGetAllChecklistUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists?type=sample&format=json";
+    private static final String enaChecklistBaseUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists/xml/${checklistId}?type=sample";
 
     private final SchemaService schemaService;
     private final SchemaObjectPopulator populator;
@@ -121,7 +122,7 @@ public class ChecklistConverterService {
     private EnaChecklist getEnaChecklist(String checklistId) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new EnaErrorHandler());
-        URI uri = URI.create(enaChecklistBaseUrl + checklistId);
+        URI uri = URI.create(enaChecklistBaseUrl.replace("${checklistId}", checklistId));
         EnaChecklist enaChecklist = restTemplate.getForObject(uri, EnaChecklist.class);
         Objects.requireNonNull(enaChecklist, "Failed to retrieve ENA checklist");
 
@@ -132,14 +133,13 @@ public class ChecklistConverterService {
         List<String> enaChecklists = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new EnaErrorHandler());
-        URI uri = URI.create("https://www.ebi.ac.uk/ena/browser/api/summary/ERC000001-ERC999999?offset=0&limit=100");
+        URI uri = URI.create(enaGetAllChecklistUrl);
         JsonNode allChecklistsJson = restTemplate.getForObject(uri, JsonNode.class);
         Objects.requireNonNull(allChecklistsJson, "Failed to retrieve ENA checklist");
 
-        JsonNode checklistsJson = allChecklistsJson.get("summaries");
-        if (checklistsJson.isArray()) {
-            for (JsonNode n : checklistsJson) {
-                enaChecklists.add(n.get("accession").textValue());
+        if (allChecklistsJson.isArray()) {
+            for (JsonNode n : allChecklistsJson) {
+                enaChecklists.add(n.get("report").get("id").textValue());
             }
         }
 
