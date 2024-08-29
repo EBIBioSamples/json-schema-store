@@ -46,6 +46,19 @@ public class SchemaTemplateGenerator {
             .map(Property::synonyms)
             .collect(Collectors.toList());
 
+        List<Property> propertiesWithSynonyms = propertyList.stream()
+            .flatMap(p -> {
+                List<Property> props = new ArrayList<>();
+                props.add(p);
+                if (!CollectionUtils.isEmpty(p.synonyms())) {
+                    props.addAll(
+                        p.synonyms().stream()
+                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.cardinality()))
+                            .toList());
+                }
+                return props.stream();
+        }).toList();
+
         // Write everything to main template
         StringWriter schemaWriter = new StringWriter();
         Template template = vEngine.getTemplate("templates/biosamples_template.vm");
@@ -53,7 +66,7 @@ public class SchemaTemplateGenerator {
         ctx.put("schema_id", schemaId);
         ctx.put("schema_title", title);
         ctx.put("schema_description", description);
-        ctx.put("properties", propertyList);
+        ctx.put("properties", propertiesWithSynonyms);
         ctx.put("required", required);
         ctx.put("recommended", recommended);
         template.merge(ctx, schemaWriter);
