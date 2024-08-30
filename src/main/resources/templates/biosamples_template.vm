@@ -13,11 +13,49 @@
     },
     "characteristics": {
       "type": "object",
-      "required": ${required},
-      "recommended": ${recommended},
       "properties": {
-${properties}
+      #foreach ($property in $properties)
+        "$property.name()": {
+          "type":"array",
+          "items":{
+            "properties": {
+              "text": $property.type()
+
+              #if ($property.units())
+              ,
+              "unit": {
+                "enum": [
+                  #foreach ($unit in $property.units())
+                  "${unit}"#if( $foreach.hasNext ),#end
+                  #end
+                ]
+              }
+              #end
+            },
+            "required":["text"#if ($property.units()), "unit"#end]
+          }
+        }#if( $foreach.hasNext ),#end
+      #end
       }
+      #if($required.size() > 0)
+        ,
+        "allOf": [
+        #foreach ($synonyms in $required)
+          {
+            "errorMessage": "Just one of the following properties must be specified: #foreach($synonym in $synonyms)'$synonym'#if($foreach.hasNext), #end#end",
+            "oneOf": [
+            #foreach ($synonym in $synonyms)
+              {
+                "required": [
+                  "$synonym"
+                ]
+              }#if( $foreach.hasNext ),#end
+            #end
+            ]
+          }#if( $foreach.hasNext ),#end
+        #end
+        ]
+      #end
     }
   },
   "required": [

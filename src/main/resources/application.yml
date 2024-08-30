@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: dev
-#  data:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  #  data:
 #    mongodb:
 #      auto-index-creation: false

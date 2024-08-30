@@ -5,8 +5,7 @@ services:
     ports:
       - 27017:27017
   validator:
-    image: ebispot/elixir-jsonsschema-validator:1.3.0
-    command: npm start
+    image: quay.io/ebi-ait/biovalidator:2.2.2
     ports:
       - 3020:3020
   json-schema-store:

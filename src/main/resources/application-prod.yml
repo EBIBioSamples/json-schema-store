@@ -2,7 +2,8 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/schemastore
+      port: 27017
+      host: localhost
       database: schemastore
       repositories:
         type: auto
@@ -16,10 +17,8 @@ management:
 # Elixir Validator
 schemastore:
   validator:
-    url: http://localhost:3020/validate
+    url: http://localhost:3020/biosamples/schema/validator/validate
 
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
+server:
+  servlet:
+    context-path: /biosamples/schema/store

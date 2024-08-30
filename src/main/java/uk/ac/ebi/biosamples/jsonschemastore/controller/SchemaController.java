@@ -25,14 +25,14 @@ public class SchemaController {
     private final SchemaService schemaService;
     private final SchemaValidationService schemaValidationService;
     private final SchemaResourceAssembler schemaResourceAssembler;
-    private final SchemaObjectPopulator populator;
+    private final SchemaObjectPopulator schemaObjectPopulator;
 
     public SchemaController(SchemaService schemaService, SchemaValidationService schemaValidationService,
-                            SchemaResourceAssembler schemaResourceAssembler, SchemaObjectPopulator populator) {
+                            SchemaResourceAssembler schemaResourceAssembler, SchemaObjectPopulator schemaObjectPopulator) {
         this.schemaService = schemaService;
         this.schemaValidationService = schemaValidationService;
         this.schemaResourceAssembler = schemaResourceAssembler;
-        this.populator = populator;
+        this.schemaObjectPopulator = schemaObjectPopulator;
     }
 
     @GetMapping
@@ -74,7 +74,7 @@ public class SchemaController {
 
     @PostMapping
     public ResponseEntity<JsonSchema> createSchema(@RequestBody JsonSchema schema) {
-        populator.populateSchema(schema);
+        schemaObjectPopulator.populateSchema(schema);
         if (schemaService.schemaIdExists(schema.getId())) {
             throw new MalformedSchemaException("Schema Id already exists");
         }
@@ -97,15 +97,15 @@ public class SchemaController {
 
     @PutMapping
     public ResponseEntity<JsonSchema> updateSchema(@RequestParam("id") String id, @RequestBody JsonSchema schema) {
-        populator.populateSchema(schema);
+        schemaObjectPopulator.populateSchema(schema);
         if(schema.getAccession() == null
                 || schema.getAccession().isEmpty()
                 || !schemaService.schemaAccessionExists(schema.getAccession())) {
-            throw new MalformedSchemaException("Accession must be present to update the schema");
+            throw new MalformedSchemaException("Accession must be present to update the schema id: " + id);
         }
 
         if (schemaService.schemaIdExists(schema.getId())) {
-            populator.incrementAndPopulateSchema(schema);
+            schemaObjectPopulator.incrementAndPopulateSchema(schema);
         }
 
         try {
