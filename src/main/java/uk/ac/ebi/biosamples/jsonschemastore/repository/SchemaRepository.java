@@ -4,12 +4,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 
 import java.util.Optional;
 
 public interface SchemaRepository extends MongoRepository<MongoJsonSchema, String> {
     Page<MongoJsonSchema> findAllBy(TextCriteria criteria, Pageable pageable);
+    @Query("{ $text: { $search: ?0 } }")
+    Page<MongoJsonSchema> findAllByText(String text, Pageable pageable);
 
     Page<MongoJsonSchema> findByNameOrderByVersionDesc(String schemaName, Pageable pageable);
 
@@ -28,4 +31,5 @@ public interface SchemaRepository extends MongoRepository<MongoJsonSchema, Strin
     Optional<MongoJsonSchema> findFirstByAccessionOrderByVersionDesc(String accession);
 
     Optional<MongoJsonSchema> findFirstByDomainAndNameOrderByVersionDesc(String domain, String name);
+
 }

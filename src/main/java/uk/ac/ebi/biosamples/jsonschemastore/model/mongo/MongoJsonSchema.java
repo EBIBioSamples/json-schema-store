@@ -18,6 +18,7 @@ public class MongoJsonSchema {
     @Id
     @TextIndexed(weight = 10F)
     private String id;
+    @TextIndexed(weight = 10F)
     private String accession;
     @TextIndexed(weight = 5F)
     private String title;
@@ -27,6 +28,7 @@ public class MongoJsonSchema {
     private String schema;
     @TextIndexed(weight = 10F)
     private String name;
+    @TextIndexed(weight = 10F)
     private String version;
     private String domain;
     private String authority;
