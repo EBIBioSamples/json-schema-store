@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Data
 @Document(collection = "schemas")
 @CompoundIndexes({
@@ -28,4 +30,5 @@ public class MongoJsonSchema {
     private String version;
     private String domain;
     private String authority;
+    private List<SchemaFieldAssociation> schemaFieldAssociations;
 }

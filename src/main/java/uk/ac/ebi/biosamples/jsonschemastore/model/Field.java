@@ -25,7 +25,8 @@ import org.springframework.lang.NonNull;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ChoiceField.class, name = "choice"),
-        @JsonSubTypes.Type(value = PatternField.class, name = "pattern")
+        @JsonSubTypes.Type(value = PatternField.class, name = "pattern"),
+        @JsonSubTypes.Type(value = Field.class, name = "text")
 })
 public class Field
 {
