@@ -27,7 +27,7 @@ public class ChecklistConverterController {
     return new ResponseEntity<>(jsonSchema, HttpStatus.CREATED);
   }
 
-  @PutMapping("/convert/all")
+  @GetMapping("/convert/all")
   public ResponseEntity<String> convertAndSaveAllEnaChecklists() {
     String enaChecklists = checklistConverterService.persistEnaChecklists();
 
