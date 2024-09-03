@@ -28,13 +28,21 @@ public interface FieldRepository
 
 
     @Override
-    @RestResource(exported = true, rel = "fff")
     List<Field> findAllById(Iterable<String> ids);
 
     List<Field> findByIdIn(List<String> ids);
 
     @Query("{ $text: { $search: ?0 } }")
     Page<Field> findAllByText(String text, Pageable pageable);
+    @Query("{\n" +
+            "    $or: [\n" +
+            "        { \"label\": { $regex: /?0/, $options: \"i\" } },\n" +
+            "        { \"description\": { $regex: /?0/, $options: \"i\" } }\n" +
+            "    ]\n" +
+            "}")
+    Page<Field> findAllByTextPartial(String text, Pageable pageable);
+
+
 }
 
 
