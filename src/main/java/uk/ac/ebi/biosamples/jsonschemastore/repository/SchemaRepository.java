@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.repository.Query;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SchemaRepository extends MongoRepository<MongoJsonSchema, String> {
@@ -24,6 +25,8 @@ public interface SchemaRepository extends MongoRepository<MongoJsonSchema, Strin
             "    ]\n" +
             "}")
     Page<MongoJsonSchema> findAllByTextPartial(String text, Pageable pageable);
+
+    List<MongoJsonSchema> findByIdIn(List<String> ids);
     Page<MongoJsonSchema> findByNameOrderByVersionDesc(String schemaName, Pageable pageable);
 
     Page<MongoJsonSchema> findByAccessionOrderByVersionDesc(String accession, Pageable pageable);
