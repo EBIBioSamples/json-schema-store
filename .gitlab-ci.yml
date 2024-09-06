@@ -1,44 +1,24 @@
-image: maven:latest
-
 variables:
-  MAVEN_CLI_OPTS: "-DskipTests"
-
-cache:
-  paths:
-    - .m2/repository/
-    - target/
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$DOCKER_TAG
+  DOCKER_PULL_SECRET: docker-registry-secret
+  DOCKER_AUTH_CONFIG: $DOCKER_CONFIG_JSON
 
 stages:
   - build
-#  - test
-  - deploy
 
-build:
+build_and_publish:
+  image: docker:latest
+  services:
+    - docker:dind
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS package -Pprod
-  artifacts:
-    paths:
-      - target/json-schema-store-0.0.1-SNAPSHOT.jar
+    - echo "$CI_DEPLOY_PASSWORD" | docker login $CI_REGISTRY -u $CI_DEPLOY_USER --password-stdin
+    - echo $DOCKER_IMAGE_NAME
+    - docker build -t $DOCKER_IMAGE_NAME .
+    - docker push $DOCKER_IMAGE_NAME
+  after_script:
+    - docker logout ${CI_REGISTRY}
 
-#test:
-#  stage: test
-#  script:
-#    - mvn $MAVEN_CLI_OPTS test
-#
-deploy:
-  image: ubuntu
-  stage: deploy
-  script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
-    - eval $(ssh-agent -s)
-    - echo "$BSD_PROD_SSH_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - ssh-keyscan ebi-cli >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d "rm -rf ~/deployments/sw/www/json-schema-store/*"
-    - scp -r -v -o StrictHostKeyChecking=no ./target/json-schema-store-*.jar tc_spo01@wp-p1m2-3d:~/deployments/sw/www/json-schema-store/json-schema-store.jar
-    - ssh -v -o StrictHostKeyChecking=no tc_spo01@wp-p1m2-3d "~/config/start.sh"
-#  only:
-#    - master
