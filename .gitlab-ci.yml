@@ -18,7 +18,7 @@ stages:
   - deploy
 
 build:
-  image: maven:3.8-openjdk-11
+  image: maven:latest
   stage: build
   script:
     - mvn $MAVEN_CLI_OPTS clean package -Pprod
