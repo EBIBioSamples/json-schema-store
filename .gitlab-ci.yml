@@ -6,14 +6,29 @@ variables:
   DOCKER_PULL_SECRET: docker-registry-secret
   DOCKER_AUTH_CONFIG: $DOCKER_CONFIG_JSON
 
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
 stages:
   - build
+  - publish
+
+
+build:
+  stage: build
+  script:
+    - mvn package -DskipTests -Pprod
+  artifacts:
+    paths:
+      - target/json-schema-store-0.0.1-SNAPSHOT.jar
 
 build_and_publish:
   image: docker:latest
   services:
     - docker:dind
-  stage: build
+  stage: publish
   script:
     - echo "$CI_DEPLOY_PASSWORD" | docker login $CI_REGISTRY -u $CI_DEPLOY_USER --password-stdin
     - echo $DOCKER_IMAGE_NAME
