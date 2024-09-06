@@ -1,4 +1,5 @@
 variables:
+  MAVEN_CLI_OPTS: "-DskipTests"
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
   DOCKER_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
@@ -12,22 +13,24 @@ cache:
 
 stages:
   - build
+  #  - test
   - publish
+  - deploy
 
 build:
+  image: maven:3.8-openjdk-11
   stage: build
-  image: maven:latest
   script:
-    - mvn package -DskipTests -Pprod
+    - mvn $MAVEN_CLI_OPTS clean package -Pprod
   artifacts:
     paths:
-      - target/json-schema-store-0.0.1-SNAPSHOT.jar
+      - target/json-schema-store-0.0.2.jar
 
-build_image_and_publish:
-  stage: publish
+build_docker_image:
   image: docker:latest
   services:
     - docker:dind
+  stage: publish
   script:
     - echo "$CI_DEPLOY_PASSWORD" | docker login $CI_REGISTRY -u $CI_DEPLOY_USER --password-stdin
     - echo $DOCKER_IMAGE_NAME
@@ -35,4 +38,22 @@ build_image_and_publish:
     - docker push $DOCKER_IMAGE_NAME
   after_script:
     - docker logout ${CI_REGISTRY}
+
+#test:
+#  stage: test
+#  script:
+#    - mvn $MAVEN_CLI_OPTS test
+#
+deploy:
+  stage: deploy
+  image: dtzar/helm-kubectl:3.11.0
+  script:
+    - kubectl create namespace $KUBECTL_NAMESPACE || true
+    - kubectl config set-context --current --namespace=${KUBECTL_NAMESPACE}
+    - kubectl delete secret $DOCKER_PULL_SECRET || true
+    - kubectl create secret docker-registry $DOCKER_PULL_SECRET --docker-server=$CI_REGISTRY --docker-username=$CI_DEPLOY_USER --docker-password=$CI_DEPLOY_PASSWORD
+    - envsubst < deployment.yaml > kubernetes.yaml
+    - kubectl apply -f kubernetes.yaml
+    - kubectl rollout restart deployments json-schema-store
+  when: manual
 
