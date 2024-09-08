@@ -37,7 +37,8 @@
     "type": "choice",
     "description": "Field 4, a choice field",
     "usedBySchemas": ["ENA-GSC_MIxS_air:1.0.0"],
-    "_class": "uk.ac.ebi.biosamples.jsonschemastore.model.ChoiceField"
+    "_class": "uk.ac.ebi.biosamples.jsonschemastore.model.ChoiceField",
+    "group": "group 1"
   },
   {
     "id": "field3_pattern",
@@ -54,7 +55,8 @@
     "type": "text",
     "description": "Field 5, a text field",
     "usedBySchemas": ["ENA-GSC_MIxS_air:1.0.0"],
-    "_class": "uk.ac.ebi.biosamples.jsonschemastore.model.Field"
+    "_class": "uk.ac.ebi.biosamples.jsonschemastore.model.Field",
+    "group": "group 1"
   }
 
 ]

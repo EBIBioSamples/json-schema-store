@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -35,7 +36,8 @@ public class Field
     protected String id; // "name" in the old ena editor
     protected String label;
     protected String description;
-    protected List<String> usedBySchemas;
+    protected Set<String> usedBySchemas;
     protected String type;
+    protected String group;
 }
 
