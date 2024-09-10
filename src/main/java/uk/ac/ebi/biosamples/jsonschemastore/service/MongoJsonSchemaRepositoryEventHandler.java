@@ -16,14 +16,14 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 
 @Component
 @RepositoryEventHandler(MongoJsonSchema.class)
-public class MongoJsonSchemaRepostioryEventHandler {
+public class MongoJsonSchemaRepositoryEventHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(MongoJsonSchemaRepostioryEventHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MongoJsonSchemaRepositoryEventHandler.class);
 
     private final FieldRepository fieldRepository;
     private final SchemaRepository schemaRepository;
 
-    public MongoJsonSchemaRepostioryEventHandler(FieldRepository fieldRepository, SchemaRepository schemaRepository) {
+    public MongoJsonSchemaRepositoryEventHandler(FieldRepository fieldRepository, SchemaRepository schemaRepository) {
         this.fieldRepository = fieldRepository;
         this.schemaRepository = schemaRepository;
     }

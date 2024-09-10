@@ -4,13 +4,25 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+# spring actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 logging:
   level:
     org:
       springframework:
-        security: INFO
+        security: WARN
     uk:
       ac:
         ebi:
           biosamples:
             jsonschemastore: INFO
+
+
+# Elixir Validator
+schemastore:
+  validator:
+    url: http://localhost:3020/validate
