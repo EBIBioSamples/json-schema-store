@@ -3,6 +3,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
@@ -43,9 +44,9 @@ public class MongoJsonSchemaRepositoryEventHandler {
                 .collect(Collectors.toSet());
         schemaFieldIds.stream()
                 .map(fieldRepository::findById)
-                .findFirst()
+                .filter(Optional::isPresent)
                 .map(Optional::get)
-                .ifPresent(field-> {
+                .forEach(field-> {
                     field.getUsedBySchemas().add(schema.getId());
                     fieldRepository.save(field);
                 });

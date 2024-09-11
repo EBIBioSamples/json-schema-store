@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -35,7 +36,7 @@ public class MongoJsonSchema {
     private String version;
     private String domain;
     private String authority;
-    private List<SchemaFieldAssociation> schemaFieldAssociations;
+    private List<SchemaFieldAssociation> schemaFieldAssociations = new ArrayList<>();
     @CreatedDate
     private LocalDateTime createdDate;
 
