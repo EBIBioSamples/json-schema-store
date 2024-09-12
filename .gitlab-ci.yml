@@ -14,7 +14,7 @@ cache:
 stages:
   - build
 #  - test
-  - build_docker_image
+  - publish
   - deploy
 
 build:
@@ -30,7 +30,7 @@ build_docker_image:
   image: docker:latest
   services:
     - docker:dind
-  stage: build_docker_image
+  stage: publish
   script:
     - echo "$CI_DEPLOY_PASSWORD" | docker login $CI_REGISTRY -u $CI_DEPLOY_USER --password-stdin
     - echo $DOCKER_IMAGE_NAME
