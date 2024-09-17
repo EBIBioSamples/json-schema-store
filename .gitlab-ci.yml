@@ -5,6 +5,7 @@ variables:
   DOCKER_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$DOCKER_TAG
   DOCKER_PULL_SECRET: docker-registry-secret
+  MONGO_URI: $MONGO_URI
 
 cache:
   paths:
@@ -21,7 +22,7 @@ build:
   image: maven:3.8-openjdk-11
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS clean package -Pprod
+    - mvn $MAVEN_CLI_OPTS clean package -Pdocker
   artifacts:
     paths:
       - target/json-schema-store-0.0.2.jar
