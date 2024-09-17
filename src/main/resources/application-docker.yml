@@ -2,11 +2,7 @@
 spring:
   data:
     mongodb:
-      port: 27017
-      host: mongodb
-      database: schemastore
-      repositories:
-        type: auto
+      uri: ${MONGO_URI}
 server:
   port: 8085
 # spring actuator
@@ -19,4 +15,4 @@ management:
 # Elixir Validator
 schemastore:
   validator:
-    url: http://localhost:3020/validate
+    url: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
