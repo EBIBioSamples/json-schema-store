@@ -2,7 +2,7 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGO_URI}
+      uri: ${MONGO_URL}
 server:
   port: 8085
 # spring actuator
