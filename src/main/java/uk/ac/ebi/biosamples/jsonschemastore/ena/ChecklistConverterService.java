@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.ApplicationStateException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Property;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
 
@@ -16,14 +18,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class ChecklistConverterService {
-    String enaChecklistBaseUrl = "https://www.ebi.ac.uk/ena/browser/api/xml/";
+    private static final String enaGetAllChecklistUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists?type=sample&format=json";
+    private static final String enaChecklistBaseUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists/xml/${checklistId}?type=sample";
 
     private final SchemaService schemaService;
     private final SchemaObjectPopulator populator;
@@ -33,25 +35,77 @@ public class ChecklistConverterService {
         this.populator = populator;
     }
 
-    public String getChecklist(String checklistId) {
+    private static String getTypedTemplate(Field field) {
+        String fieldTypeTemplate;
+        if (field.getFieldType().getTextChoiceField() != null) {
+            fieldTypeTemplate = SchemaTemplateGenerator.getEnumTemplate(getEnumValueList(field.getFieldType().getTextChoiceField()));
+        } else if (field.getFieldType().getTextField() != null) {
+            String regex = field.getFieldType().getTextField().getRegex() != null ? field.getFieldType().getTextField().getRegex() : "";
+            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate(regex, 0, 0, "");
+        } else {
+            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate("", 0, 0, "");
+        }
+
+        return fieldTypeTemplate;
+    }
+
+    private static List<String> getEnumValueList(TextChoiceField enumField) {
+        List<String> values = new ArrayList<>();
+        for (TextValue textValue : enumField.getTextValue()) {
+            values.add(textValue.getValue());
+            if (textValue.getSynonyms() != null) {
+                values.addAll(textValue.getSynonyms());
+            }
+        }
+        return values;
+    }
+
+    private static Property mapEnaFieldToProperty(Field field) {
+        return new Property(field.getName(), field.getSynonyms(), field.getDescription(), getTypedTemplate(field),
+            field.getUnits(), getCardinality(field.getMandatory()));
+    }
+
+    private static Property.AttributeCardinality getCardinality(String fieldRequirement) {
+        if (StringUtils.hasText(fieldRequirement)) {
+            return Property.AttributeCardinality.valueOf(fieldRequirement.toUpperCase());
+        } else {
+            return Property.AttributeCardinality.OPTIONAL;
+        }
+    }
+
+    public String convertEnaChecklist(String checklistId) {
         String jsonSchema;
         try {
             EnaChecklist enaChecklist = getEnaChecklist(checklistId);
-            List<Map<String, String>> properties = listProperties(enaChecklist);
+            List<Property> properties = listProperties(enaChecklist);
             String schemaId = getSchemaId(enaChecklist);
             String title = enaChecklist.getChecklist().getDescriptor().getName();
             String description = enaChecklist.getChecklist().getDescriptor().getDescription();
             jsonSchema = SchemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);
         } catch (Exception e) {
-            log.error("Could not GET checklist: " + checklistId, e);
-            throw new ApplicationStateException("Could not retrieve checklist for " + checklistId);
+            log.error("Could not checklistId checklist: " + checklistId, e);
+            throw new ApplicationStateException("Could not retrieve checklist for " + checklistId, e);
         }
         return jsonSchema;
     }
 
-    public String saveSchema(String checklistId) {
-        String checklist = getChecklist(checklistId);
-        JsonNode schema = SchemaTemplateGenerator.getJson(checklist);
+    public String persistEnaChecklist(String checklistId) {
+        String jsonSchema = convertEnaChecklist(checklistId);
+        saveSchema(checklistId, jsonSchema);
+        return jsonSchema;
+    }
+
+    public String persistEnaChecklists() {
+        List<String> accessions = getEnaChecklists();
+        List<String> checklists = new ArrayList<>();
+        for (String accession : accessions) {
+            checklists.add(persistEnaChecklist(accession));
+        }
+        return checklists.toString();
+    }
+
+    public String saveSchema(String checklistId, String schemaString) {
+        JsonNode schema = SchemaTemplateGenerator.getJson(schemaString);
 
         JsonSchema jsonSchema = new JsonSchema();
         jsonSchema.setSchema(schema);
@@ -62,40 +116,30 @@ public class ChecklistConverterService {
 
         schemaService.saveSchemaWithAccession(jsonSchema);
 
-        return checklist;
-    }
-
-    public List<String> getAndSaveAllSchema() {
-        List<String> enaChecklists = getEnaChecklists();
-        for (String checklist : enaChecklists) {
-            saveSchema(checklist);
-        }
-
-        return enaChecklists;
+        return schemaString;
     }
 
     private EnaChecklist getEnaChecklist(String checklistId) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new EnaErrorHandler());
-        URI uri = URI.create(enaChecklistBaseUrl + checklistId);
+        URI uri = URI.create(enaChecklistBaseUrl.replace("${checklistId}", checklistId));
         EnaChecklist enaChecklist = restTemplate.getForObject(uri, EnaChecklist.class);
         Objects.requireNonNull(enaChecklist, "Failed to retrieve ENA checklist");
 
         return enaChecklist;
     }
 
-    private List<String> getEnaChecklists() {
+    private static List<String> getEnaChecklists() {
         List<String> enaChecklists = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new EnaErrorHandler());
-        URI uri = URI.create("https://www.ebi.ac.uk/ena/browser/api/summary/ERC000001-ERC999999?offset=0&limit=100");
+        URI uri = URI.create(enaGetAllChecklistUrl);
         JsonNode allChecklistsJson = restTemplate.getForObject(uri, JsonNode.class);
         Objects.requireNonNull(allChecklistsJson, "Failed to retrieve ENA checklist");
 
-        JsonNode checklistsJson = allChecklistsJson.get("summaries");
-        if (checklistsJson.isArray()) {
-            for (JsonNode n : checklistsJson) {
-                enaChecklists.add(n.get("accession").textValue());
+        if (allChecklistsJson.isArray()) {
+            for (JsonNode n : allChecklistsJson) {
+                enaChecklists.add(n.get("report").get("id").textValue());
             }
         }
 
@@ -108,30 +152,13 @@ public class ChecklistConverterService {
         return String.format("https://www.ebi.ac.uk/biosamples/schemas/%s/%s", schemaName, schemaVersion);
     }
 
-    private List<Map<String, String>> listProperties(EnaChecklist enaChecklist) {
+
+
+    private List<Property> listProperties(EnaChecklist enaChecklist) {
         return enaChecklist.getChecklist().getDescriptor().getFieldGroups().stream().
-                flatMap(group -> group.getFields().stream())
-                .map(f -> Map.of("property", f.getName(),
-                        "property_type", getTypedTemplate(f),
-                        "property_description", f.getDescription() == null ? "" : f.getDescription(),
-                        "requirement", f.getMandatory()))
-                .collect(Collectors.toList());
-    }
-
-    private static String getTypedTemplate(Field field) {
-        String fieldTypeTemplate;
-        if (field.getFieldType().getTextChoiceField() != null) {
-            fieldTypeTemplate = SchemaTemplateGenerator.getEnumTemplate(
-                    field.getFieldType().getTextChoiceField().getTextValue()
-                            .stream().map(TextValue::getValue).collect(Collectors.toList()));
-        } else if (field.getFieldType().getTextField() != null) {
-            String regex = field.getFieldType().getTextField().getRegex() != null ? field.getFieldType().getTextField().getRegex() : "";
-            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate(regex, 0, 0, "");
-        } else {
-            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate("", 0, 0, "");
-        }
-
-        return fieldTypeTemplate;
+            flatMap(group -> group.getFields().stream())
+            .map(ChecklistConverterService::mapEnaFieldToProperty)
+            .collect(Collectors.toList());
     }
 
     static class EnaErrorHandler implements ResponseErrorHandler {
@@ -142,7 +169,7 @@ public class ChecklistConverterService {
 
         @Override
         public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
-            throw new ApplicationStateException("Could not retrieve checklist: " + clientHttpResponse.getStatusText());
+            throw new ApplicationStateException("Could not retrieve checklist: " + clientHttpResponse);
         }
     }
 }

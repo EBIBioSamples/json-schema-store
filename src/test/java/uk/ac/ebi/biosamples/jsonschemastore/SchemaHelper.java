@@ -11,9 +11,12 @@ import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoMetaSchema;
 
 @Slf4j
-public class SchemaHelper {
+public final class SchemaHelper {
 
-    public static JsonSchema getJsonSchema_test_1() {
+  private SchemaHelper() {
+  }
+
+  public static JsonSchema getJsonSchema_test_1() {
         return new JsonSchema();
     }
 

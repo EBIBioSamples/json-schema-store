@@ -55,12 +55,17 @@ class Field {
     private String label;
     @JacksonXmlProperty(localName = "NAME")
     private String name;
+    @JacksonXmlProperty(localName = "SYNONYM")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<String> synonyms;
     @JacksonXmlProperty(localName = "DESCRIPTION")
     private String description;
     @JacksonXmlProperty(localName = "MANDATORY")
     private String mandatory;
     @JacksonXmlProperty(localName = "FIELD_TYPE")
     private FieldType fieldType;
+    @JacksonXmlProperty(localName = "UNITS")
+    private List<String> units;
 }
 
 @Data
@@ -88,4 +93,7 @@ class TextChoiceField {
 class TextValue {
     @JacksonXmlProperty(localName = "VALUE")
     private String value;
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = "SYNONYM")
+    private List<String> synonyms;
 }
