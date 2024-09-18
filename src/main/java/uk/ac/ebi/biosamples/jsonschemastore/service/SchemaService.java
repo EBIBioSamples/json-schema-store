@@ -2,9 +2,7 @@ package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
@@ -127,5 +125,14 @@ public class SchemaService {
     private void populateAccession(JsonSchema jsonSchema) {
         String accession = accessioningService.getSchemaAccession(jsonSchema.getId());
         jsonSchema.setAccession(accession);
+    }
+
+    public Page<MongoJsonSchema> findBySchema(MongoJsonSchema exampleSchema, Pageable pageable) {
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withIgnorePaths("schemaFieldAssociations")
+                .withMatcher("l", new ExampleMatcher.GenericPropertyMatcher());
+        Example<MongoJsonSchema> example = Example.of(exampleSchema, matcher);
+        return schemaRepository.findAll(example, pageable);
     }
 }

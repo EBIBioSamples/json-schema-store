@@ -5,14 +5,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
+import org.springframework.data.rest.core.annotation.RestResource;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface SchemaRepository extends MongoRepository<MongoJsonSchema, String> {
+public interface SchemaRepository
+        extends MongoRepository<MongoJsonSchema, String>
+         {
+    @RestResource(exported = false)
     Page<MongoJsonSchema> findAllBy(TextCriteria criteria, Pageable pageable);
+
     @Query("{ $text: { $search: ?0 } }")
     Page<MongoJsonSchema> findAllByText(String text, Pageable pageable);
 
@@ -46,3 +50,5 @@ public interface SchemaRepository extends MongoRepository<MongoJsonSchema, Strin
     Optional<MongoJsonSchema> findFirstByDomainAndNameOrderByVersionDesc(String domain, String name);
 
 }
+
+

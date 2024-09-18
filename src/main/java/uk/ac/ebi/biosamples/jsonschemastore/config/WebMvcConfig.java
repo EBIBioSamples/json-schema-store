@@ -24,23 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-    /*ObjectMapper jsonMapper = new ObjectMapper();
-    modelMapper.typeMap(JsonSchema.class, MongoJsonSchema.class).addMappings(mapper -> {
-      mapper.map(src -> src.getSchema().toString(), MongoJsonSchema::setSchema);
-    });
-
-    modelMapper.typeMap(MongoJsonSchema.class, JsonSchema.class).addMappings(mapper -> {
-      mapper.map(src -> {
-        try {
-          return jsonMapper.readTree(src.getSchema());
-        } catch (JsonProcessingException e) {
-          log.error("Couldn't convert mongo model to JSON: {}", e.getMessage());
-          return null;
-        }
-      }, JsonSchema::setSchema);
-    });*/
-        return modelMapper;
+        return new ModelMapper();
     }
 
     // testing on the localhost

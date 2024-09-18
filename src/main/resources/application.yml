@@ -4,6 +4,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  data:
+    rest:
+      basePath: /api/v2
 # spring actuator
 management:
   endpoints:
@@ -14,7 +17,10 @@ logging:
   level:
     org:
       springframework:
-        security: WARN
+        security: DEBUG
+        data:
+          rest: DEBUG
+        web: DEBUG
     uk:
       ac:
         ebi:

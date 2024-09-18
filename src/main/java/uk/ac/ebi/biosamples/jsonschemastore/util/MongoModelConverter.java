@@ -10,6 +10,8 @@ import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoMetaSchema;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class MongoModelConverter {
@@ -46,12 +48,16 @@ public class MongoModelConverter {
         jsonSchema.setDomain(mongoJsonSchema.getDomain());
         jsonSchema.setMetaSchema(mongoJsonSchema.getMetaSchema());
         jsonSchema.setAuthority(mongoJsonSchema.getAuthority());
-        try {
-            jsonSchema.setSchema(objectMapper.readTree(mongoJsonSchema.getSchema()));
-        } catch (JsonProcessingException e) {
-            log.error("Failed to convert mongo schema to JSON", e);
-        }
-
+        Optional.ofNullable(mongoJsonSchema.getSchema())
+                .map(schemaStr -> {
+                    try {
+                        return objectMapper.readTree(schemaStr);
+                    } catch (JsonProcessingException e) {
+                        log.error("Failed to parse mongo schema string to JSON : " + mongoJsonSchema.getId(), e);
+                        return null;
+                    }
+                })
+                .ifPresent(jsonSchema::setSchema);
         return jsonSchema;
     }
 

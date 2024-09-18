@@ -7,8 +7,6 @@ spring:
       repositories:
         type: auto
       auto-index-creation: true
-    rest:
-      basePath: /api/v2
 # spring actuator
 management:
   endpoints:

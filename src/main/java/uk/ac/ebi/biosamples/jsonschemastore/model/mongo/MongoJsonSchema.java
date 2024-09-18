@@ -42,4 +42,13 @@ public class MongoJsonSchema {
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+
+    private boolean editable;
+
+    public void makeNonEditable() {
+        this.editable = false;
+    }
+    public void makeEditable() {
+        this.editable = true;
+    }
 }
