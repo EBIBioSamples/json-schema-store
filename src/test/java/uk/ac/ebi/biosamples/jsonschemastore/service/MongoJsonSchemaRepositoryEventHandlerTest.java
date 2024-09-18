@@ -1,5 +1,6 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
 
+import org.assertj.core.api.Condition;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,13 +39,15 @@ class MongoJsonSchemaRepositoryEventHandlerTest {
         schema.setVersion("1.0.5");
         schema.setName("test01");
 
-
         // When
         eventHandler.handleBeforeSave(schema);  // Trigger the event
 
         // Then
-        assertThat(schema.getVersion()).isEqualTo("1.0.6");
-        assertThat(schema.getId()).isEqualTo("test01:1.0.6");
+        assertThat(schema)
+                .hasFieldOrPropertyWithValue("version","1.0.6")
+                .hasFieldOrPropertyWithValue("id","test01:1.0.6")
+                .hasFieldOrPropertyWithValue("editable",true);
+
     }
 
     @Test
@@ -57,9 +60,11 @@ class MongoJsonSchemaRepositoryEventHandlerTest {
         eventHandler.handleBeforeCreate(schema);
 
         // Then
-        assertThat(schema.getVersion()).isEqualTo("1.0.0");
-        assertThat(schema.getId()).isEqualTo("test_01:1.0.0");
-        assertThat(schema.getName()).isEqualTo("test_01");
+        assertThat(schema)
+                .hasFieldOrPropertyWithValue("version","1.0.6")
+                .hasFieldOrPropertyWithValue("id","test01:1.0.6")
+                .hasFieldOrPropertyWithValue("editable",true)
+                .hasFieldOrPropertyWithValue("name","test_01");
     }
 
     @Test

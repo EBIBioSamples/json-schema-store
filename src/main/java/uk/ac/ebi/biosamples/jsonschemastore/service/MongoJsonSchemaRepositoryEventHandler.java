@@ -1,4 +1,5 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
@@ -16,19 +17,32 @@ import java.util.stream.Collectors;
 import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
 
 @Component
-@RepositoryEventHandler(MongoJsonSchema.class)
+@RepositoryEventHandler
+@RequiredArgsConstructor
 public class MongoJsonSchemaRepositoryEventHandler {
-
     private static final Logger logger = LoggerFactory.getLogger(MongoJsonSchemaRepositoryEventHandler.class);
-
     private final FieldRepository fieldRepository;
     private final SchemaRepository schemaRepository;
 
-    public MongoJsonSchemaRepositoryEventHandler(FieldRepository fieldRepository, SchemaRepository schemaRepository) {
-        this.fieldRepository = fieldRepository;
-        this.schemaRepository = schemaRepository;
+    /**
+     * Called when a new checklist is created. Initialises the version, id, and name
+     * @param schema
+     */
+    @HandleBeforeCreate
+    public void handleBeforeCreate(MongoJsonSchema schema) {
+        logger.info("Before creating MongoJsonSchema: {}", schema.getId());
+        schema.setName(toVariableName(schema.getTitle()));
+        schema.setVersion("1.0");
+        schema.setId(schema.getName()+":"+schema.getVersion());
+        schema.setAccession(getNextAccession());
+        schema.makeEditable();
     }
 
+    /**
+     * called after a checklist is saved (both 1st or n-th time).
+     * updates field references
+     * @param schema
+     */
     @HandleAfterSave
     @HandleAfterCreate
     public void handleAfterCreateOrSave(MongoJsonSchema schema) {
@@ -61,28 +75,31 @@ public class MongoJsonSchemaRepositoryEventHandler {
                 });
     }
 
-    @HandleBeforeCreate
-    public void handleBeforeCreate(MongoJsonSchema schema) {
-        logger.info("Before creating MongoJsonSchema: {}", schema.getId());
-        schema.setName(toVariableName(schema.getTitle()));
-        schema.setVersion("1.0.0");
-        schema.setId(schema.getName()+":"+schema.getVersion());
-        schema.setAccession(getNextAccession());
-    }
-
     private String getNextAccession() {
         // TODO: won't work correctly when deleted
         return "ERC" + 900000 + schemaRepository.count();
     }
 
 
+    /**
+     * called before a checklist is updated.
+     * makes it uneditable, increments version
+     * @param newSchemaVersion
+     */
     @HandleBeforeSave
-    public void handleBeforeSave(MongoJsonSchema schema) {
-        logger.info("Before saving MongoJsonSchema: {}", schema.getId());
-        String incrementedVersion = getIncrementedVersion(schema);
+    public void handleBeforeSave(MongoJsonSchema newSchemaVersion) {
+        logger.info("Before saving MongoJsonSchema: {}", newSchemaVersion.getId());
+        // make the current version not editable
+        MongoJsonSchema currentSchemaVersion = schemaRepository.findById(newSchemaVersion.getId()).get();
+        currentSchemaVersion.makeNonEditable();
+        schemaRepository.save(currentSchemaVersion);
+
+        // this will generate a new checklist instance with an incremented version
+        String incrementedVersion = getIncrementedVersion(newSchemaVersion);
         logger.info("incrementedVersion: {}", incrementedVersion);
-        schema.setVersion(incrementedVersion);
-        schema.setId(schema.getName()+":"+schema.getVersion());
+        newSchemaVersion.setVersion(incrementedVersion);
+        newSchemaVersion.setId(newSchemaVersion.getName()+":"+newSchemaVersion.getVersion());
+        newSchemaVersion.makeEditable();
     }
 
     private static String getIncrementedVersion(MongoJsonSchema schema) {
