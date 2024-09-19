@@ -9,7 +9,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.util.CollectionUtils;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.MalformedSchemaException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Property;

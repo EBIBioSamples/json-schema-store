@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Authority;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
@@ -23,6 +23,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
     private static final Logger logger = LoggerFactory.getLogger(MongoJsonSchemaRepositoryEventHandler.class);
     private final FieldRepository fieldRepository;
     private final SchemaRepository schemaRepository;
+    private final AccessioningService accessioningService;
 
     /**
      * Called when a new checklist is created. Initialises the version, id, and name
@@ -34,8 +35,10 @@ public class MongoJsonSchemaRepositoryEventHandler {
         schema.setName(toVariableName(schema.getTitle()));
         schema.setVersion("1.0");
         schema.setId(schema.getName()+":"+schema.getVersion());
-        schema.setAccession(getNextAccession());
+        schema.setAccession(accessioningService.getSchemaAccession(schema.getId()));
+        schema.setAuthority(Authority.BIOSAMPLES.name());
         schema.makeEditable();
+        schema.makeLatest();
     }
 
     /**
@@ -75,11 +78,6 @@ public class MongoJsonSchemaRepositoryEventHandler {
                 });
     }
 
-    private String getNextAccession() {
-        // TODO: won't work correctly when deleted
-        return "ERC" + 900000 + schemaRepository.count();
-    }
-
 
     /**
      * called before a checklist is updated.
@@ -92,6 +90,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
         // make the current version not editable
         MongoJsonSchema currentSchemaVersion = schemaRepository.findById(newSchemaVersion.getId()).get();
         currentSchemaVersion.makeNonEditable();
+        currentSchemaVersion.makeNonLatest();
         schemaRepository.save(currentSchemaVersion);
 
         // this will generate a new checklist instance with an incremented version
@@ -100,17 +99,17 @@ public class MongoJsonSchemaRepositoryEventHandler {
         newSchemaVersion.setVersion(incrementedVersion);
         newSchemaVersion.setId(newSchemaVersion.getName()+":"+newSchemaVersion.getVersion());
         newSchemaVersion.makeEditable();
+        newSchemaVersion.makeLatest();
     }
 
     private static String getIncrementedVersion(MongoJsonSchema schema) {
-        String incrementedVersion = incrementMinorVersion(schema.getVersion());
-        return incrementedVersion;
+        return incrementMinorVersion(schema.getVersion());
     }
 
     private static String incrementMinorVersion(String version) {
         String[] versionComponents = version.split("\\.");
-        String buildNumber = versionComponents[2];
-        versionComponents[2] = String.valueOf(Integer.valueOf(buildNumber)+1);
+        String buildNumber = versionComponents[1];
+        versionComponents[1] = String.valueOf(Integer.valueOf(buildNumber)+1);
         return String.join(".", versionComponents);
     }
 

@@ -16,7 +16,10 @@ import java.util.List;
 @Data
 @Document(collection = "schemas")
 @CompoundIndexes({
-        @CompoundIndex(name = "accession_version", def = "{'accession' : 1, 'version': 1}")
+        @CompoundIndex(
+                name = "accession_version",
+                def = "{'accession' : 1, 'version': 1}",
+                unique = true)
 })
 public class MongoJsonSchema {
     @Id
@@ -43,12 +46,22 @@ public class MongoJsonSchema {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    private boolean editable;
+    private Boolean editable;
+    private Boolean latest;
 
     public void makeNonEditable() {
         this.editable = false;
     }
+
     public void makeEditable() {
         this.editable = true;
+    }
+
+    public void makeNonLatest() {
+        this.latest = false;
+    }
+
+    public void makeLatest() {
+        this.latest = true;
     }
 }

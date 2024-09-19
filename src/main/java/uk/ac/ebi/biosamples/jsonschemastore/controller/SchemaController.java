@@ -134,8 +134,7 @@ public class SchemaController {
     }
 
     @GetMapping(value = "/search/findByExample")
-    public
-        PagedModel<EntityModel<MongoJsonSchema>>
+    public PagedModel<EntityModel<MongoJsonSchema>>
         findByExample(@ModelAttribute MongoJsonSchema exampleSchema,
                       Pageable pageable) {
         Page<MongoJsonSchema> entityPage = schemaService.findBySchema(exampleSchema, pageable);
