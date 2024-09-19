@@ -22,6 +22,9 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
+          env:
+            - name: MONGO_URL
+              value: ${MONGO_URL}
 
 ---
 apiVersion: v1
