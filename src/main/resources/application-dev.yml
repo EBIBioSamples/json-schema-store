@@ -2,11 +2,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/schemastore
-      database: schemastore
-      repositories:
-        type: auto
-      auto-index-creation: true
+      uri: ${MONGO_URL}
 # spring actuator
 management:
   endpoints:
@@ -17,7 +13,7 @@ management:
 # Elixir Validator
 schemastore:
   validator:
-    url: http://localhost:3020/validate
+    url: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
 
 logging:
   level:

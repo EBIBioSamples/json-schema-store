@@ -5,6 +5,7 @@ variables:
   DOCKER_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$DOCKER_TAG
   DOCKER_PULL_SECRET: docker-registry-secret
+  MONGO_URL: $MONGO_URL
 
 cache:
   paths:
@@ -13,24 +14,28 @@ cache:
 
 stages:
   - build
-  #  - test
+#  - test
   - publish
   - deploy
 
 build:
-  image: maven:latest
+  image: maven:3.8.3-openjdk-17
   stage: build
+  variables:
+    MONGO_URL: $MONGO_URL
   script:
-    - mvn $MAVEN_CLI_OPTS clean package -Pprod
+    - mvn $MAVEN_CLI_OPTS clean package -Pdocker
   artifacts:
     paths:
-      - target/json-schema-store-0.0.1.jar
+      - target/json-schema-store-0.0.2.jar
 
 build_docker_image:
   image: docker:latest
   services:
     - docker:dind
   stage: publish
+  variables:
+    MONGO_URL: $MONGO_URL
   script:
     - echo "$CI_DEPLOY_PASSWORD" | docker login $CI_REGISTRY -u $CI_DEPLOY_USER --password-stdin
     - echo $DOCKER_IMAGE_NAME
