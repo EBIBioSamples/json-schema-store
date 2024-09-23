@@ -5,7 +5,6 @@ variables:
   DOCKER_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$DOCKER_TAG
   DOCKER_PULL_SECRET: docker-registry-secret
-  MONGO_URL: $MONGO_URL
 
 cache:
   paths:
@@ -22,7 +21,7 @@ build:
   image: maven:3.8.3-openjdk-17
   stage: build
   variables:
-    MONGO_URL: $MONGO_URL
+    MONGO_URL: $DEV_MONGO_URL
   script:
     - mvn $MAVEN_CLI_OPTS clean package -Pdocker
   artifacts:
@@ -49,16 +48,38 @@ build_docker_image:
 #  script:
 #    - mvn $MAVEN_CLI_OPTS test
 #
-deploy:
+
+deploy_dev:
+  variables:
+    NAMESPACE: schema-store
+    HOST: wwwdev.ebi.ac.uk
+    MONGO_URL: $DEV_MONGO_URL
+  environment:
+    name: dev
+    url: https://wwwdev.ebi.ac.uk/schema-store
+  when: manual
+  extends: .kube_deploy_script
+
+deploy_prod:
+  variables:
+    NAMESPACE: schema-store-prod
+    HOST: www.ebi.ac.uk
+    MONGO_URL: $PROD_MONGO_URL
+  environment:
+    name: prod
+    url: https://www.ebi.ac.uk/schema-store
+  when: manual
+  extends: .kube_deploy_script
+
+.kube_deploy_script:
   stage: deploy
-  image: dtzar/helm-kubectl:3.11.0
+  image: dtzar/helm-kubectl
   script:
     - kubectl create namespace $KUBECTL_NAMESPACE || true
-    - kubectl config set-context --current --namespace=${KUBECTL_NAMESPACE}
+    - kubectl config set-context --current --namespace=${NAMESPACE}
     - kubectl delete secret $DOCKER_PULL_SECRET || true
     - kubectl create secret docker-registry $DOCKER_PULL_SECRET --docker-server=$CI_REGISTRY --docker-username=$CI_DEPLOY_USER --docker-password=$CI_DEPLOY_PASSWORD
     - envsubst < deployment.yaml > kubernetes.yaml
     - kubectl apply -f kubernetes.yaml
     - kubectl rollout restart deployments json-schema-store
-  when: manual
 
