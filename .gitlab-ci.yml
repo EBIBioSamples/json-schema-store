@@ -33,8 +33,6 @@ build_docker_image:
   services:
     - docker:dind
   stage: publish
-  variables:
-    MONGO_URL: $MONGO_URL
   script:
     - echo "$CI_DEPLOY_PASSWORD" | docker login $CI_REGISTRY -u $CI_DEPLOY_USER --password-stdin
     - echo $DOCKER_IMAGE_NAME
