@@ -1,0 +1,25 @@
+### general checklist search: by editable field
+GET {{schema_store_url}}/mongoJsonSchemas1/search/findByExample?editable=Yes
+Accept: application/hal+json
+
+> {%
+client.test("status is 200", () => {
+    client.assert(response.status == 200, `expected 200, was ${response.status}`)
+})
+%}
+
+### schemas
+GET {{schema_store_url}}/api/v2/schemas
+
+### mongoJsonSchemas
+GET {{schema_store_url}}/api/v2/mongoJsonSchemas
+
+### mappings
+GET {{schema_store_url}}/actuator/mappings
+Accept: application/json
+
+### convert and save all ena checklists
+GET {{schema_store_url}}/checklist/converter/convert/all
+
+### convert a single xml checklist
+GET {{schema_store_url}}/checklist/converter/ERC000011

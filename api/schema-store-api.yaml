@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  title: Schema Store
+  description: Schema Store
+  version: 1.0.0
+servers:
+  - url: 'http://wp-np2-40:8080/biosamples/schema/store'
+    description: schema store dev vm
+  - url: 'http://localhost:8080/biosamples/schema/store'
+    description: schema store local
+paths:
+  /api/v2/schemas/search:
+    get:
+      summary: search schemas
+      parameters:
+        - in: query
+          name: id
+          description: schema id in the for of url
+          required: false
+          schema:
+            type: string
+          examples:
+            ERC000015:
+              summary: ERC000015 ENA-GSC_MIxS_human_gut
+              value: 'https://www.ebi.ac.uk/biosamples/schemas/ENA-GSC_MIxS_human_gut/1.0.0'
+        - in: query
+          name: text
+          description: string to search for
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON object containing 1st page of results in HAL format
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/definitions/schemas/Schema'
+                  - $ref: '#/definitions/schemas/HAL'
+                type: object
+                discriminator:
+                  propertyName: type
+                  mapping:
+                    id: '#/definitions/schemas/Schema'
+              examples:
+                single:
+                  $ref: '#/definitions/schemas/Schema/example'
+                default:
+                  $ref: './all-schemas.json'
+
+definitions:
+  schemas:
+    Schema:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        version:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        schema:
+          type: object
+        schemaFields:
+          $ref: '#/definitions/schemas/SchemaField'
+      example:
+        $ref: './schema-example.json'
+    Field:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        usedBySchemas:
+          type: array
+          items:
+            properties:
+              name: schemaId
+              type: string
+
+
+
+      example:
+        id: text-field-example
+        name: text-field-example
+        label: Text field Example
+        description: Text field Example Description
+    HAL:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            schemas:
+              type: array
+              items:
+                $ref: '#/definitions/schemas/Schema'
+        _links:
+          type: object
+        page:
+          type: object
+    SchemaField:
+      type: array
+      description: describes a field's inclusion in a schema
+      items:
+        type: object
+        properties:
+          cardinality:
+            description: needs a name change
+            enum:
+              - mandatory
+              - optional
+              - recommended
+          numberOfValues:
+            description: needs a name change, should be cardinality
+            enum:
+              - single
+              - multiple
+          fieldId:
+            type: String

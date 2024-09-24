@@ -2,7 +2,8 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGO_URL}
+      uri: mongodb://localhost:27017/schemastore
+
 # spring actuator
 management:
   endpoints:
