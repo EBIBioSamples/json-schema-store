@@ -1,9 +1,10 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
 
+// TODO: make a Srping Componet rather than static
 public class VariableNameFormatter {
-    public static String toVariableName(String title) {
+    public static String toVariableName(String name) {
         // Replace spaces with underscores
-        String formatted = title.replaceAll("\\s+", "_");
+        String formatted = name.replaceAll("\\s+", "_");
         // Convert to lowercase
         formatted = formatted.toLowerCase();
 

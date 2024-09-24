@@ -25,6 +25,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
+import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
+
 @Data
 @Document(collection = "fields")
 @SuperBuilder
@@ -43,7 +45,8 @@ import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 public class Field
 {
     @Id
-    protected String id; // "name" in the old ena editor
+    protected String id;
+    protected String name;
     protected String label;
     protected String description;
     protected Set<String> usedBySchemas = new HashSet<>();;
@@ -74,7 +77,7 @@ public class Field
         } else {
             throw new IllegalArgumentException("property " + property.name() + " has unsupported type " + property.type());
         }
-        return builder.id(property.name())
+        return builder.name(toVariableName(property.name()))
                 .description(property.description())
                 .label(property.name())
                 .usedBySchemas(new HashSet<>(1))

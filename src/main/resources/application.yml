@@ -19,7 +19,9 @@ logging:
       springframework:
         security: DEBUG
         data:
-          rest: DEBUG
+          rest:
+            webmvc:
+              json: INFO
         web: DEBUG
     uk:
       ac:

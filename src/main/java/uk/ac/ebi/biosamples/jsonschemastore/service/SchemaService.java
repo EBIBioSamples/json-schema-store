@@ -1,32 +1,32 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SchemaService {
     private final AccessioningService accessioningService;
     private final SchemaRepository schemaRepository;
+    private final FieldRepository fieldRepository;
     private final MongoModelConverter modelConverter;
-
-    public SchemaService(AccessioningService accessioningService, SchemaRepository schemaRepository, MongoModelConverter modelConverter) {
-        this.accessioningService = accessioningService;
-        this.schemaRepository = schemaRepository;
-        this.modelConverter = modelConverter;
-    }
 
     public Optional<JsonSchema> getSchemaByNameAndVersion(@NonNull String schemaName, String version) {
         Optional<MongoJsonSchema> optionalSchema = schemaRepository.findFirstByNameAndVersionOrderByVersionDesc(schemaName, version);
@@ -93,13 +93,19 @@ public class SchemaService {
     }
 
     // todo check accession logic in both POST and PUT requests
-    public JsonSchema saveSchemaWithAccession(@NonNull JsonSchema jsonSchema) {
+    public JsonSchema saveSchemaWithAccession(@NonNull JsonSchema jsonSchema, Set<Field> fields) {
         String accession = jsonSchema.getAccession();
         if (accession != null && !accession.isEmpty()) {
             jsonSchema.setAccession(accession);
         }
         MongoJsonSchema mongoJsonSchema = modelConverter.jsonSchemaToMongoJsonSchema(jsonSchema);
         MongoJsonSchema mongoJsonSchemaResult = schemaRepository.save(mongoJsonSchema);
+        fields.stream()
+                .map(field -> fieldRepository.findByName(field.getName()).orElse(field))
+                .forEach(field -> {
+                    field.getUsedBySchemas().add(jsonSchema.getId());
+                    fieldRepository.save(field);
+                });
         return modelConverter.mongoJsonSchemaToJsonSchema(mongoJsonSchemaResult);
     }
 

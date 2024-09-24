@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
+
 @Slf4j
 @Service
 public class ChecklistConverterService {
@@ -76,7 +78,7 @@ public class ChecklistConverterService {
     }
 
     private static SchemaFieldAssociation fieldAssociationFromProperty(Property property) {
-        return new SchemaFieldAssociation(property.name(), property.cardinality(), Multiplicity.Single);
+        return new SchemaFieldAssociation(toVariableName(property.name()), property.cardinality(), Multiplicity.Single);
     }
 
     public ImportedChecklist convertEnaChecklist(String checklistId) {
@@ -84,7 +86,7 @@ public class ChecklistConverterService {
             List<Property> properties;
             EnaChecklist enaChecklist = getEnaChecklist(checklistId);
             properties = listProperties(enaChecklist);
-            String schemaId = getSchemaId(enaChecklist);
+            String schemaId = toVariableName(enaChecklist.getChecklist().getDescriptor().getName());
             String title = enaChecklist.getChecklist().getDescriptor().getName();
             String description = enaChecklist.getChecklist().getDescriptor().getDescription();
             String jsonSchema = SchemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);
@@ -168,8 +170,8 @@ public class ChecklistConverterService {
     }
 
     private String getSchemaId(EnaChecklist enaChecklist) {
-        String schemaName = "ENA-" + enaChecklist.getChecklist().getDescriptor().getName().replace(" ", "_");
-        String schemaVersion = "1.0.0";
+        String schemaName = "ENA-" + toVariableName(enaChecklist.getChecklist().getDescriptor().getName());
+        String schemaVersion = "1.0";
         return String.format("https://www.ebi.ac.uk/biosamples/schemas/%s/%s", schemaName, schemaVersion);
     }
 
