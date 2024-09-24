@@ -13,6 +13,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 
 import java.util.List;
+import java.util.Optional;
 
 @RepositoryRestResource(collectionResourceDescription = @Description("hi"))
 public interface FieldRepository
@@ -31,6 +32,7 @@ public interface FieldRepository
     List<Field> findAllById(Iterable<String> ids);
 
     List<Field> findByIdIn(List<String> ids);
+    List<Field> findByNameIn(List<String> names);
 
     @Query("{ $text: { $search: ?0 } }")
     Page<Field> findAllByText(String text, Pageable pageable);
@@ -42,6 +44,7 @@ public interface FieldRepository
             "}")
     Page<Field> findAllByTextPartial(String text, Pageable pageable);
 
+    Optional<Field> findByName(String name);
 
 }
 

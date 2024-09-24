@@ -20,7 +20,7 @@ public class SchemaObjectPopulator {
     public void populateSchema(Schema schema) {
         JsonNode node = schema.getSchema();
         String id = Objects.requireNonNull(node.get("$id"), "$id field cannot be null!").asText();
-        SchemaId schemaId = SchemaIdExtractor.validateSchemaId(id);
+        SchemaId schemaId = new SchemaId(id, "domain-not-set", id, schema.getVersion());
         populateWithSchemaId(schema, schemaId);
         populateAuthority(schema);
     }

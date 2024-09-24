@@ -44,7 +44,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean getRespositoryPopulator() {
         Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        factory.setResources(new Resource[]{new ClassPathResource("env/init_db_schema.json")});
+//        factory.setResources(new Resource[]{new ClassPathResource("env/init_db_schema.json")});
         return factory;
     }
 }
