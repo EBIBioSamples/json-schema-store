@@ -17,8 +17,8 @@ public class ChecklistConverterController {
 
   @GetMapping("/{checklist}")
   public ResponseEntity<String> convertChecklist(@PathVariable("checklist") String checklist) {
-    String jsonSchema = checklistConverterService.convertEnaChecklist(checklist);
-    return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
+    ImportedChecklist jsonSchema = checklistConverterService.convertEnaChecklist(checklist);
+    return new ResponseEntity<>(jsonSchema.getJsonSchemaString(), HttpStatus.OK);
   }
 
   @PutMapping("/{checklist}")

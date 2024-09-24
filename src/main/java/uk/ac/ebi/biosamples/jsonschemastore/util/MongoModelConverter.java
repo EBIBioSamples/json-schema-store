@@ -33,6 +33,9 @@ public class MongoModelConverter {
         mongoJsonSchema.setMetaSchema(jsonSchema.getMetaSchema());
         mongoJsonSchema.setSchema(jsonSchema.getSchema().toString());
         mongoJsonSchema.setAuthority(jsonSchema.getAuthority());
+        mongoJsonSchema.setSchemaFieldAssociations(jsonSchema.getSchemaFieldAssociations());
+        mongoJsonSchema.setEditable(jsonSchema.getEditable());
+        mongoJsonSchema.setLatest(jsonSchema.getLatest());
 
         return mongoJsonSchema;
     }
@@ -48,6 +51,7 @@ public class MongoModelConverter {
         jsonSchema.setDomain(mongoJsonSchema.getDomain());
         jsonSchema.setMetaSchema(mongoJsonSchema.getMetaSchema());
         jsonSchema.setAuthority(mongoJsonSchema.getAuthority());
+        jsonSchema.setSchemaFieldAssociations(mongoJsonSchema.getSchemaFieldAssociations());
         Optional.ofNullable(mongoJsonSchema.getSchema())
                 .map(schemaStr -> {
                     try {

@@ -88,10 +88,12 @@ public class MongoJsonSchemaRepositoryEventHandler {
     public void handleBeforeSave(MongoJsonSchema newSchemaVersion) {
         logger.info("Before saving MongoJsonSchema: {}", newSchemaVersion.getId());
         // make the current version not editable
-        MongoJsonSchema currentSchemaVersion = schemaRepository.findById(newSchemaVersion.getId()).get();
-        currentSchemaVersion.makeNonEditable();
-        currentSchemaVersion.makeNonLatest();
-        schemaRepository.save(currentSchemaVersion);
+        schemaRepository.findById(newSchemaVersion.getId())
+                .ifPresent(currentSchemaVersion-> {
+                            currentSchemaVersion.makeNonEditable();
+                            currentSchemaVersion.makeNonLatest();
+                            schemaRepository.save(currentSchemaVersion);
+                        });
 
         // this will generate a new checklist instance with an incremented version
         String incrementedVersion = getIncrementedVersion(newSchemaVersion);

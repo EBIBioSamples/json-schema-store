@@ -2,6 +2,8 @@ package uk.ac.ebi.biosamples.jsonschemastore.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,6 +11,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -18,6 +23,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
+import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
 @Data
 @Document(collection = "fields")
@@ -48,5 +54,32 @@ public class Field
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+
+    public static Field fromProperty(Property property) {
+        JsonNode typeAsJson = SchemaTemplateGenerator.getJson(property.type());
+        Field.FieldBuilder builder;
+        if(typeAsJson.has("enum")) {
+            List<String> choices = StreamSupport.stream(typeAsJson.get("enum").spliterator(), false)
+                    .map(JsonNode::asText)
+                    .collect(Collectors.toList());
+            builder = ChoiceField.builder().type("choice");
+             ((ChoiceField.ChoiceFieldBuilder<?, ?>) builder)
+                     .choices(choices);
+        } else if (typeAsJson.has("pattern")) {
+            builder = PatternField.builder().type("pattern");
+            ((PatternField.PatternFieldBuilder<?, ?>) builder)
+                    .pattern(typeAsJson.get("pattern").asText());
+        } else if (typeAsJson.has("type")) {
+            builder = Field.builder().type("string");
+        } else {
+            throw new IllegalArgumentException("property " + property.name() + " has unsupported type " + property.type());
+        }
+        return builder.id(property.name())
+                .description(property.description())
+                .label(property.name())
+                .usedBySchemas(new HashSet<>(1))
+                .build();
+
+    }
 }
 
