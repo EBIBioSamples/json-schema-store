@@ -3,7 +3,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/schemastore
-
+server:
+  port: 8085
+  servlet:
+    context-path: /schema-store
 # spring actuator
 management:
   endpoints:

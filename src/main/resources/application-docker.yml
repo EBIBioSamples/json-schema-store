@@ -5,6 +5,8 @@ spring:
       uri: ${MONGO_URL}
 server:
   port: 8085
+  servlet:
+    context-path: /schema-store
 # spring actuator
 management:
   endpoints:
