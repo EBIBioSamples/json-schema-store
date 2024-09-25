@@ -22,67 +22,9 @@ import java.io.IOException;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-
-        registry.addResourceHandler("/**/*")
-                .addResourceLocations("classpath:/static/")
-                .resourceChain(true)
-                .addResolver(new PathResourceResolver() {
-                    @Override
-                    protected Resource getResource(String resourcePath,
-                                                   Resource location) throws IOException {
-                        Resource requestedResource = location.createRelative(resourcePath);
-                        return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
-                                : new ClassPathResource("/static/index.html");
-                    }
-                });
-    }
-
-    @Bean
-    public HateoasPageableHandlerMethodArgumentResolver pageableResolver() {
-        return new HateoasPageableHandlerMethodArgumentResolver(sortResolver());
-    }
-
-    @Bean
-    public HateoasSortHandlerMethodArgumentResolver sortResolver() {
-        return new HateoasSortHandlerMethodArgumentResolver();
-    }
-
-    @Bean
-    public PagedResourcesAssembler<JsonSchema> getPagedResourcesAssembler() {
-        return new PagedResourcesAssembler<>(pageableResolver(), null);
-    }
-
-    @Bean
-    public PagedResourcesAssembler<MetaSchema> getPagedResourcesAssemblerForMetaSchema() {
-        return new PagedResourcesAssembler<>(pageableResolver(), null);
-    }
-
-    @Bean
-    public PagedResourcesAssembler<SchemaOutline> getPagedResourcesAssemblerForSchemaOutline() {
-        return new PagedResourcesAssembler<>(pageableResolver(), null);
-    }
-
     @Bean
     public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-    /*ObjectMapper jsonMapper = new ObjectMapper();
-    modelMapper.typeMap(JsonSchema.class, MongoJsonSchema.class).addMappings(mapper -> {
-      mapper.map(src -> src.getSchema().toString(), MongoJsonSchema::setSchema);
-    });
-
-    modelMapper.typeMap(MongoJsonSchema.class, JsonSchema.class).addMappings(mapper -> {
-      mapper.map(src -> {
-        try {
-          return jsonMapper.readTree(src.getSchema());
-        } catch (JsonProcessingException e) {
-          log.error("Couldn't convert mongo model to JSON: {}", e.getMessage());
-          return null;
-        }
-      }, JsonSchema::setSchema);
-    });*/
-        return modelMapper;
+        return new ModelMapper();
     }
 
     // testing on the localhost
@@ -102,7 +44,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean getRespositoryPopulator() {
         Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        factory.setResources(new Resource[]{new ClassPathResource("env/init_db_schema.json")});
+//        factory.setResources(new Resource[]{new ClassPathResource("env/init_db_schema.json")});
         return factory;
     }
 }

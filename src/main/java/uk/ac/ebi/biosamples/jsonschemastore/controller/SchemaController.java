@@ -1,7 +1,10 @@
 package uk.ac.ebi.biosamples.jsonschemastore.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
@@ -11,6 +14,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.exception.JsonSchemaServiceException
 import uk.ac.ebi.biosamples.jsonschemastore.exception.MalformedSchemaException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
+import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaValidationService;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
@@ -20,20 +24,14 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v2/schemas", produces = {"application/json"})
+@RequestMapping(value = "${spring.data.rest.basePath}/schemas", produces = {"application/json"})
+@RequiredArgsConstructor
 public class SchemaController {
     private final SchemaService schemaService;
     private final SchemaValidationService schemaValidationService;
     private final SchemaResourceAssembler schemaResourceAssembler;
     private final SchemaObjectPopulator schemaObjectPopulator;
-
-    public SchemaController(SchemaService schemaService, SchemaValidationService schemaValidationService,
-                            SchemaResourceAssembler schemaResourceAssembler, SchemaObjectPopulator schemaObjectPopulator) {
-        this.schemaService = schemaService;
-        this.schemaValidationService = schemaValidationService;
-        this.schemaResourceAssembler = schemaResourceAssembler;
-        this.schemaObjectPopulator = schemaObjectPopulator;
-    }
+    private final PagedResourcesAssembler pagedResourcesAssembler;
 
     @GetMapping
     public ResponseEntity<JsonSchema> getSchema(@RequestParam("id") String id) {
@@ -45,7 +43,7 @@ public class SchemaController {
 
     @GetMapping("/{accession}/{version}")
     public ResponseEntity<JsonSchema> getSchemaByAccessionAndVersion(@PathVariable("accession") String accession,
-                                                           @PathVariable("version") String version) {
+                                                                     @PathVariable("version") String version) {
         return schemaService.getSchemaByAccessionAndVersion(accession, version)
                 .map(schemaResourceAssembler::populateResources)
                 .map(ResponseEntity::ok)
@@ -54,8 +52,8 @@ public class SchemaController {
 
     @GetMapping("/search")
     public PagedModel<EntityModel<JsonSchema>> getSchemaPage(@RequestParam(value = "text", required = false) String text,
-                                                              @RequestParam(value = "page", required = false) Integer page,
-                                                              @RequestParam(value = "size", required = false) Integer size) {
+                                                             @RequestParam(value = "page", required = false) Integer page,
+                                                             @RequestParam(value = "size", required = false) Integer size) {
         text = Objects.requireNonNullElse(text, "");
         page = Objects.requireNonNullElse(page, 0);
         size = Objects.requireNonNullElse(size, 10);
@@ -98,7 +96,7 @@ public class SchemaController {
     @PutMapping
     public ResponseEntity<JsonSchema> updateSchema(@RequestParam("id") String id, @RequestBody JsonSchema schema) {
         schemaObjectPopulator.populateSchema(schema);
-        if(schema.getAccession() == null
+        if (schema.getAccession() == null
                 || schema.getAccession().isEmpty()
                 || !schemaService.schemaAccessionExists(schema.getAccession())) {
             throw new MalformedSchemaException("Accession must be present to update the schema id: " + id);
@@ -134,4 +132,16 @@ public class SchemaController {
         Page<SchemaOutline> schemaPage = schemaService.getAllVersionsByAccession(accession, page, size);
         return schemaResourceAssembler.buildPageForSchemaOutline(schemaPage);
     }
+
+    @GetMapping(value = "/search/findByExample")
+    public PagedModel<EntityModel<MongoJsonSchema>>
+        findByExample(@ModelAttribute MongoJsonSchema exampleSchema,
+                      Pageable pageable) {
+        Page<MongoJsonSchema> entityPage = schemaService.findBySchema(exampleSchema, pageable);
+        return pagedResourcesAssembler.toModel(entityPage);
+
+    }
+
+
+
 }

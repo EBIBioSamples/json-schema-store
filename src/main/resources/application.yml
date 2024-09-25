@@ -4,6 +4,33 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  #  data:
-#    mongodb:
-#      auto-index-creation: false
+  data:
+    rest:
+      basePath: /api/v2
+# spring actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        data:
+          rest:
+            webmvc:
+              json: INFO
+        web: DEBUG
+    uk:
+      ac:
+        ebi:
+          biosamples:
+            jsonschemastore: INFO
+
+
+# Elixir Validator
+schemastore:
+  validator:
+    url: http://localhost:3020/validate

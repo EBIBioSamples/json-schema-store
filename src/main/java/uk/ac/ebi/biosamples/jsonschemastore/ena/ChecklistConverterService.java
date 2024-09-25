@@ -9,17 +9,21 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.ApplicationStateException;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Authority;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Property;
+import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.Multiplicity;
+import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
 
 @Slf4j
 @Service
@@ -61,8 +65,8 @@ public class ChecklistConverterService {
     }
 
     private static Property mapEnaFieldToProperty(Field field) {
-        return new Property(field.getName(), field.getSynonyms(), field.getDescription(), getTypedTemplate(field),
-            field.getUnits(), getCardinality(field.getMandatory()));
+        return new Property(field.getName(), field.getSynonyms(), field.getDescription(),   getTypedTemplate(field),
+                field.getUnits(), getCardinality(field.getMandatory()) );
     }
 
     private static Property.AttributeCardinality getCardinality(String fieldRequirement) {
@@ -73,26 +77,30 @@ public class ChecklistConverterService {
         }
     }
 
-    public String convertEnaChecklist(String checklistId) {
-        String jsonSchema;
+    private static SchemaFieldAssociation fieldAssociationFromProperty(Property property) {
+        return new SchemaFieldAssociation(toVariableName(property.name()), property.cardinality(), Multiplicity.Single);
+    }
+
+    public ImportedChecklist convertEnaChecklist(String checklistId) {
         try {
+            List<Property> properties;
             EnaChecklist enaChecklist = getEnaChecklist(checklistId);
-            List<Property> properties = listProperties(enaChecklist);
-            String schemaId = getSchemaId(enaChecklist);
+            properties = listProperties(enaChecklist);
+            String schemaId = toVariableName(enaChecklist.getChecklist().getDescriptor().getName());
             String title = enaChecklist.getChecklist().getDescriptor().getName();
             String description = enaChecklist.getChecklist().getDescriptor().getDescription();
-            jsonSchema = SchemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);
+            String jsonSchema = SchemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);
+            return new ImportedChecklist(jsonSchema, properties);
         } catch (Exception e) {
-            log.error("Could not checklistId checklist: " + checklistId, e);
-            throw new ApplicationStateException("Could not retrieve checklist for " + checklistId, e);
+            log.error("Could not convert checklist: " + checklistId, e);
+            throw new ApplicationStateException("Could not convert checklist for " + checklistId, e);
         }
-        return jsonSchema;
     }
 
     public String persistEnaChecklist(String checklistId) {
-        String jsonSchema = convertEnaChecklist(checklistId);
+        ImportedChecklist jsonSchema = convertEnaChecklist(checklistId);
         saveSchema(checklistId, jsonSchema);
-        return jsonSchema;
+        return jsonSchema.getJsonSchemaString();
     }
 
     public String persistEnaChecklists() {
@@ -104,19 +112,34 @@ public class ChecklistConverterService {
         return checklists.toString();
     }
 
-    public String saveSchema(String checklistId, String schemaString) {
-        JsonNode schema = SchemaTemplateGenerator.getJson(schemaString);
+    public String saveSchema(String checklistId, ImportedChecklist importedChecklist) {
+
+        JsonSchema jsonSchema = fromJson(checklistId, importedChecklist);
+        Set<uk.ac.ebi.biosamples.jsonschemastore.model.Field> fields = importedChecklist.getProperties()
+                .stream().map(uk.ac.ebi.biosamples.jsonschemastore.model.Field::fromProperty)
+                .collect(Collectors.toSet());
+
+        schemaService.saveSchemaWithAccession(jsonSchema, fields);
+
+        return importedChecklist.getJsonSchemaString();
+    }
+
+    private JsonSchema fromJson(String checklistId, ImportedChecklist importedChecklist) {
+        JsonNode schemaAsJson = SchemaTemplateGenerator.getJson(importedChecklist.getJsonSchemaString());
 
         JsonSchema jsonSchema = new JsonSchema();
-        jsonSchema.setSchema(schema);
-        jsonSchema.setAuthority("ENA");
+        jsonSchema.setSchema(schemaAsJson);
+        jsonSchema.setVersion("1.0");
+        jsonSchema.setAuthority(Authority.ENA.name());
         jsonSchema.setAccession(checklistId);
         jsonSchema.setMetaSchema("https://schemablocks.org/metaschemas/json-schema-draft-07/1.0.1");
+        jsonSchema.setEditable(true);
+        jsonSchema.setLatest(true);
+        importedChecklist.getProperties()
+                .stream().map(ChecklistConverterService::fieldAssociationFromProperty)
+                .forEach(jsonSchema.getSchemaFieldAssociations()::add);
         populator.populateSchema(jsonSchema);
-
-        schemaService.saveSchemaWithAccession(jsonSchema);
-
-        return schemaString;
+        return jsonSchema;
     }
 
     private EnaChecklist getEnaChecklist(String checklistId) {
@@ -124,7 +147,7 @@ public class ChecklistConverterService {
         restTemplate.setErrorHandler(new EnaErrorHandler());
         URI uri = URI.create(enaChecklistBaseUrl.replace("${checklistId}", checklistId));
         EnaChecklist enaChecklist = restTemplate.getForObject(uri, EnaChecklist.class);
-        Objects.requireNonNull(enaChecklist, "Failed to retrieve ENA checklist");
+        Objects.requireNonNull(enaChecklist, "Failed to retrieve ENA checklist" + checklistId);
 
         return enaChecklist;
     }
@@ -147,18 +170,18 @@ public class ChecklistConverterService {
     }
 
     private String getSchemaId(EnaChecklist enaChecklist) {
-        String schemaName = "ENA-" + enaChecklist.getChecklist().getDescriptor().getName().replace(" ", "_");
-        String schemaVersion = "1.0.0";
+        String schemaName = "ENA-" + toVariableName(enaChecklist.getChecklist().getDescriptor().getName());
+        String schemaVersion = "1.0";
         return String.format("https://www.ebi.ac.uk/biosamples/schemas/%s/%s", schemaName, schemaVersion);
     }
 
 
-
     private List<Property> listProperties(EnaChecklist enaChecklist) {
-        return enaChecklist.getChecklist().getDescriptor().getFieldGroups().stream().
-            flatMap(group -> group.getFields().stream())
-            .map(ChecklistConverterService::mapEnaFieldToProperty)
-            .collect(Collectors.toList());
+        return enaChecklist.getChecklist().getDescriptor()
+                .getFieldGroups().stream()
+                .flatMap(group -> group.getFields().stream())
+                .map(ChecklistConverterService::mapEnaFieldToProperty)
+                .collect(Collectors.toList());
     }
 
     static class EnaErrorHandler implements ResponseErrorHandler {

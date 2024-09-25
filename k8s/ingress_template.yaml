@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: schema-store-ingress
+  namespace: ${NAMESPACE}
+  labels:
+    app: schema-store-service
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: ${HOST}
+      http:
+        paths:
+          - path: /ait/schemastore(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: schema-store-service
+                port:
+                  number: 8080
