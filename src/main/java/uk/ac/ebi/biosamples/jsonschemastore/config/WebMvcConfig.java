@@ -41,6 +41,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     // initially loading basic schemas/metaschemas into the db
+    // TODO: move to some spring profile
     @Bean
     public Jackson2RepositoryPopulatorFactoryBean getRespositoryPopulator() {
         Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();

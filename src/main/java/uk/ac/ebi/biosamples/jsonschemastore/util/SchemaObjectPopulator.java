@@ -7,8 +7,6 @@ import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Schema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 
-import java.util.Objects;
-
 @Component
 public class SchemaObjectPopulator {
     private final SchemaStoreProperties properties;
@@ -18,20 +16,26 @@ public class SchemaObjectPopulator {
     }
 
     public void populateSchema(Schema schema) {
-        JsonNode node = schema.getSchema();
-        String id = Objects.requireNonNull(node.get("$id"), "$id field cannot be null!").asText();
-        SchemaId schemaId = new SchemaId(id, "domain-not-set", id, schema.getVersion());
+        SchemaId schemaId = toSchemaId(schema);
         populateWithSchemaId(schema, schemaId);
         populateAuthority(schema);
     }
 
     public void incrementAndPopulateSchema(Schema schema) {
-        JsonNode node = schema.getSchema();
-        String id = Objects.requireNonNull(node.get("$id"), "$id field cannot be null!").asText();
-        SchemaId schemaId = SchemaIdExtractor.incrementSchemaId(id);
-        populateWithSchemaId(schema, schemaId);
-        ((ObjectNode)schema.getSchema()).put("$id", schemaId.getId());
+        SchemaId schemaId = toSchemaId(schema);
+        SchemaId incrementedId = SchemaId.incrementMinorVersion(schemaId);
+        populateWithSchemaId(schema, incrementedId);
+        ((ObjectNode)schema.getSchema()).put("$id", "base-url-not-set/"+incrementedId.asString());
         populateAuthority(schema);
+    }
+
+    private static SchemaId toSchemaId(Schema schema) {
+        // TODO: check if schema's $id is populated, get version from there
+        JsonNode node = schema.getSchema();
+        String accession = schema.getAccession();
+        String version = schema.getVersion();
+        SchemaId schemaId = new SchemaId(accession, version);
+        return schemaId;
     }
 
     private void populateAuthority(Schema schema) {
@@ -43,11 +47,10 @@ public class SchemaObjectPopulator {
 
     private void populateWithSchemaId(Schema schema, SchemaId schemaId) {
         JsonNode node = schema.getSchema();
-        schema.setId(schemaId.getId());
-        schema.setName(schemaId.getName());
+        schema.setId(schemaId.asString());
         schema.setVersion(schemaId.getVersion());
-        schema.setDomain(schemaId.getDomain());
         schema.setTitle(node.get("title") != null ? node.get("title").asText() : "");
+        schema.setName(schema.getTitle());
         schema.setDescription(node.get("description") != null ? node.get("description").asText() : "");
     }
 }

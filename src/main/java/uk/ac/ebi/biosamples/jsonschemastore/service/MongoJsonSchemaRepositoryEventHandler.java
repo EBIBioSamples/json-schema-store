@@ -96,23 +96,13 @@ public class MongoJsonSchemaRepositoryEventHandler {
                         });
 
         // this will generate a new checklist instance with an incremented version
-        String incrementedVersion = getIncrementedVersion(newSchemaVersion);
+        // TODO: reuse SchemaId
+        String incrementedVersion = VersionIncrementer.incrementMinorVersion(newSchemaVersion.getVersion());
         logger.info("incrementedVersion: {}", incrementedVersion);
         newSchemaVersion.setVersion(incrementedVersion);
-        newSchemaVersion.setId(newSchemaVersion.getName()+":"+newSchemaVersion.getVersion());
+        newSchemaVersion.setId(newSchemaVersion.getAccession()+":"+newSchemaVersion.getVersion());
         newSchemaVersion.makeEditable();
         newSchemaVersion.makeLatest();
-    }
-
-    private static String getIncrementedVersion(MongoJsonSchema schema) {
-        return incrementMinorVersion(schema.getVersion());
-    }
-
-    private static String incrementMinorVersion(String version) {
-        String[] versionComponents = version.split("\\.");
-        String buildNumber = versionComponents[1];
-        versionComponents[1] = String.valueOf(Integer.valueOf(buildNumber)+1);
-        return String.join(".", versionComponents);
     }
 
     @HandleBeforeDelete

@@ -12,6 +12,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.exception.ApplicationStateException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Authority;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Property;
+import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.Multiplicity;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
@@ -86,7 +87,7 @@ public class ChecklistConverterService {
             List<Property> properties;
             EnaChecklist enaChecklist = getEnaChecklist(checklistId);
             properties = listProperties(enaChecklist);
-            String schemaId = toVariableName(enaChecklist.getChecklist().getDescriptor().getName());
+                String schemaId = new SchemaId(enaChecklist.getChecklist().getAccession(), "1.0").asString();
             String title = enaChecklist.getChecklist().getDescriptor().getName();
             String description = enaChecklist.getChecklist().getDescriptor().getDescription();
             String jsonSchema = SchemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);

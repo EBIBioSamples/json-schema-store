@@ -32,7 +32,8 @@ public interface FieldRepository
     List<Field> findAllById(Iterable<String> ids);
 
     List<Field> findByIdIn(List<String> ids);
-    List<Field> findByNameIn(List<String> names);
+
+    List<Field> findAllByNameIn(List<String> names);
 
     @Query("{ $text: { $search: ?0 } }")
     Page<Field> findAllByText(String text, Pageable pageable);
