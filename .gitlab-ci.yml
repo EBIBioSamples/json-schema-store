@@ -73,7 +73,7 @@ deploy_prod:
   stage: deploy
   image: dtzar/helm-kubectl
   script:
-    - kubectl create namespace $KUBECTL_NAMESPACE || true
+    - kubectl create namespace $NAMESPACE || true
     - kubectl config set-context --current --namespace=${NAMESPACE}
     - kubectl delete secret $DOCKER_PULL_SECRET || true
     - kubectl create secret docker-registry $DOCKER_PULL_SECRET --docker-server=$CI_REGISTRY --docker-username=$CI_DEPLOY_USER --docker-password=$CI_DEPLOY_PASSWORD
