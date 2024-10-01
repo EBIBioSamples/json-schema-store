@@ -31,7 +31,7 @@ public interface FieldRepository
     @Override
     List<Field> findAllById(Iterable<String> ids);
 
-    List<Field> findByIdIn(List<String> ids);
+    Page<Field> findAllByIdIn(List<String> ids, Pageable pageable);
 
     List<Field> findAllByNameIn(List<String> names);
 
