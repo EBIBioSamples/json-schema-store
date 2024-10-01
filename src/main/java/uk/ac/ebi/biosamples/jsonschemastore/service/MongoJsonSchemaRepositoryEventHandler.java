@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Authority;
+import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
@@ -34,8 +35,9 @@ public class MongoJsonSchemaRepositoryEventHandler {
         logger.info("Before creating MongoJsonSchema: {}", schema.getId());
         schema.setName(toVariableName(schema.getTitle()));
         schema.setVersion("1.0");
-        schema.setId(schema.getName()+":"+schema.getVersion());
         schema.setAccession(accessioningService.getSchemaAccession(schema.getId()));
+
+        schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
         schema.setAuthority(Authority.BIOSAMPLES.name());
         schema.makeEditable();
         schema.makeLatest();
@@ -105,13 +107,4 @@ public class MongoJsonSchemaRepositoryEventHandler {
         newSchemaVersion.makeLatest();
     }
 
-    @HandleBeforeDelete
-    public void handleBeforeDelete(MongoJsonSchema schema) {
-        logger.info("Before deleting MongoJsonSchema: {}", schema.getId());
-    }
-
-    @HandleAfterDelete
-    public void handleAfterDelete(MongoJsonSchema schema) {
-        logger.info("After deleting MongoJsonSchema: {}", schema.getId());
-    }
 }

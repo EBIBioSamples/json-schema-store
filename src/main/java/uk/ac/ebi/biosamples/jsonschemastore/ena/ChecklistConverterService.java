@@ -9,10 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.ApplicationStateException;
-import uk.ac.ebi.biosamples.jsonschemastore.model.Authority;
-import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
-import uk.ac.ebi.biosamples.jsonschemastore.model.Property;
-import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
+import uk.ac.ebi.biosamples.jsonschemastore.model.*;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.Multiplicity;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
@@ -79,7 +76,10 @@ public class ChecklistConverterService {
     }
 
     private static SchemaFieldAssociation fieldAssociationFromProperty(Property property) {
-        return new SchemaFieldAssociation(toVariableName(property.name()), property.cardinality(), Multiplicity.Single);
+        return new SchemaFieldAssociation(
+                new FieldId(toVariableName(property.name()), "1.0").asString(),
+                property.cardinality(),
+                Multiplicity.Single);
     }
 
     public ImportedChecklist convertEnaChecklist(String checklistId) {

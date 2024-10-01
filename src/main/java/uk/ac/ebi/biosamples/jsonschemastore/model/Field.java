@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -47,6 +48,7 @@ public class Field
     @Id
     protected String id;
     protected String name;
+    protected String version;
     protected String label;
     protected String description;
     protected Set<String> usedBySchemas = new HashSet<>();;
@@ -79,6 +81,8 @@ public class Field
         }
         return builder.name(toVariableName(property.name()))
                 .description(property.description())
+                .version("1.0")
+                .id(new FieldId(toVariableName(property.name()), "1.0").asString())
                 .label(property.name())
                 .usedBySchemas(new HashSet<>(1))
                 .build();

@@ -2,6 +2,7 @@ package uk.ac.ebi.biosamples.jsonschemastore.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import uk.ac.ebi.biosamples.jsonschemastore.service.VersionIncrementer;
 
 @Data
 @AllArgsConstructor
@@ -14,14 +15,7 @@ public class SchemaId {
     }
 
     public static SchemaId incrementMinorVersion(SchemaId schemaId) {
-        String[] versionComponents = schemaId.version.split("\\.");
-        if(versionComponents.length!=2) {
-            throw new IllegalArgumentException("expecting version to be major.minor format: " + schemaId.version);
-        }
-        String minorVersion = versionComponents[1];
-        versionComponents[1] = String.valueOf(Integer.valueOf(minorVersion) + 1);
-        String incrementdVersion = String.join(".", versionComponents);
-        return new SchemaId(schemaId.accession, incrementdVersion);
+        return new SchemaId(schemaId.accession, VersionIncrementer.incrementMinorVersion(schemaId.version));
     }
 
     public static SchemaId fromString(String id) {
