@@ -21,13 +21,16 @@ public class FieldRepositoryEventHandler {
     @HandleBeforeCreate
     public void handleBeforeCreate(Field field) {
         field.setVersion("1.0");
-        field.setId(new FieldId(toVariableName(field.getLabel()), field.getVersion()).asString());
+        field.setName(toVariableName(field.getLabel()));
+        field.setId(new FieldId(field.getName(), field.getVersion()).asString());
     }
 
 
     @HandleBeforeSave
     public void handleBeforeSave(Field field) {
-        field.setVersion(VersionIncrementer.incrementMinorVersion(field.getVersion()));
+        String incrementedVersion = VersionIncrementer.incrementMinorVersion(field.getVersion());
+        logger.info("incrementedVersion: {}", incrementedVersion);
+        field.setVersion(incrementedVersion);
         field.setId(new FieldId(field.getName(), field.getVersion()).asString());
     }
 }

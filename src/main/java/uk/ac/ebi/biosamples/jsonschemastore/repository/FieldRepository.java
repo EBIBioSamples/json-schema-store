@@ -27,7 +27,6 @@ public interface FieldRepository
      */
     List<Field> findByUsedBySchemas(String schemaId);
 
-
     @Override
     List<Field> findAllById(Iterable<String> ids);
 
