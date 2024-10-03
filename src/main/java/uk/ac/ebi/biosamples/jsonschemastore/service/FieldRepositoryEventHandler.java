@@ -32,5 +32,9 @@ public class FieldRepositoryEventHandler {
         logger.info("incrementedVersion: {}", incrementedVersion);
         field.setVersion(incrementedVersion);
         field.setId(new FieldId(field.getName(), field.getVersion()).asString());
+
+        // TODO
+        // 1. find all checklists that use this field version
+        // 2. create a new version for them that contains the new field version
     }
 }
