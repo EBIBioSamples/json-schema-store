@@ -1,7 +1,0 @@
-
-# spring actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"

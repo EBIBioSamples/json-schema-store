@@ -5,7 +5,11 @@ spring:
   data:
     rest:
       basePath: /api/v2
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 logging:
   level:
     org:

@@ -51,8 +51,6 @@ deploy_dev:
   variables:
     NAMESPACE: schema-store
     HOST: wwwdev.ebi.ac.uk
-    MONGO_URL: $DEV_MONGO_URL
-    PROFILE: docker
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
   environment:
     name: dev
@@ -64,9 +62,6 @@ deploy_prod:
   variables:
     NAMESPACE: schema-store-prod
     HOST: www.ebi.ac.uk
-    MONGO_URL: $PROD_MONGO_URL
-    PROFILE: prod
-    VALIDATOR_URL: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
   environment:
     name: prod
     url: https://www.ebi.ac.uk/schema-store
@@ -77,13 +72,13 @@ deploy_prod:
   stage: deploy
   image: dtzar/helm-kubectl
   script:
+    - . k8s/${CI_ENVIRONMENT_NAME}.sh
     - kubectl create namespace $NAMESPACE || true
     - kubectl config set-context --current --namespace=${NAMESPACE}
     - kubectl delete secret $DOCKER_PULL_SECRET || true
     - kubectl create secret docker-registry $DOCKER_PULL_SECRET --docker-server=$CI_REGISTRY --docker-username=$CI_DEPLOY_USER --docker-password=$CI_DEPLOY_PASSWORD
-    - envsubst < config/application_cfgmap.yaml > config/application.yaml
-    - kubectl apply -f config/application.yaml
+    - envsubst < k8s/application_cfgmap.yaml > config/application.yaml
     - envsubst < k8s/deployment.yaml > kubernetes.yaml
-    - kubectl apply -f kubernetes.yaml
+    - kubectl apply -f k8s/*.yaml
     - kubectl rollout restart deployments json-schema-store
 

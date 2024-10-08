@@ -22,30 +22,9 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
-          volumeMounts:
-            - name: config-volume
-              mountPath: /config/application.yaml
-              subPath: application.yaml
           env:
             - name: SPRING_DATA_MOBGODB_URI
-              value: ${MONGO_URL}
-            - name: SPRING_CONFIG_LOCATION
-              value: "classpath:/config/,file:/config/application.yaml"
-      volumes:
-        - name: config-volume
-          configMap:
-            name: app-config
+              value: ${MONGO_URI}
+            - name: SCHEMASTORE_VALIDATOR_URL
+              value: ${VALIDATOR_URL}
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: json-schema-store-service
-spec:
-  type: NodePort
-  selector:
-    app: json-schema-store
-  ports:
-    - protocol: TCP
-      port: 8085
-      targetPort: 8085
