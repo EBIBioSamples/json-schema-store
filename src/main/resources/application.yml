@@ -1,18 +1,11 @@
 spring:
-  profiles:
-    active: dev
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   data:
     rest:
       basePath: /api/v2
-# spring actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
+
 logging:
   level:
     org:
@@ -28,9 +21,3 @@ logging:
         ebi:
           biosamples:
             jsonschemastore: INFO
-
-
-# Elixir Validator
-schemastore:
-  validator:
-    url: http://localhost:3020/validate

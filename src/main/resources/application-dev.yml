@@ -1,25 +1,3 @@
-# MongoDB conf
-spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/schemastore
-
-server:
-  port: 8085
-  servlet:
-    context-path: /schema-store
-# spring actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-# Elixir Validator
-schemastore:
-  validator:
-    url: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
-
 logging:
   level:
     org:
