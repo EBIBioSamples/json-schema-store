@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: ${NAMESPACE}
+data:
+  application.yaml: |
+    spring:
+      profiles:
+        active: ${PROFILE}
+    server:
+      port: 8085
+      servlet:
+        context-path: /schema-store
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: "*"
+    schemastore:
+      validator:
+        url: ${VALIDATOR_URL}

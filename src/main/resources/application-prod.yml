@@ -1,24 +1,7 @@
-# MongoDB conf
-spring:
-  data:
-    mongodb:
-      port: 27017
-      host: localhost
-      database: schemastore
-      repositories:
-        type: auto
+
 # spring actuator
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-
-# Elixir Validator
-schemastore:
-  validator:
-    url: http://localhost:3020/biosamples/schema/validator/validate
-
-server:
-  servlet:
-    context-path: /biosamples/schema/store
