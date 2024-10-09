@@ -48,7 +48,7 @@ build_docker_image:
 #
 deploy_dev:
   variables:
-    NAMESPACE: schema-store
+    NAMESPACE: biosamples-dev
     HOST: wwwint.ebi.ac.uk
     MONGO_URL: $DEV_MONGO_URL
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
@@ -59,7 +59,7 @@ deploy_dev:
 
 deploy_test:
   variables:
-    NAMESPACE: schema-store
+    NAMESPACE: biosamples-test
     HOST: wwwdev.ebi.ac.uk
     MONGO_URL: $TEST_MONGO_URL
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
@@ -71,7 +71,7 @@ deploy_test:
 
 deploy_prod:
   variables:
-    NAMESPACE: schema-store-prod
+    NAMESPACE: biosamples-prod
     HOST: www.ebi.ac.uk
     MONGO_URL: $PROD_MONGO_URL
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
