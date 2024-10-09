@@ -50,23 +50,15 @@ build_docker_image:
 deploy_dev:
   variables:
     NAMESPACE: schema-store
-    HOST: wwwdev.ebi.ac.uk
-    VALIDATOR_URL: https://wwwdev.ebi.ac.uk/ait/biovalidator/validate
+    HOST: wwwint.ebi.ac.uk
+    VALIDATOR_URL: https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
     name: dev
-    url: https://wwwdev.ebi.ac.uk/schema-store
+    url: https://wwwint.ebi.ac.uk/biosamples/schema-store
   when: manual
   extends: .kube_deploy_script
 
-deploy_prod:
-  variables:
-    NAMESPACE: schema-store-prod
-    HOST: www.ebi.ac.uk
-  environment:
-    name: prod
-    url: https://www.ebi.ac.uk/schema-store
-  when: manual
-  extends: .kube_deploy_script
+# TODO: add test and prod after validation of dev
 
 .kube_deploy_script:
   stage: deploy
