@@ -4,6 +4,8 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   data:
+    mongodb:
+      uri: ${MONGO_URL}
     rest:
       basePath: /api/v2
 server:

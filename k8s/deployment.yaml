@@ -23,7 +23,7 @@ spec:
           ports:
             - containerPort: 8085
           env:
-            - name: SPRING_DATA_MOBGODB_URI
+            - name: MONGO_URL
               value: ${MONGO_URL}
             - name: BIO_VALIDATOR_URL
               value: ${VALIDATOR_URL}
