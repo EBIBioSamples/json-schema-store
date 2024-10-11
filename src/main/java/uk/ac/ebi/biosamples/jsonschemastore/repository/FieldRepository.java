@@ -44,7 +44,6 @@ public interface FieldRepository
             "}")
     Page<Field> findAllByTextPartial(String text, Pageable pageable);
 
-    //todo fix: this will return a list instead of single field, replace with one below. Check similar problems
     Optional<Field> findByName(String name);
     //Optional<Field> findFirstByNameOrderByCreatedDateDesc(String name);
 

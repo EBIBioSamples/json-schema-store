@@ -3,7 +3,6 @@ package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
@@ -44,9 +43,9 @@ public class FieldRepositoryEventHandler {
   public void handleBeforeSave(Field field) {
     String oldFieldId = field.getId();
     Field oldField = fieldRepository.findById(field.getId())
-        .orElseThrow(() -> new DataRetrievalFailureException("Could not find the field: " + oldFieldId));
+        .orElseThrow(() -> new DataIntegrityViolationException("Could not find the field: " + oldFieldId));
     if (!oldField.getLabel().equals(field.getLabel())) {
-      throw new DataIntegrityViolationException("Field `label` could not be edited once created. Please create a new field instead.");
+      throw new DataIntegrityViolationException("Attribute `label` could not be edited once created. Please create a new field instead.");
     }
 
     String incrementedVersion = VersionIncrementer.incrementMinorVersion(field.getVersion());
@@ -71,7 +70,7 @@ public class FieldRepositoryEventHandler {
   private String updateSchemaAndIncrementVersion(Field field, String oldFieldId, String schemaId) {
     log.info("Updating field: {} in schema: {}", field.getId(), schemaId);
     MongoJsonSchema schema = schemaRepository.findById(schemaId)
-        .orElseThrow(() -> new DataRetrievalFailureException("Could not find expected schema: " + schemaId));
+        .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
     SchemaFieldAssociation fieldAssociation = schema.getSchemaFieldAssociations().stream()
         .filter(f -> f.getFieldId().equals(oldFieldId))
         .findFirst()
