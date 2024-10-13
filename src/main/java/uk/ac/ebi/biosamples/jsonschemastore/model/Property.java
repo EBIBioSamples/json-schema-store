@@ -7,8 +7,14 @@ public record Property(String name,
                        String description,
                        String type,
                        List<String> units,
-                       AttributeCardinality cardinality) {
+                       AttributeCardinality cardinality,
+                       Multiplicity multiplicity
+                       ) {
   public enum AttributeCardinality {
     MANDATORY, RECOMMENDED, OPTIONAL
+  }
+
+  public enum Multiplicity {
+    SINGLE, MULTIPLE
   }
 }

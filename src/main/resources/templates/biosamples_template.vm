@@ -17,6 +17,10 @@
       #foreach ($property in $properties)
         "$property.name()": {
           "type":"array",
+          "minItems": 1,
+          #if ($property.multiplicity()=="SINGLE")
+            "maxItems":1,
+          #end
           "items":{
             "properties": {
               "text": $property.type()

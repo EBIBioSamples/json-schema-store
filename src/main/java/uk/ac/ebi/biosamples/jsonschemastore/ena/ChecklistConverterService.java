@@ -63,8 +63,14 @@ public class ChecklistConverterService {
     }
 
     private static Property mapEnaFieldToProperty(Field field) {
-        return new Property(field.getName(), field.getSynonyms(), field.getDescription(),   getTypedTemplate(field),
-                field.getUnits(), getCardinality(field.getMandatory()) );
+        return new Property(field.getName(),
+                field.getSynonyms(),
+                field.getDescription(),
+                getTypedTemplate(field),
+                field.getUnits(),
+                getCardinality(field.getMandatory()),
+                getMultiplicity(field.getMultiplicity())
+        );
     }
 
     private static Property.AttributeCardinality getCardinality(String fieldRequirement) {
@@ -72,6 +78,14 @@ public class ChecklistConverterService {
             return Property.AttributeCardinality.valueOf(fieldRequirement.toUpperCase());
         } else {
             return Property.AttributeCardinality.OPTIONAL;
+        }
+    }
+
+    private static Property.Multiplicity getMultiplicity(String multiplicity) {
+        if (StringUtils.hasText(multiplicity)) {
+            return Property.Multiplicity.valueOf(multiplicity.toUpperCase());
+        } else {
+            return Property.Multiplicity.SINGLE;
         }
     }
 
