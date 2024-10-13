@@ -5,6 +5,8 @@ variables:
   DOCKER_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$DOCKER_TAG
   DOCKER_PULL_SECRET: docker-registry-secret
+  K8S_NAMESPACE_PREFIX: biosamples
+  APP_NAME: $CI_PROJECT_NAME
 
 cache:
   paths:
@@ -49,13 +51,14 @@ build_docker_image:
 
 deploy_dev:
   variables:
-    NAMESPACE: schema-store
+    ENVIRONMENT_NAME: dev
     HOST: wwwint.ebi.ac.uk
     VALIDATOR_URL: https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
     name: dev
     url: https://wwwint.ebi.ac.uk/biosamples/schema-store
-  when: manual
+  only:
+    - dev
   extends: .kube_deploy_script
 
 # TODO: add test and prod after validation of dev
@@ -63,14 +66,17 @@ deploy_dev:
 .kube_deploy_script:
   stage: deploy
   image: dtzar/helm-kubectl
+  variables:
+    K8S_NAMESPACE: ${K8S_NAMESPACE_PREFIX}-${ENVIRONMENT_NAME}
   script:
     - . k8s/${CI_ENVIRONMENT_NAME}.sh
-    - kubectl create namespace $NAMESPACE || true
-    - kubectl config set-context --current --namespace=${NAMESPACE}
+    - kubectl create namespace ${K8S_NAMESPACE} || true
+    - kubectl config set-context --current --namespace=${K8S_NAMESPACE}
     - kubectl delete secret $DOCKER_PULL_SECRET || true
     - kubectl create secret docker-registry $DOCKER_PULL_SECRET --docker-server=$CI_REGISTRY --docker-username=$CI_DEPLOY_USER --docker-password=$CI_DEPLOY_PASSWORD
-    - envsubst < k8s/application_cfgmap.yaml > config/application.yaml
-    - envsubst < k8s/deployment.yaml > kubernetes.yaml
-    - kubectl apply -f k8s/*.yaml
+    - mkdir k8s.$$
+    - envsubst < k8s/application_cfgmap.yaml > k8s.$$/application.yaml
+    - envsubst < k8s/deployment.yaml > k8s.$$/kubernetes.yaml
+    - kubectl apply -f k8s.$$/*.yaml
     - kubectl rollout restart deployments json-schema-store
 
