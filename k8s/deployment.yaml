@@ -23,7 +23,7 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: SPRING_DATA_MOBGODB_URI
+            - name: SPRING_DATA_MONGODB_URI
               valueFrom:
                 secretKeyRef:
                   name: json-schema-store-secret      # The name of the secret
