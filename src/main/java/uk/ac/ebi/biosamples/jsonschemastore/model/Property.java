@@ -7,10 +7,10 @@ public record Property(String name,
                        String description,
                        String type,
                        List<String> units,
-                       AttributeCardinality cardinality,
+                       RequirementType requirementType,
                        Multiplicity multiplicity
                        ) {
-  public enum AttributeCardinality {
+  public enum RequirementType {
     MANDATORY, RECOMMENDED, OPTIONAL
   }
 
