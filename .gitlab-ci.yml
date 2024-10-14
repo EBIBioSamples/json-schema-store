@@ -69,7 +69,6 @@ deploy_dev:
   variables:
     K8S_NAMESPACE: ${K8S_NAMESPACE_PREFIX}-${ENVIRONMENT_NAME}
   script:
-    - . k8s/${CI_ENVIRONMENT_NAME}.sh
     - kubectl create namespace ${K8S_NAMESPACE} || true
     - kubectl config set-context --current --namespace=${K8S_NAMESPACE}
     - kubectl delete secret $DOCKER_PULL_SECRET || true
