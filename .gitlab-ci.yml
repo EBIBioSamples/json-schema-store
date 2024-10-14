@@ -76,6 +76,7 @@ deploy_dev:
     - mkdir k8s.$$
     - envsubst < k8s/application_cfgmap.yaml > k8s.$$/application.yaml
     - envsubst < k8s/deployment.yaml > k8s.$$/kubernetes.yaml
+    - envsubst < k8s/service.yaml > k8s.$$/service.yaml
     - kubectl apply -f k8s.$$/
     - kubectl rollout restart deployments json-schema-store
 
