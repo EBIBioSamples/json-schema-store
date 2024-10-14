@@ -21,7 +21,7 @@ spec:
           image: $DOCKER_IMAGE_NAME
           imagePullPolicy: Always
           ports:
-            - containerPort: 8085
+            - containerPort: 8080
           env:
             - name: SPRING_DATA_MOBGODB_URI
               valueFrom:
