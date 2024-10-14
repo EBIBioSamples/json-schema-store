@@ -74,9 +74,10 @@ deploy_dev:
     - kubectl delete secret $DOCKER_PULL_SECRET || true
     - kubectl create secret docker-registry $DOCKER_PULL_SECRET --docker-server=$CI_REGISTRY --docker-username=$CI_DEPLOY_USER --docker-password=$CI_DEPLOY_PASSWORD
     - mkdir k8s.$$
-    - envsubst < k8s/application_cfgmap.yaml > k8s.$$/application.yaml
-    - envsubst < k8s/deployment.yaml > k8s.$$/kubernetes.yaml
+    - envsubst < k8s/configmap.yaml > k8s.$$/configmap.yaml
+    - envsubst < k8s/deployment.yaml > k8s.$$/deployment.yaml
     - envsubst < k8s/service.yaml > k8s.$$/service.yaml
+    - envsubst < k8s/ingress.yaml > k8s.$$/ingress.yaml
     - kubectl apply -f k8s.$$/
     - kubectl rollout restart deployments json-schema-store
 
