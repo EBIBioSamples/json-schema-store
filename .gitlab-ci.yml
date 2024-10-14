@@ -56,7 +56,7 @@ deploy_dev:
     VALIDATOR_URL: https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
     name: dev
-    url: https://wwwint.ebi.ac.uk/biosamples/schema-store
+    url: https://wwwint.ebi.ac.uk/biosamples/schema-store/api/v2
   only:
     - dev
   extends: .kube_deploy_script
