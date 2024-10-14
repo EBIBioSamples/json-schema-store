@@ -24,7 +24,13 @@ spec:
             - containerPort: 8085
           env:
             - name: SPRING_DATA_MOBGODB_URI
-              value: ${MONGO_URI}
+              valueFrom:
+                secretKeyRef:
+                  name: json-schema-store-secret      # The name of the secret
+                  key: spring.data.mongodb.uri        # The key in the secret
             - name: SCHEMASTORE_VALIDATOR_URL
-              value: ${VALIDATOR_URL}
+              valueFrom:
+                configMapKeyRef:
+                  name: json-schema-store-config
+                  key: schemastore.validator.url
 

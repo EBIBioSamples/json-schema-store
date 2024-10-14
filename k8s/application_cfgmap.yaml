@@ -1,15 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app-config
-  namespace: ${NAMESPACE}
+  name: json-schema-store-config
 data:
-  application.yaml: |
-    schemastore:
-      validator:
-        url: ${VALIDATOR_URL}
-    spring:
-      data:
-        mongodb:
-          url: ${MONGO_URL}
-        
+  schemastore.validator.url: "https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate"
+
