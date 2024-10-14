@@ -49,7 +49,7 @@ class FieldRepositoryEventHandlerTest {
 
     SchemaFieldAssociation field = new SchemaFieldAssociation();
     field.setFieldId("handleBeforeSaveField:1.0");
-    field.setCardinality(Property.AttributeCardinality.MANDATORY);
+    field.setRequirementType(Property.RequirementType.MANDATORY);
     field.setMultiplicity(Multiplicity.Single);
     schema.setSchemaFieldAssociations(Collections.singletonList(field));
 

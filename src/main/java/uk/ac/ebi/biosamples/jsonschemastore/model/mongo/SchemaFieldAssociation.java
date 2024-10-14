@@ -16,7 +16,8 @@ public class SchemaFieldAssociation {
 
     @NonNull
     String fieldId;
-    @NonNull Property.AttributeCardinality cardinality;
+    @NonNull
+    Property.RequirementType requirementType;
     @NonNull Multiplicity multiplicity;
 
 }
