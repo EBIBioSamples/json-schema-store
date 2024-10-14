@@ -3,6 +3,8 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   data:
+    mongodb:
+      uri: mongodb://localhost/schemastore
     rest:
       basePath: /api/v2
 management:

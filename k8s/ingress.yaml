@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: json-schema-store-ingress
-  namespace: ${NAMESPACE}
   labels:
     app: json-schema-store-service
   annotations:
@@ -10,13 +9,12 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: ${HOST}
-      http:
+    - http:
         paths:
-          - path: /biosamples/schemastore(/|$)(.*)
+          - path: /biosamples/schema-store(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: json-schema-store-service
+                name: json-schema-store
                 port:
                   number: 8080

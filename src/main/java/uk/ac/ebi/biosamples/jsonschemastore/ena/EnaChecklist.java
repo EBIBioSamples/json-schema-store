@@ -62,6 +62,8 @@ class Field {
     private String description;
     @JacksonXmlProperty(localName = "MANDATORY")
     private String mandatory;
+    @JacksonXmlProperty(localName = "MULTIPLICITY")
+    private String multiplicity;
     @JacksonXmlProperty(localName = "FIELD_TYPE")
     private FieldType fieldType;
     @JacksonXmlProperty(localName = "UNITS")

@@ -3,25 +3,32 @@ package uk.ac.ebi.biosamples.jsonschemastore.ena;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.MalformedSchemaException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Property;
+import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
+import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
 
 import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class SchemaTemplateGenerator {
     private static final ObjectMapper mapper = new ObjectMapper();
+    private final SchemaObjectPopulator populator;
 
-    public static String getBioSamplesSchema(String schemaId, String title,
+    public String getBioSamplesSchema(String schemaId, String title,
                                              String description, List<Property> propertyList) {
         VelocityEngine vEngine = new VelocityEngine();
         vEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
@@ -52,7 +59,7 @@ public class SchemaTemplateGenerator {
                 if (!CollectionUtils.isEmpty(p.synonyms())) {
                     props.addAll(
                         p.synonyms().stream()
-                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.cardinality()))
+                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.cardinality(), p.multiplicity()))
                             .toList());
                 }
                 return props.stream();
@@ -62,7 +69,7 @@ public class SchemaTemplateGenerator {
         StringWriter schemaWriter = new StringWriter();
         Template template = vEngine.getTemplate("templates/biosamples_template.vm");
         VelocityContext ctx = new VelocityContext();
-        ctx.put("schema_id", schemaId);
+        ctx.put("schema_id", populator.getSchemaResuorceURL(SchemaId.fromString(schemaId)));
         ctx.put("schema_title", title);
         ctx.put("schema_description", description);
         ctx.put("properties", propertiesWithSynonyms);

@@ -1,6 +1,7 @@
 package uk.ac.ebi.biosamples.jsonschemastore.ena;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
@@ -25,17 +26,14 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ChecklistConverterService {
     private static final String enaGetAllChecklistUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists?type=sample&format=json";
     private static final String enaChecklistBaseUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists/xml/${checklistId}?type=sample";
 
     private final SchemaService schemaService;
     private final SchemaObjectPopulator populator;
-
-    public ChecklistConverterService(SchemaService schemaService, SchemaObjectPopulator populator) {
-        this.schemaService = schemaService;
-        this.populator = populator;
-    }
+    private final SchemaTemplateGenerator schemaTemplateGenerator;
 
     private static String getTypedTemplate(Field field) {
         String fieldTypeTemplate;
@@ -63,8 +61,14 @@ public class ChecklistConverterService {
     }
 
     private static Property mapEnaFieldToProperty(Field field) {
-        return new Property(field.getName(), field.getSynonyms(), field.getDescription(),   getTypedTemplate(field),
-                field.getUnits(), getCardinality(field.getMandatory()) );
+        return new Property(field.getName(),
+                field.getSynonyms(),
+                field.getDescription(),
+                getTypedTemplate(field),
+                field.getUnits(),
+                getCardinality(field.getMandatory()),
+                getMultiplicity(field.getMultiplicity())
+        );
     }
 
     private static Property.AttributeCardinality getCardinality(String fieldRequirement) {
@@ -72,6 +76,14 @@ public class ChecklistConverterService {
             return Property.AttributeCardinality.valueOf(fieldRequirement.toUpperCase());
         } else {
             return Property.AttributeCardinality.OPTIONAL;
+        }
+    }
+
+    private static Property.Multiplicity getMultiplicity(String multiplicity) {
+        if (StringUtils.hasText(multiplicity)) {
+            return Property.Multiplicity.valueOf(multiplicity.toUpperCase());
+        } else {
+            return Property.Multiplicity.SINGLE;
         }
     }
 
@@ -90,7 +102,7 @@ public class ChecklistConverterService {
                 String schemaId = new SchemaId(enaChecklist.getChecklist().getAccession(), "1.0").asString();
             String title = enaChecklist.getChecklist().getDescriptor().getName();
             String description = enaChecklist.getChecklist().getDescriptor().getDescription();
-            String jsonSchema = SchemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);
+            String jsonSchema = schemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);
             return new ImportedChecklist(jsonSchema, properties);
         } catch (Exception e) {
             log.error("Could not convert checklist: " + checklistId, e);
@@ -169,13 +181,6 @@ public class ChecklistConverterService {
 
         return enaChecklists;
     }
-
-    private String getSchemaId(EnaChecklist enaChecklist) {
-        String schemaName = "ENA-" + toVariableName(enaChecklist.getChecklist().getDescriptor().getName());
-        String schemaVersion = "1.0";
-        return String.format("https://www.ebi.ac.uk/biosamples/schemas/%s/%s", schemaName, schemaVersion);
-    }
-
 
     private List<Property> listProperties(EnaChecklist enaChecklist) {
         return enaChecklist.getChecklist().getDescriptor()
