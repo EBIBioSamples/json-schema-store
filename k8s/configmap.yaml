@@ -4,4 +4,5 @@ metadata:
   name: json-schema-store-config
 data:
   schemastore.validator.url: "https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate"
+  server.servlet.context-path: "/biosamples/schema-store"
 

@@ -33,4 +33,9 @@ spec:
                 configMapKeyRef:
                   name: json-schema-store-config
                   key: schemastore.validator.url
+            - name: SERVER_SERVLET_CONTEXTPATH
+              valueFrom:
+                configMapKeyRef:
+                  name: json-schema-store-config
+                  key: server.servlet.context-path
 
