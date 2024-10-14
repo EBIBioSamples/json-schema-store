@@ -56,9 +56,9 @@ public class Field
     protected String group;
     @CreatedDate
     private LocalDateTime createdDate;
-
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+    private boolean latest;
 
     public static Field fromProperty(Property property) {
         JsonNode typeAsJson = SchemaTemplateGenerator.getJson(property.type());
@@ -85,6 +85,7 @@ public class Field
                 .id(new FieldId(toVariableName(property.name()), "1.0").asString())
                 .label(property.name())
                 .usedBySchemas(new HashSet<>(1))
+                .latest(true)
                 .build();
 
     }

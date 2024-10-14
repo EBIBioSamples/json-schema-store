@@ -17,14 +17,50 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 @Component
 @RepositoryEventHandler(Field.class)
 public class FieldRepositoryEventHandler {
+<<<<<<< Updated upstream
     private static final Logger logger = LoggerFactory.getLogger(FieldRepositoryEventHandler.class);
     @HandleBeforeCreate
     public void handleBeforeCreate(Field field) {
         field.setVersion("1.0");
         field.setName(toVariableName(field.getLabel()));
         field.setId(new FieldId(field.getName(), field.getVersion()).asString());
-    }
+=======
+  private final SchemaRepository schemaRepository;
+  private final FieldRepository fieldRepository;
 
+  public FieldRepositoryEventHandler(SchemaRepository schemaRepository, FieldRepository fieldRepository) {
+    this.schemaRepository = schemaRepository;
+    this.fieldRepository = fieldRepository;
+  }
+
+  @HandleBeforeCreate
+  public void handleBeforeCreate(Field field) {
+    field.setVersion("1.0");
+    field.setName(toVariableName(field.getLabel()));
+    field.setId(new FieldId(field.getName(), field.getVersion()).asString());
+    field.setLatest(true);
+  }
+
+  @HandleBeforeSave
+  public void handleBeforeSave(Field field) {
+    String oldFieldId = field.getId();
+    Field oldField = fieldRepository.findById(field.getId())
+        .orElseThrow(() -> new DataIntegrityViolationException("Could not find the field: " + oldFieldId));
+    if (!oldField.getLabel().equals(field.getLabel())) {
+      throw new DataIntegrityViolationException("Attribute `label` could not be edited once created. Please create a new field instead.");
+>>>>>>> Stashed changes
+    }
+    oldField.setLatest(false);
+    fieldRepository.save(oldField);
+
+<<<<<<< Updated upstream
+=======
+    String incrementedVersion = VersionIncrementer.incrementMinorVersion(field.getVersion());
+    field.setVersion(incrementedVersion);
+    field.setId(new FieldId(field.getName(), field.getVersion()).asString());
+    field.setLatest(true);
+    log.info("Updating field: {} and incrementing version to: {}", oldFieldId, incrementedVersion);
+>>>>>>> Stashed changes
 
     @HandleBeforeSave
     public void handleBeforeSave(Field field) {
