@@ -21,7 +21,7 @@ import java.util.Set;
 import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
 
 @Component
-@RepositoryEventHandler
+@RepositoryEventHandler(Field.class)
 @Slf4j
 public class FieldRepositoryEventHandler {
   private final SchemaRepository schemaRepository;
@@ -37,6 +37,7 @@ public class FieldRepositoryEventHandler {
     field.setVersion("1.0");
     field.setName(toVariableName(field.getLabel()));
     field.setId(new FieldId(field.getName(), field.getVersion()).asString());
+    field.setLatest(true);
   }
 
   @HandleBeforeSave
@@ -47,10 +48,13 @@ public class FieldRepositoryEventHandler {
     if (!oldField.getLabel().equals(field.getLabel())) {
       throw new DataIntegrityViolationException("Attribute `label` could not be edited once created. Please create a new field instead.");
     }
+    oldField.setLatest(false);
+    fieldRepository.save(oldField);
 
     String incrementedVersion = VersionIncrementer.incrementMinorVersion(field.getVersion());
     field.setVersion(incrementedVersion);
     field.setId(new FieldId(field.getName(), field.getVersion()).asString());
+    field.setLatest(true);
     log.info("Updating field: {} and incrementing version to: {}", oldFieldId, incrementedVersion);
 
     Set<String> schemaIds = field.getUsedBySchemas();
