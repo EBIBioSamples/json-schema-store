@@ -3,28 +3,21 @@ package uk.ac.ebi.biosamples.jsonschemastore.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
+import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.index.TextIndexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.lang.NonNull;
-import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
 import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
 
@@ -51,7 +44,7 @@ public class Field
     protected String version;
     protected String label;
     protected String description;
-    protected Set<String> usedBySchemas = new HashSet<>();;
+    protected Set<String> usedBySchemas = new HashSet<>();
     protected String type;
     protected String group;
     @CreatedDate

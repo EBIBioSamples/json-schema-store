@@ -3,13 +3,11 @@ package uk.ac.ebi.biosamples.jsonschemastore.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Schema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
-import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 
 @Component
 @RequiredArgsConstructor
@@ -25,13 +23,12 @@ public class SchemaObjectPopulator {
     }
 
     public  void addSchemaUniqueId(Schema schema, SchemaId schemaId) {
-        String schemaRestResource = getSchemaResuorceURL(schemaId);
+        String schemaRestResource = getSchemaResourceURL(schemaId);
         ((ObjectNode) schema.getSchema()).put("$id", schemaRestResource);
     }
 
-    public String getSchemaResuorceURL(SchemaId schemaId) {
-        String schemaRestResource = getSchemasResourceRoot() + "/" + schemaId.asString();
-        return schemaRestResource;
+    public String getSchemaResourceURL(SchemaId schemaId) {
+        return getSchemasRegistryResourceRoot() + "?id=" + schemaId.asString();
     }
 
     public void incrementAndPopulateSchema(Schema schema) {
@@ -42,9 +39,9 @@ public class SchemaObjectPopulator {
         populateAuthority(schema);
     }
 
-    private  String getSchemasResourceRoot() {
+    private  String getSchemasRegistryResourceRoot() {
         return ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(restResourcePathProvider.getResourcePath(MongoJsonSchema.class))
+                .replacePath("/registry/schemas")
                 .build()
                 .toUriString();
     }

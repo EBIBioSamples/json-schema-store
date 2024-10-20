@@ -69,7 +69,7 @@ public class SchemaTemplateGenerator {
         StringWriter schemaWriter = new StringWriter();
         Template template = vEngine.getTemplate("templates/biosamples_template.vm");
         VelocityContext ctx = new VelocityContext();
-        ctx.put("schema_id", populator.getSchemaResuorceURL(SchemaId.fromString(schemaId)));
+        ctx.put("schema_id", populator.getSchemaResourceURL(SchemaId.fromString(schemaId)));
         ctx.put("schema_title", title);
         ctx.put("schema_description", description);
         ctx.put("properties", propertiesWithSynonyms);
