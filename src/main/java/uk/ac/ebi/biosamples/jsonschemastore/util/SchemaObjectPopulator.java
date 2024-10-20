@@ -13,7 +13,6 @@ import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 @RequiredArgsConstructor
 public class SchemaObjectPopulator {
     private final SchemaStoreProperties properties;
-    private final RestResourcePathProvider restResourcePathProvider;
 
     public void populateSchema(Schema schema) {
         SchemaId schemaId = toSchemaId(schema);
@@ -48,11 +47,9 @@ public class SchemaObjectPopulator {
 
     private static SchemaId toSchemaId(Schema schema) {
         // TODO: check if schema's $id is populated, get version from there
-        JsonNode node = schema.getSchema();
         String accession = schema.getAccession();
         String version = schema.getVersion();
-        SchemaId schemaId = new SchemaId(accession, version);
-        return schemaId;
+        return new SchemaId(accession, version);
     }
 
     private void populateAuthority(Schema schema) {
