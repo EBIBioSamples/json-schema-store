@@ -72,7 +72,8 @@ public class ChecklistConverterService {
                 getTypedTemplate(field),
                 field.getUnits(),
                 getCardinality(field.getMandatory()),
-                getMultiplicity(field.getMultiplicity())
+                getMultiplicity(field.getMultiplicity()),
+                field.getGroupName()
         );
     }
 

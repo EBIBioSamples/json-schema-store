@@ -65,7 +65,7 @@ public class SchemaTemplateGenerator {
                 if (!CollectionUtils.isEmpty(p.synonyms())) {
                     props.addAll(
                         p.synonyms().stream()
-                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.cardinality(), p.multiplicity()))
+                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.cardinality(), p.multiplicity(), p.groupName()))
                             .toList());
                 }
                 return props.stream();

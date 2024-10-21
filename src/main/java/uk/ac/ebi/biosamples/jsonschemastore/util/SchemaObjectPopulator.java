@@ -8,17 +8,21 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Schema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
+import uk.ac.ebi.biosamples.jsonschemastore.service.ChecklistGroupService;
 
 @Component
 @RequiredArgsConstructor
 public class SchemaObjectPopulator {
     private final SchemaStoreProperties properties;
+    private final ChecklistGroupService checklistGroupService;
+
 
     public void populateSchema(Schema schema) {
         SchemaId schemaId = toSchemaId(schema);
         populateWithSchemaId(schema, schemaId);
         populateAuthority(schema);
         addSchemaUniqueId(schema, schemaId);
+        schema.setGroup(checklistGroupService.findGroupForAccession(schemaId.getAccession()));
     }
 
     public  void addSchemaUniqueId(Schema schema, SchemaId schemaId) {

@@ -85,6 +85,7 @@ public class Field
                 .id(new FieldId(toVariableName(property.name()), "1.0").asString())
                 .label(property.name())
                 .usedBySchemas(new HashSet<>(1))
+                .group(property.groupName())
                 .build();
 
     }

@@ -47,6 +47,11 @@ class FieldGroup {
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = "FIELD")
     private List<Field> fields;
+
+    public List<Field> getFields() {
+        fields.stream().forEach(f->f.setGroupName(name));
+        return fields;
+    }
 }
 
 @Data
@@ -68,6 +73,8 @@ class Field {
     private FieldType fieldType;
     @JacksonXmlProperty(localName = "UNITS")
     private List<String> units;
+
+    private String groupName;
 }
 
 @Data

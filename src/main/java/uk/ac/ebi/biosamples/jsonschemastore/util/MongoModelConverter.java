@@ -36,7 +36,7 @@ public class MongoModelConverter {
         mongoJsonSchema.setSchemaFieldAssociations(jsonSchema.getSchemaFieldAssociations());
         mongoJsonSchema.setEditable(jsonSchema.getEditable());
         mongoJsonSchema.setLatest(jsonSchema.getLatest());
-
+        mongoJsonSchema.setGroup(jsonSchema.getGroup());
         return mongoJsonSchema;
     }
 
@@ -62,6 +62,7 @@ public class MongoModelConverter {
                     }
                 })
                 .ifPresent(jsonSchema::setSchema);
+        jsonSchema.setGroup(mongoJsonSchema.getGroup());
         return jsonSchema;
     }
 

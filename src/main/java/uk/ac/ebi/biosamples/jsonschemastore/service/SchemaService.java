@@ -14,6 +14,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -93,15 +94,21 @@ public class SchemaService {
     }
 
     // todo check accession logic in both POST and PUT requests
-    public JsonSchema saveSchemaWithAccession(@NonNull JsonSchema jsonSchema, Set<Field> fields) {
+    public JsonSchema saveSchemaWithAccession(@NonNull JsonSchema jsonSchema, Set<Field> importedFields) {
         String accession = jsonSchema.getAccession();
         if (accession != null && !accession.isEmpty()) {
             jsonSchema.setAccession(accession);
         }
         MongoJsonSchema mongoJsonSchema = modelConverter.jsonSchemaToMongoJsonSchema(jsonSchema);
         MongoJsonSchema mongoJsonSchemaResult = schemaRepository.save(mongoJsonSchema);
-        fields.stream()
-                .map(field -> fieldRepository.findByName(field.getName()).orElse(field))
+        importedFields.stream()
+                .map(importedField -> {
+                    Field fieldFromDb = fieldRepository.findById(importedField.getId()).orElse(importedField);
+                    fieldFromDb.setGroup(importedField.getGroup());
+                    fieldFromDb.setType(importedField.getType());
+                    fieldFromDb.setLastModifiedDate(LocalDateTime.now());
+                    return fieldFromDb;
+                })
                 .forEach(field -> {
                     field.getUsedBySchemas().add(jsonSchema.getId());
                     fieldRepository.save(field);
