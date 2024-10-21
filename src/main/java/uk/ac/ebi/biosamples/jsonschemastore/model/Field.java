@@ -3,28 +3,21 @@ package uk.ac.ebi.biosamples.jsonschemastore.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
+import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.index.TextIndexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.lang.NonNull;
-import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
 import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
 
@@ -41,6 +34,7 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ChoiceField.class, name = "choice"),
         @JsonSubTypes.Type(value = PatternField.class, name = "pattern"),
+        @JsonSubTypes.Type(value = TaxonField.class, name = "taxon"),
         @JsonSubTypes.Type(value = Field.class, name = "text")
 })
 public class Field
@@ -51,7 +45,7 @@ public class Field
     protected String version;
     protected String label;
     protected String description;
-    protected Set<String> usedBySchemas = new HashSet<>();;
+    protected Set<String> usedBySchemas = new HashSet<>();
     protected String type;
     protected String group;
     @CreatedDate
@@ -74,10 +68,16 @@ public class Field
             builder = PatternField.builder().type("pattern");
             ((PatternField.PatternFieldBuilder<?, ?>) builder)
                     .pattern(typeAsJson.get("pattern").asText());
+        }  else if (typeAsJson.has("ontology")) {
+            builder = OntologyField.builder().type("ontology");
+            ((OntologyField.OntologyFieldBuilder<?, ?>) builder)
+                    .ontology(typeAsJson.get("ontology").asText());
         } else if (typeAsJson.has("type")) {
             builder = Field.builder().type("string");
+        } else if (typeAsJson.has("isValidTaxonomy")) {
+            builder = Field.builder().type("taxon");
         } else {
-            throw new IllegalArgumentException("property " + property.name() + " has unsupported type " + property.type());
+            throw new IllegalArgumentException("cannot import XML property " + property.name() + ". It has unsupported type: " + property.type());
         }
         return builder.name(toVariableName(property.name()))
                 .description(property.description())
@@ -86,6 +86,7 @@ public class Field
                 .label(property.name())
                 .usedBySchemas(new HashSet<>(1))
                 .latest(true)
+                .group(property.groupName())
                 .build();
 
     }
