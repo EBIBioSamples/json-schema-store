@@ -4,14 +4,26 @@ spring:
       matching-strategy: ant_path_matcher
   data:
     mongodb:
-      uri: mongodb://localhost/schemastore
+      uri: mongodb://biostest:ZXHWdLsjkos@mongodb-hlvm-153.ebi.ac.uk:27017,mongodb-hxvm-254.ebi.ac.uk:27017/schemastore?replicaSet=biostestrs106&authSource=admin
     rest:
       basePath: /api/v2
+server:
+  port: 8085
+  servlet:
+    context-path: /biosamples/schema-store
+# spring actuator
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+
+# Elixir Validator
+schemastore:
+  validator:
+    url: wwwdev.ebi.ac.uk/ait/biovalidator/validate
+
+
 logging:
   level:
     org:

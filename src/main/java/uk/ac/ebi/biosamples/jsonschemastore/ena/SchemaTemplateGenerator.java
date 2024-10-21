@@ -13,6 +13,8 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.MalformedSchemaException;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
+import uk.ac.ebi.biosamples.jsonschemastore.model.PatternField;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Property;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
@@ -80,11 +82,12 @@ public class SchemaTemplateGenerator {
         return prettyPrintJson(schemaWriter.toString());
     }
 
-    public static String getStringTemplate(String regex, int minLength, int maxLength, String format) {
+    public static String getStringTemplate(String propertyName, String value, int minLength, int maxLength, String format) {
+
         Map<String, Object> template = new LinkedHashMap<>();
         template.put("type", "string");
-        if (regex != null && !regex.isEmpty()) {
-            template.put("pattern", regex);
+        if (value != null && !value.isEmpty()) {
+            template.put(propertyName, value);
         }
         if (format != null && !format.isEmpty()) {
             template.put("format", format);
