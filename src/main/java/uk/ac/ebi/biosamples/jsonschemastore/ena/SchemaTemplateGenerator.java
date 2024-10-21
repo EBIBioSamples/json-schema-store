@@ -28,6 +28,10 @@ public class SchemaTemplateGenerator {
     private static final ObjectMapper mapper = new ObjectMapper();
     private final SchemaObjectPopulator populator;
 
+    public static String getTaxonTemplate() {
+        return getJsonString(Map.of("isValidTaxonomy", true));
+    }
+
     public String getBioSamplesSchema(String schemaId, String title,
                                              String description, List<Property> propertyList) {
         VelocityEngine vEngine = new VelocityEngine();

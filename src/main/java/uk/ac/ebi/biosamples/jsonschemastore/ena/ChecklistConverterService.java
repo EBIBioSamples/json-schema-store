@@ -42,6 +42,8 @@ public class ChecklistConverterService {
         } else if (field.getFieldType().getTextField() != null) {
             String regex = field.getFieldType().getTextField().getRegex() != null ? field.getFieldType().getTextField().getRegex() : "";
             fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate(regex, 0, 0, "");
+        } else if (field.getFieldType().getTaxonField() != null) {
+            fieldTypeTemplate = SchemaTemplateGenerator.getTaxonTemplate();
         } else {
             fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate("", 0, 0, "");
         }

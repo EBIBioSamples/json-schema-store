@@ -76,12 +76,19 @@ class FieldType {
     private TextField textField;
     @JacksonXmlProperty(localName = "TEXT_CHOICE_FIELD")
     private TextChoiceField textChoiceField;
+    @JacksonXmlProperty(localName = "TAXON_FIELD")
+    private TaxonField taxonField;
 }
 
 @Data
 class TextField {
     @JacksonXmlProperty(localName = "REGEX_VALUE")
     private String regex;
+}
+@Data
+class TaxonField {
+    @JacksonXmlProperty(isAttribute = true)
+    private String restrictionType;
 }
 
 @Data

@@ -34,6 +34,7 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ChoiceField.class, name = "choice"),
         @JsonSubTypes.Type(value = PatternField.class, name = "pattern"),
+        @JsonSubTypes.Type(value = TaxonField.class, name = "taxon"),
         @JsonSubTypes.Type(value = Field.class, name = "text")
 })
 public class Field
@@ -69,8 +70,10 @@ public class Field
                     .pattern(typeAsJson.get("pattern").asText());
         } else if (typeAsJson.has("type")) {
             builder = Field.builder().type("string");
+        } else if (typeAsJson.has("isValidTaxonomy")) {
+            builder = Field.builder().type("taxon");
         } else {
-            throw new IllegalArgumentException("property " + property.name() + " has unsupported type " + property.type());
+            throw new IllegalArgumentException("cannot import XML property " + property.name() + ". It has unsupported type: " + property.type());
         }
         return builder.name(toVariableName(property.name()))
                 .description(property.description())
