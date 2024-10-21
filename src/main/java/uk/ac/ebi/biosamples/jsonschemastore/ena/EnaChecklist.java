@@ -76,6 +76,9 @@ class FieldType {
     private TextField textField;
     @JacksonXmlProperty(localName = "TEXT_CHOICE_FIELD")
     private TextChoiceField textChoiceField;
+
+    @JacksonXmlProperty(localName = "ONTOLOGY_FIELD")
+    private OntologyField ontologyField;
     @JacksonXmlProperty(localName = "TAXON_FIELD")
     private TaxonField taxonField;
 }
@@ -89,6 +92,12 @@ class TextField {
 class TaxonField {
     @JacksonXmlProperty(isAttribute = true)
     private String restrictionType;
+}
+
+@Data
+class OntologyField {
+    @JacksonXmlProperty(localName = "ONTOLOGY_ID")
+    private String ontologyId;
 }
 
 @Data
