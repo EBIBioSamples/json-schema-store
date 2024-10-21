@@ -41,9 +41,12 @@ public class ChecklistConverterService {
             fieldTypeTemplate = SchemaTemplateGenerator.getEnumTemplate(getEnumValueList(field.getFieldType().getTextChoiceField()));
         } else if (field.getFieldType().getTextField() != null) {
             String regex = field.getFieldType().getTextField().getRegex() != null ? field.getFieldType().getTextField().getRegex() : "";
-            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate(regex, 0, 0, "");
-        } else {
-            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate("", 0, 0, "");
+            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate("pattern", regex, 0, 0, "");
+        } else if (field.getFieldType().getOntologyField() != null) {
+            String ontologyId = field.getFieldType().getOntologyField().getOntologyId() != null ? field.getFieldType().getOntologyField().getOntologyId() : "";
+            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate("ontology", ontologyId, 0, 0, "");
+        }  else {
+            fieldTypeTemplate = SchemaTemplateGenerator.getStringTemplate("","", 0, 0, "");
         }
 
         return fieldTypeTemplate;

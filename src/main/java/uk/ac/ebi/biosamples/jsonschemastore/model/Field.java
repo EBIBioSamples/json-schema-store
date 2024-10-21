@@ -67,6 +67,10 @@ public class Field
             builder = PatternField.builder().type("pattern");
             ((PatternField.PatternFieldBuilder<?, ?>) builder)
                     .pattern(typeAsJson.get("pattern").asText());
+        }  else if (typeAsJson.has("ontology")) {
+            builder = OntologyField.builder().type("ontology");
+            ((OntologyField.OntologyFieldBuilder<?, ?>) builder)
+                    .ontology(typeAsJson.get("ontology").asText());
         } else if (typeAsJson.has("type")) {
             builder = Field.builder().type("string");
         } else {
