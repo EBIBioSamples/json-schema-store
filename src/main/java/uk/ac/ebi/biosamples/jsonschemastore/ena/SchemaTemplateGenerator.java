@@ -13,6 +13,8 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.MalformedSchemaException;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
+import uk.ac.ebi.biosamples.jsonschemastore.model.PatternField;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Property;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
@@ -27,6 +29,10 @@ import java.util.stream.Collectors;
 public class SchemaTemplateGenerator {
     private static final ObjectMapper mapper = new ObjectMapper();
     private final SchemaObjectPopulator populator;
+
+    public static String getTaxonTemplate() {
+        return getJsonString(Map.of("isValidTaxonomy", true));
+    }
 
     public String getBioSamplesSchema(String schemaId, String title,
                                              String description, List<Property> propertyList) {
@@ -59,7 +65,7 @@ public class SchemaTemplateGenerator {
                 if (!CollectionUtils.isEmpty(p.synonyms())) {
                     props.addAll(
                         p.synonyms().stream()
-                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.requirementType(), p.multiplicity()))
+                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.requirementType(), p.multiplicity(), p.groupName()))
                             .toList());
                 }
                 return props.stream();
@@ -69,7 +75,7 @@ public class SchemaTemplateGenerator {
         StringWriter schemaWriter = new StringWriter();
         Template template = vEngine.getTemplate("templates/biosamples_template.vm");
         VelocityContext ctx = new VelocityContext();
-        ctx.put("schema_id", populator.getSchemaResuorceURL(SchemaId.fromString(schemaId)));
+        ctx.put("schema_id", populator.getSchemaResourceURL(SchemaId.fromString(schemaId)));
         ctx.put("schema_title", title);
         ctx.put("schema_description", description);
         ctx.put("properties", propertiesWithSynonyms);
@@ -80,11 +86,12 @@ public class SchemaTemplateGenerator {
         return prettyPrintJson(schemaWriter.toString());
     }
 
-    public static String getStringTemplate(String regex, int minLength, int maxLength, String format) {
+    public static String getStringTemplate(String propertyName, String value, int minLength, int maxLength, String format) {
+
         Map<String, Object> template = new LinkedHashMap<>();
         template.put("type", "string");
-        if (regex != null && !regex.isEmpty()) {
-            template.put("pattern", regex);
+        if (value != null && !value.isEmpty()) {
+            template.put(propertyName, value);
         }
         if (format != null && !format.isEmpty()) {
             template.put("format", format);

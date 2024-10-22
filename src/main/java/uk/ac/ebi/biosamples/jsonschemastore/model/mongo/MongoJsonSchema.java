@@ -48,6 +48,7 @@ public class MongoJsonSchema {
 
     private Boolean editable;
     private Boolean latest;
+    private String group;
 
     public void makeNonEditable() {
         this.editable = false;

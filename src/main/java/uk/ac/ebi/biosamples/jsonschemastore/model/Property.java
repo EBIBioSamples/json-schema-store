@@ -8,7 +8,8 @@ public record Property(String name,
                        String type,
                        List<String> units,
                        RequirementType requirementType,
-                       Multiplicity multiplicity
+                       Multiplicity multiplicity,
+                       String groupName
                        ) {
   public enum RequirementType {
     MANDATORY, RECOMMENDED, OPTIONAL
