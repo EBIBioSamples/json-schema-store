@@ -26,4 +26,5 @@ public abstract class Schema extends RepresentationModel<Schema> {
     protected List<SchemaFieldAssociation> schemaFieldAssociations = new ArrayList<>();
     private Boolean editable;
     private Boolean latest;
+    private String group;
 }
