@@ -107,7 +107,7 @@ public class ChecklistConverterService {
                 String schemaId = new SchemaId(enaChecklist.getChecklist().getAccession(), "1.0").asString();
             String title = enaChecklist.getChecklist().getDescriptor().getName();
             String description = enaChecklist.getChecklist().getDescriptor().getDescription();
-            String jsonSchema = schemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);
+            String jsonSchema = schemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties, false);
             return new ImportedChecklist(jsonSchema, properties);
         } catch (Exception e) {
             log.error("Could not convert checklist: " + checklistId, e);
