@@ -41,6 +41,8 @@ public interface FieldRepository extends MongoRepository<Field, String> {
             "    $or: [\n" +
             "        { \"label\": { $regex: /?0/, $options: \"i\" } },\n" +
             "        { \"description\": { $regex: /?0/, $options: \"i\" } }\n" +
+            "        { \"group\": { $regex: /?0/, $options: \"i\" } }\n" +
+            "        { \"type\": { $regex: /?0/, $options: \"i\" } }\n" +
             "    ]\n" +
             "}")
     Page<Field> findAllByTextPartial(String text, Pageable pageable);

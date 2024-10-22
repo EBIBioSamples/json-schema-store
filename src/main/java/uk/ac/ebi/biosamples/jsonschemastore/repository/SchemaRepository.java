@@ -26,6 +26,7 @@ public interface SchemaRepository
             "        { \"description\": { $regex: /?0/, $options: \"i\" } },\n" +
             "        { \"title\": { $regex: /?0/, $options: \"i\" } }\n" +
             "        { \"name\": { $regex: /?0/, $options: \"i\" } }\n" +
+            "        { \"group\": { $regex: /?0/, $options: \"i\" } }\n" +
             "    ]\n" +
             "}")
     Page<MongoJsonSchema> findAllByTextPartial(String text, Pageable pageable);
