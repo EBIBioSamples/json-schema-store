@@ -35,7 +35,7 @@ public class SchemaTemplateGenerator {
     }
 
     public String getBioSamplesSchema(String schemaId, String title,
-                                             String description, List<Property> propertyList) {
+                                             String description, List<Property> propertyList, boolean ignoreSynonyms) {
         VelocityEngine vEngine = new VelocityEngine();
         vEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         vEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -81,6 +81,7 @@ public class SchemaTemplateGenerator {
         ctx.put("properties", propertiesWithSynonyms);
         ctx.put("required", required);
         ctx.put("recommended", recommended);
+        ctx.put("ignoreSynonyms", ignoreSynonyms);
         template.merge(ctx, schemaWriter);
 
         return prettyPrintJson(schemaWriter.toString());
