@@ -18,7 +18,6 @@ import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
 
 import java.io.IOException;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,17 +70,17 @@ public class ChecklistConverterService {
                 field.getDescription(),
                 getTypedTemplate(field),
                 field.getUnits(),
-                getCardinality(field.getMandatory()),
+                getRequirementType(field.getMandatory()),
                 getMultiplicity(field.getMultiplicity()),
                 field.getGroupName()
         );
     }
 
-    private static Property.AttributeCardinality getCardinality(String fieldRequirement) {
+    private static Property.RequirementType getRequirementType(String fieldRequirement) {
         if (StringUtils.hasText(fieldRequirement)) {
-            return Property.AttributeCardinality.valueOf(fieldRequirement.toUpperCase());
+            return Property.RequirementType.valueOf(fieldRequirement.toUpperCase());
         } else {
-            return Property.AttributeCardinality.OPTIONAL;
+            return Property.RequirementType.OPTIONAL;
         }
     }
 
@@ -96,7 +95,7 @@ public class ChecklistConverterService {
     private static SchemaFieldAssociation fieldAssociationFromProperty(Property property) {
         return new SchemaFieldAssociation(
                 new FieldId(toVariableName(property.name()), "1.0").asString(),
-                property.cardinality(),
+                property.requirementType(),
                 Multiplicity.Single);
     }
 
@@ -108,7 +107,7 @@ public class ChecklistConverterService {
                 String schemaId = new SchemaId(enaChecklist.getChecklist().getAccession(), "1.0").asString();
             String title = enaChecklist.getChecklist().getDescriptor().getName();
             String description = enaChecklist.getChecklist().getDescriptor().getDescription();
-            String jsonSchema = schemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties);
+            String jsonSchema = schemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties, false);
             return new ImportedChecklist(jsonSchema, properties);
         } catch (Exception e) {
             log.error("Could not convert checklist: " + checklistId, e);

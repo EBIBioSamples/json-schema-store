@@ -115,7 +115,7 @@ definitions:
       items:
         type: object
         properties:
-          cardinality:
+          requirementType:
             description: needs a name change
             enum:
               - mandatory

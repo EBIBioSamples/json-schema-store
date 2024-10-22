@@ -35,7 +35,7 @@ public class SchemaTemplateGenerator {
     }
 
     public String getBioSamplesSchema(String schemaId, String title,
-                                             String description, List<Property> propertyList) {
+                                             String description, List<Property> propertyList, boolean ignoreSynonyms) {
         VelocityEngine vEngine = new VelocityEngine();
         vEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         vEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -43,7 +43,7 @@ public class SchemaTemplateGenerator {
 
         // Collect all the attributes with requirements
         List<Set<String>> required = propertyList.stream()
-            .filter(p -> p.cardinality() == Property.AttributeCardinality.MANDATORY)
+            .filter(p -> p.requirementType() == Property.RequirementType.MANDATORY)
             .map(p -> {
                 Set<String> s = new HashSet<>();
                 s.add(p.name());
@@ -54,7 +54,7 @@ public class SchemaTemplateGenerator {
             })
             .collect(Collectors.toList());
         List<List<String>> recommended = propertyList.stream()
-            .filter(p -> p.cardinality() == Property.AttributeCardinality.RECOMMENDED)
+            .filter(p -> p.requirementType() == Property.RequirementType.RECOMMENDED)
             .map(Property::synonyms)
             .collect(Collectors.toList());
 
@@ -65,7 +65,7 @@ public class SchemaTemplateGenerator {
                 if (!CollectionUtils.isEmpty(p.synonyms())) {
                     props.addAll(
                         p.synonyms().stream()
-                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.cardinality(), p.multiplicity(), p.groupName()))
+                            .map(s -> new Property(s, Collections.emptyList(), p.description(), p.type(), p.units(), p.requirementType(), p.multiplicity(), p.groupName()))
                             .toList());
                 }
                 return props.stream();
@@ -81,6 +81,7 @@ public class SchemaTemplateGenerator {
         ctx.put("properties", propertiesWithSynonyms);
         ctx.put("required", required);
         ctx.put("recommended", recommended);
+        ctx.put("ignoreSynonyms", ignoreSynonyms);
         template.merge(ctx, schemaWriter);
 
         return prettyPrintJson(schemaWriter.toString());
