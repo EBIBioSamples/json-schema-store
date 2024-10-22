@@ -1,6 +1,5 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
 
-import org.assertj.core.api.Condition;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -128,7 +127,7 @@ class MongoJsonSchemaRepositoryEventHandlerTest {
         public static Field addFieldWithId(MongoJsonSchema schema, String fieldId) {
             Field field = new Field();
             field.setId(fieldId);
-            SchemaFieldAssociation association = new SchemaFieldAssociation(fieldId, Property.AttributeCardinality.MANDATORY, Multiplicity.Single);
+            SchemaFieldAssociation association = new SchemaFieldAssociation(fieldId, Property.RequirementType.MANDATORY, Multiplicity.Single);
             schema.getSchemaFieldAssociations().add(association);
             return field;
         }
