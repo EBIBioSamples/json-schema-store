@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
@@ -35,8 +36,10 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
         @JsonSubTypes.Type(value = ChoiceField.class, name = "choice"),
         @JsonSubTypes.Type(value = PatternField.class, name = "pattern"),
         @JsonSubTypes.Type(value = TaxonField.class, name = "taxon"),
+        @JsonSubTypes.Type(value = OntologyField.class, name = "ontology"),
         @JsonSubTypes.Type(value = Field.class, name = "text")
 })
+@TypeAlias("text")
 public class Field
 {
     @Id
@@ -73,7 +76,7 @@ public class Field
             ((OntologyField.OntologyFieldBuilder<?, ?>) builder)
                     .ontology(typeAsJson.get("ontology").asText());
         } else if (typeAsJson.has("type")) {
-            builder = Field.builder().type("string");
+            builder = Field.builder().type("text");
         } else if (typeAsJson.has("isValidTaxonomy")) {
             builder = Field.builder().type("taxon");
         } else {
