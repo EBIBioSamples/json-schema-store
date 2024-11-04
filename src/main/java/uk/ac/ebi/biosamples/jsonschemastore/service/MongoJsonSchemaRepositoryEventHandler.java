@@ -22,6 +22,7 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 @RequiredArgsConstructor
 public class MongoJsonSchemaRepositoryEventHandler {
     private static final Logger logger = LoggerFactory.getLogger(MongoJsonSchemaRepositoryEventHandler.class);
+    public static final String DEFAULT_SCHEMA_VERSION = "1.0";
     private final FieldRepository fieldRepository;
     private final SchemaRepository schemaRepository;
     private final AccessioningService accessioningService;
@@ -34,7 +35,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
     public void handleBeforeCreate(MongoJsonSchema schema) {
         logger.info("Before creating MongoJsonSchema: {}", schema.getId());
         schema.setName(toVariableName(schema.getTitle()));
-        schema.setVersion("1.0");
+        schema.setVersion(DEFAULT_SCHEMA_VERSION);
         schema.setAccession(accessioningService.getSchemaAccession(schema.getId()));
 
         schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());

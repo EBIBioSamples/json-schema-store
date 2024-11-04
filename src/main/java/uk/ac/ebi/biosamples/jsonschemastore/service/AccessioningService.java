@@ -7,8 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.ApplicationStateException;
+import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
+
+import java.util.Optional;
+
+import static uk.ac.ebi.biosamples.jsonschemastore.service.MongoJsonSchemaRepositoryEventHandler.DEFAULT_SCHEMA_VERSION;
 
 @Slf4j
 @Service
@@ -18,7 +23,10 @@ public class AccessioningService {
     private final SchemaStoreProperties properties;
 
     public String getSchemaAccession(final String schemaId) {
-        return schemaRepository.findById(schemaId)
+        return Optional.ofNullable(schemaId)
+                .map(schemaRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .map(MongoJsonSchema::getAccession)
                 .orElseGet(() -> createNewAccession(schemaId, 0));
     }
@@ -30,9 +38,9 @@ public class AccessioningService {
                 .orElse("BSDC00000");
         String accession = incrementAccession(latestAccession);
         MongoJsonSchema mongoJsonSchema = new MongoJsonSchema();
-        mongoJsonSchema.setId(schemaId);
         mongoJsonSchema.setAccession(accession);
-        mongoJsonSchema.setVersion("1.0");
+        mongoJsonSchema.setVersion(DEFAULT_SCHEMA_VERSION);
+        mongoJsonSchema.setId(new SchemaId(mongoJsonSchema.getAccession(), mongoJsonSchema.getVersion()).asString());
         try {
             schemaRepository.insert(mongoJsonSchema);
         } catch (MongoWriteException e) {
