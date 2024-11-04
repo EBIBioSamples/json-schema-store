@@ -27,6 +27,7 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 @Service
 @RequiredArgsConstructor
 public class ChecklistConverterService {
+    // TODO: get ena url from config
     private static final String enaGetAllChecklistUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists?type=sample&format=json";
     private static final String enaChecklistBaseUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists/xml/${checklistId}?type=sample";
 

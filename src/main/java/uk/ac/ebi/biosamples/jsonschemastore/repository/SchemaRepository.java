@@ -3,6 +3,7 @@ package uk.ac.ebi.biosamples.jsonschemastore.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -12,8 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SchemaRepository
-        extends MongoRepository<MongoJsonSchema, String>
-         {
+        extends MongoRepository<MongoJsonSchema, String> {
     @RestResource(exported = false)
     Page<MongoJsonSchema> findAllBy(TextCriteria criteria, Pageable pageable);
 
@@ -32,6 +32,7 @@ public interface SchemaRepository
     Page<MongoJsonSchema> findAllByTextPartial(String text, Pageable pageable);
 
     List<MongoJsonSchema> findByIdIn(List<String> ids);
+
     Page<MongoJsonSchema> findByNameOrderByVersionDesc(String schemaName, Pageable pageable);
 
     Page<MongoJsonSchema> findByAccessionOrderByVersionDesc(String accession, Pageable pageable);
@@ -50,6 +51,16 @@ public interface SchemaRepository
 
     Optional<MongoJsonSchema> findFirstByDomainAndNameOrderByVersionDesc(String domain, String name);
 
+    record AttributeResult(String attributeName) {
+    }
+
+    @Aggregation(pipeline = {
+            "{ '$group': { '_id': '$?0'} }",
+            "{ '$sort': { '_id': 1 } }",
+            "{ '$project': {'attributeName': '$_id', _id: 0 } }"
+    })
+    @RestResource(exported = false)
+    List<AttributeResult> findAttributeValues(String attributeName);
 }
 
 

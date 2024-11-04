@@ -94,7 +94,7 @@ public class SchemaService {
     }
 
     // todo check accession logic in both POST and PUT requests
-    public JsonSchema saveSchemaWithAccession(@NonNull JsonSchema jsonSchema, Set<Field> importedFields) {
+    public void saveSchemaWithAccession(@NonNull JsonSchema jsonSchema, Set<Field> importedFields) {
         String accession = jsonSchema.getAccession();
         if (accession != null && !accession.isEmpty()) {
             jsonSchema.setAccession(accession);
@@ -113,7 +113,6 @@ public class SchemaService {
                     field.getUsedBySchemas().add(jsonSchema.getId());
                     fieldRepository.save(field);
                 });
-        return modelConverter.mongoJsonSchemaToJsonSchema(mongoJsonSchemaResult);
     }
 
     public void deleteSchema(@NonNull String schemaId) {
@@ -147,5 +146,10 @@ public class SchemaService {
                 .withMatcher("l", new ExampleMatcher.GenericPropertyMatcher());
         Example<MongoJsonSchema> example = Example.of(exampleSchema, matcher);
         return schemaRepository.findAll(example, pageable);
+    }
+
+
+    public List<SchemaRepository.AttributeResult> findAttributeValues(String attributeName){
+        return schemaRepository.findAttributeValues(attributeName);
     }
 }

@@ -15,11 +15,14 @@ import uk.ac.ebi.biosamples.jsonschemastore.exception.MalformedSchemaException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaValidationService;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaResourceAssembler;
 
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -140,6 +143,12 @@ public class SchemaController {
         Page<MongoJsonSchema> entityPage = schemaService.findBySchema(exampleSchema, pageable);
         return pagedResourcesAssembler.toModel(entityPage);
 
+    }
+
+    @GetMapping("/search/findAttributeValues")
+    @ResponseBody
+    public List<SchemaRepository.AttributeResult> findDistinctAndSortByAttributeName(String attributeName){
+        return schemaService.findAttributeValues(attributeName);
     }
 
 

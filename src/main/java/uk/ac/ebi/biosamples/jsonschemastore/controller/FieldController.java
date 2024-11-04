@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 
+import java.util.List;
+
 @RepositoryRestController
 @RequiredArgsConstructor
 public class FieldController {
@@ -32,5 +34,11 @@ public class FieldController {
 
     Page<Field> fieldPage = fieldRepository.findAll(example, pageable);
     return pagedResourcesAssembler.toModel(fieldPage);
+  }
+
+  @GetMapping("/fields/search/findAttributeValues")
+  @ResponseBody
+  public List<FieldRepository.AttributeResult> findDistinctAndSortByAttributeName(String attributeName){
+    return fieldRepository.findAttributeValues(attributeName);
   }
 }
