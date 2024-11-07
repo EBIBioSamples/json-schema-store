@@ -9,6 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
+    - host: ${HOST}
     - http:
         paths:
           - path: /biosamples/schema-store(/|$)(.*)
