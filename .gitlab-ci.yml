@@ -79,6 +79,7 @@ deploy_prod:
     name: prod
     url: https://www.ebi.ac.uk/biosamples/schema-store/api/v2
   only:
+    - dev
     - main
   extends: .kube_deploy_script
   when: manual
