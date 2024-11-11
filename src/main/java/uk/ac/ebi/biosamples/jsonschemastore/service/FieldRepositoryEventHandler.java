@@ -45,6 +45,9 @@ public class FieldRepositoryEventHandler {
     String oldFieldId = field.getId();
     Field oldField = fieldRepository.findById(field.getId())
         .orElseThrow(() -> new DataIntegrityViolationException("Could not find the field: " + oldFieldId));
+    if(!oldField.isLatest()) {
+      throw new IllegalStateException("Non latest versions are not updatable");
+    }
     if (!oldField.getLabel().equals(field.getLabel())) {
       throw new DataIntegrityViolationException("Attribute `label` could not be edited once created. Please create a new field instead.");
     }

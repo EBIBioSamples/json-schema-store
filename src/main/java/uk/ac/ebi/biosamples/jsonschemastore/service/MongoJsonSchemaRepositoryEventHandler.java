@@ -90,7 +90,9 @@ public class MongoJsonSchemaRepositoryEventHandler {
     @HandleBeforeSave
     public void handleBeforeSave(MongoJsonSchema newSchemaVersion) {
         logger.info("Before saving MongoJsonSchema: {}", newSchemaVersion.getId());
-        // make the current version not editable
+        if(!newSchemaVersion.getLatest()) {
+            throw new IllegalStateException("Non latest versions are not updatable");
+        }
         schemaRepository.findById(newSchemaVersion.getId())
                 .ifPresent(currentSchemaVersion-> {
                             currentSchemaVersion.makeNonEditable();
