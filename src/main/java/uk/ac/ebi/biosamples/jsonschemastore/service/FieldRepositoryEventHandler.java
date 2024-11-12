@@ -7,6 +7,7 @@ import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.biosamples.jsonschemastore.exception.OperationNotAllowedException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
 import uk.ac.ebi.biosamples.jsonschemastore.model.FieldId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
@@ -46,7 +47,7 @@ public class FieldRepositoryEventHandler {
     Field oldField = fieldRepository.findById(field.getId())
         .orElseThrow(() -> new DataIntegrityViolationException("Could not find the field: " + oldFieldId));
     if(!oldField.isLatest()) {
-      throw new IllegalStateException("Non latest versions are not updatable");
+      throw new OperationNotAllowedException("Non latest versions are not updatable");
     }
     if (!oldField.getLabel().equals(field.getLabel())) {
       throw new DataIntegrityViolationException("Attribute `label` could not be edited once created. Please create a new field instead.");
