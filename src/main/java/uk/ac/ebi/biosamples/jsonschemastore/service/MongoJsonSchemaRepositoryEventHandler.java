@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.biosamples.jsonschemastore.exception.OperationNotAllowedException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Authority;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
@@ -90,7 +91,9 @@ public class MongoJsonSchemaRepositoryEventHandler {
     @HandleBeforeSave
     public void handleBeforeSave(MongoJsonSchema newSchemaVersion) {
         logger.info("Before saving MongoJsonSchema: {}", newSchemaVersion.getId());
-        // make the current version not editable
+        if(!newSchemaVersion.getLatest()) {
+            throw new OperationNotAllowedException("Non latest versions are not updatable");
+        }
         schemaRepository.findById(newSchemaVersion.getId())
                 .ifPresent(currentSchemaVersion-> {
                             currentSchemaVersion.makeNonEditable();
