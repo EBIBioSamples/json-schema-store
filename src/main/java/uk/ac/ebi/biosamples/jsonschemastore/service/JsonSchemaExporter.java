@@ -61,13 +61,13 @@ public class JsonSchemaExporter {
     }
   }
 
-  private List<Property> listProperties(MongoJsonSchema schema) {
+  protected List<Property> listProperties(MongoJsonSchema schema) {
     List<Property> properties = new ArrayList<>();
     for (SchemaFieldAssociation fieldAssociation : schema.getSchemaFieldAssociations()) {
       Field field = fieldRepository.findById(fieldAssociation.getFieldId())
           .orElseThrow(() -> new ApplicationStateException("Invalid schema state. Field can not be found: " + fieldAssociation.getFieldId()));
       Property property = new Property(field.getName(), Collections.emptyList(), field.getDescription(),
-          getTypedTemplate(field), List.of(), fieldAssociation.getRequirementType(), convertToPropertyMuliplicity(fieldAssociation.getMultiplicity()), "");
+          getTypedTemplate(field), new ArrayList<>(field.getUnits()), fieldAssociation.getRequirementType(), convertToPropertyMuliplicity(fieldAssociation.getMultiplicity()), "");
       properties.add(property);
     }
     return properties;
