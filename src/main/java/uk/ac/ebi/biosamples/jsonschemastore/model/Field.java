@@ -14,9 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -51,6 +49,7 @@ public class Field
     protected Set<String> usedBySchemas = new HashSet<>();
     protected String type;
     protected String group;
+    protected Set<String> units;
     @CreatedDate
     private LocalDateTime createdDate;
     @LastModifiedDate
@@ -87,6 +86,7 @@ public class Field
                 .version("1.0")
                 .id(new FieldId(toVariableName(property.name()), "1.0").asString())
                 .label(property.name())
+                .units(property.units() == null ? Collections.emptySet() : new HashSet(property.units()))
                 .usedBySchemas(new HashSet<>(1))
                 .latest(true)
                 .group(property.groupName())

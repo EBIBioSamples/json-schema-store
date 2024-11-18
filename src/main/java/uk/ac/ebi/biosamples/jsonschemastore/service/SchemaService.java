@@ -106,6 +106,7 @@ public class SchemaService {
                     Field fieldFromDb = fieldRepository.findById(importedField.getId()).orElse(importedField);
                     fieldFromDb.setGroup(importedField.getGroup());
                     fieldFromDb.setType(importedField.getType());
+                    fieldFromDb.setUnits(importedField.getUnits());
                     fieldFromDb.setLastModifiedDate(LocalDateTime.now());
                     return fieldFromDb;
                 })

@@ -1,21 +1,29 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.ac.ebi.biosamples.jsonschemastore.FieldGeneratorHelper;
 import uk.ac.ebi.biosamples.jsonschemastore.SchemaHelper;
+import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -24,6 +32,8 @@ class SchemaServiceTest {
     private AccessioningService accessioningService;
     @Mock
     private SchemaRepository schemaRepository;
+    @Mock
+    private FieldRepository fieldRepository;
     @Mock
     private MongoModelConverter modelConverter;
     @InjectMocks
@@ -51,7 +61,6 @@ class SchemaServiceTest {
 
     @Test
     void getSchemaByNameAndVersion_schema_not_present() {
-
         Optional<JsonSchema> schema = schemaService.getSchemaByNameAndVersion("test_schema_fake", "0.0.1");
         assertTrue(schema.isEmpty());
     }
@@ -61,5 +70,18 @@ class SchemaServiceTest {
         JsonSchema jsonSchemaTest = SchemaHelper.getJsonSchema_test_2();
         JsonSchema schema = schemaService.saveSchema(jsonSchemaTest);
         assertEquals(jsonSchemaTest, schema);
+    }
+
+    @Test
+    void saveSchemaWithAccessionShouldSaveNewValueOfFieldUnits() {
+        String fieldId = "test_field_id";
+        Field field = FieldGeneratorHelper.getTestFieldWithIdAndUnits(fieldId, Collections.emptyList());
+        Field unitModifiedField = FieldGeneratorHelper.getTestFieldWithIdAndUnits(fieldId, Collections.singletonList("m"));
+        when(fieldRepository.findById(fieldId)).thenReturn(Optional.of(field));
+        when(fieldRepository.save(any())).thenReturn(field);
+
+        JsonSchema schema = SchemaHelper.getJsonSchema_test_2();
+        schemaService.saveSchemaWithAccession(schema, Set.of(unitModifiedField));
+        Assertions.assertThat(field.getUnits().contains("m")).isTrue();
     }
 }
