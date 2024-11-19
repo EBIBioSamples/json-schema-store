@@ -49,11 +49,6 @@ public class MongoJsonSchema {
     private Boolean editable;
     private Boolean latest;
     private String group;
-    private String searchable;
-
-    public void setSearchable(String searchable) {
-        this.searchable = searchable;
-    }
 
     public void makeNonEditable() {
         this.editable = false;
