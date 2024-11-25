@@ -18,14 +18,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
-import uk.ac.ebi.biosamples.jsonschemastore.auth.BearerTokenAuthenticationProvider;
 import uk.ac.ebi.biosamples.jsonschemastore.service.UserService;
 
 import java.io.IOException;
@@ -67,12 +64,8 @@ public class SecurityConfig {
         requestHeaderAuthenticationFilter.setPrincipalRequestHeader("Authorization");
         requestHeaderAuthenticationFilter.setAuthenticationManager(authenticationManager);
         requestHeaderAuthenticationFilter.setCheckForPrincipalChanges(true);
-        requestHeaderAuthenticationFilter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                userService.updateUser((UserDetails) authentication.getPrincipal());
-            }
-        });
+        requestHeaderAuthenticationFilter.setAuthenticationSuccessHandler(
+                (request, response, authentication) -> userService.updateUser((UserDetails) authentication.getPrincipal()));
         return requestHeaderAuthenticationFilter;
     }
 
@@ -81,7 +74,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth,
                                                        AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> uds) {
-//        auth.authenticationProvider(bearerTokenAuthenticationProvider);
         PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
         preAuthenticatedAuthenticationProvider.setPreAuthenticatedUserDetailsService(uds);
         auth.authenticationProvider(preAuthenticatedAuthenticationProvider);

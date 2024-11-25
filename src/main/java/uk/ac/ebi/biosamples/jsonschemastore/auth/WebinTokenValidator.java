@@ -49,7 +49,6 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
             if (authResponse.getStatusCode().is2xxSuccessful()) {
 
                 JsonNode accountInfo = objectMapper.readTree(authResponse.getBody());
-                // TODO read role from db here
                 String submissionAccountId = accountInfo.get("submissionAccountId").asText();
                 Collection<? extends GrantedAuthority> authorities = getGrantedAuthorities(submissionAccountId);
                 return User.builder()
@@ -77,8 +76,7 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
             defaultAuthorities = List.of(new SimpleGrantedAuthority("reader"));
         }
 
-        Collection<? extends GrantedAuthority> authorities = Optional.ofNullable(userDetails).map(UserDetails::getAuthorities).orElse(defaultAuthorities);
-        return authorities;
+        return Optional.ofNullable(userDetails).map(UserDetails::getAuthorities).orElse(defaultAuthorities);
     }
 
 
