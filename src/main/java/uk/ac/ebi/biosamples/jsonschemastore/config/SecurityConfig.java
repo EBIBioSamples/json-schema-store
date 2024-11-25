@@ -56,7 +56,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(bearerTokenAuthenticationProvider);
         return auth.getOrBuild();
     }

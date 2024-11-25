@@ -29,7 +29,7 @@ public class WebinTokenValidator {
             // Send the token to the third-party API for validation
             HttpHeaders headers = new HttpHeaders();
             headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-            HttpEntity<Void> requestEntity = new HttpEntity<Void>(headers);
+            HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
             String validationUrl = schemaStoreProperties.getAuthApiUrl() + "/admin/submission-account";
 
             ResponseEntity<String> authResponse = restTemplate.exchange(

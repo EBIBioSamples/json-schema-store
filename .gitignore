@@ -23,7 +23,6 @@ target/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
 build/
@@ -84,7 +83,6 @@ yarn-error.log
 baseline.json
 
 node/
-target/
 /.venv/bin/activate
 /.venv/bin/activate.csh
 /.venv/bin/activate.fish
