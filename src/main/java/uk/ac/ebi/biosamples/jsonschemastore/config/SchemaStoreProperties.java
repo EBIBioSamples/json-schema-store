@@ -19,4 +19,7 @@ public class SchemaStoreProperties {
 
     @Value("${schemastore.admin.password:password}")
     private String adminPassword;
+
+    @Value("${auth.api.url}")
+    private String authApiUrl;
 }

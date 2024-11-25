@@ -7,11 +7,15 @@ spring:
       uri: mongodb://localhost/schemastore
     rest:
       basePath: /api/v2
+
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+auth:
+  api:
+    url: https://wwwdev.ebi.ac.uk/ena/submit/webin/auth
 logging:
   level:
     org:
