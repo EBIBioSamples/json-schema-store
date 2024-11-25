@@ -1,7 +1,6 @@
 package uk.ac.ebi.biosamples.jsonschemastore.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import uk.ac.ebi.biosamples.jsonschemastore.model.User;
 
 import java.util.Optional;

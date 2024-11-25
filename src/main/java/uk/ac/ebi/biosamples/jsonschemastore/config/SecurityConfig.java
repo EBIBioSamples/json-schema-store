@@ -1,5 +1,7 @@
 package uk.ac.ebi.biosamples.jsonschemastore.config;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
@@ -13,11 +15,20 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import uk.ac.ebi.biosamples.jsonschemastore.auth.BearerTokenAuthenticationProvider;
+import uk.ac.ebi.biosamples.jsonschemastore.service.UserService;
+
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -25,15 +36,16 @@ import uk.ac.ebi.biosamples.jsonschemastore.auth.BearerTokenAuthenticationProvid
 public class SecurityConfig {
 
     protected final Log logger = LogFactory.getLog(getClass());
-    protected final BearerTokenAuthenticationProvider bearerTokenAuthenticationProvider;
+    private final UserService userService;
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+        RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter = requestHeaderAuthenticationFilter(authenticationManager);
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/v2/mongoJsonSchemas").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v2/mongoJsonSchemas").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v2/mongoJsonSchemas").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/v2/mongoJsonSchemas").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v2/mongoJsonSchemas").hasAuthority("admin")
+                        .requestMatchers(HttpMethod.PUT, "/api/v2/mongoJsonSchemas").hasAuthority("admin")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v2/mongoJsonSchemas").hasAuthority("admin")
+                        .requestMatchers(HttpMethod.GET, "/api/v2/mongoJsonSchemas").hasAuthority("reader")
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptions -> exceptions
@@ -42,7 +54,7 @@ public class SecurityConfig {
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                         })
                 )
-                .addFilter(new BearerTokenAuthenticationFilter(authenticationManager))
+                .addFilter(requestHeaderAuthenticationFilter)
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
@@ -50,14 +62,29 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    private RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter(AuthenticationManager authenticationManager) {
+        RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter = new RequestHeaderAuthenticationFilter();
+        requestHeaderAuthenticationFilter.setPrincipalRequestHeader("Authorization");
+        requestHeaderAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        requestHeaderAuthenticationFilter.setCheckForPrincipalChanges(true);
+        requestHeaderAuthenticationFilter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                userService.updateUser((UserDetails) authentication.getPrincipal());
+            }
+        });
+        return requestHeaderAuthenticationFilter;
     }
 
+
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(bearerTokenAuthenticationProvider);
+    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth,
+                                                       AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> uds) {
+//        auth.authenticationProvider(bearerTokenAuthenticationProvider);
+        PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
+        preAuthenticatedAuthenticationProvider.setPreAuthenticatedUserDetailsService(uds);
+        auth.authenticationProvider(preAuthenticatedAuthenticationProvider);
         return auth.getOrBuild();
     }
 }

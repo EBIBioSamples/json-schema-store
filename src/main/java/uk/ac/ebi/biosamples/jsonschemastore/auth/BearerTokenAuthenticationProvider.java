@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class BearerTokenAuthenticationProvider implements AuthenticationProvider {
     private final WebinTokenValidator webinTokenValidator;
