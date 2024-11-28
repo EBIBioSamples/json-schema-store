@@ -45,19 +45,22 @@ public class JsonSchemaExporter {
     return fieldTypeTemplate;
   }
 
-  public String convertEnaChecklist(String checklistId) {
+  public String generateJsonSchemaFromChecklistFields(String checklistId) {
+    MongoJsonSchema schema = schemaRepository.findById(checklistId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid checklistId: " + checklistId));
+    return generateJsonSchemaFromChecklistFields(schema);
+  }
+
+  public String generateJsonSchemaFromChecklistFields(MongoJsonSchema schema) {
     try {
-      List<Property> properties;
-      MongoJsonSchema schema = schemaRepository.findById(checklistId)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid checklistId: " + checklistId));
-      properties = listProperties(schema);
+      List<Property> properties = listProperties(schema);
       String schemaId = new SchemaId(schema.getAccession(), schema.getVersion()).asString();
       String title = schema.getTitle();
       String description = schema.getDescription();
       return schemaTemplateGenerator.getBioSamplesSchema(schemaId, title, description, properties, true);
     } catch (Exception e) {
-      log.error("Could not convert checklist: {}", checklistId, e);
-      throw new ApplicationStateException("Could not convert checklist for " + checklistId, e);
+      log.error("Could not convert checklist: {}", schema.getId(), e);
+      throw new ApplicationStateException("Could not convert checklist for " + schema.getId(), e);
     }
   }
 

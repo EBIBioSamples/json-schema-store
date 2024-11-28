@@ -1,6 +1,7 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
@@ -24,14 +25,11 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 @Component
 @RepositoryEventHandler(Field.class)
 @Slf4j
+@RequiredArgsConstructor
 public class FieldRepositoryEventHandler {
   private final SchemaRepository schemaRepository;
   private final FieldRepository fieldRepository;
-
-  public FieldRepositoryEventHandler(SchemaRepository schemaRepository, FieldRepository fieldRepository) {
-    this.schemaRepository = schemaRepository;
-    this.fieldRepository = fieldRepository;
-  }
+  private final JsonSchemaExporter jsonSchemaExporter;
 
   @HandleBeforeCreate
   public void handleBeforeCreate(Field field) {
@@ -87,6 +85,7 @@ public class FieldRepositoryEventHandler {
     fieldAssociation.setFieldId(field.getId());
     schema.setVersion(VersionIncrementer.incrementMinorVersion(schema.getVersion()));
     schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
+    schema.setSchema(jsonSchemaExporter.generateJsonSchemaFromChecklistFields(schema));
     log.info("Updating schema: {} and incrementing version to: {}", schemaId, schema.getVersion());
     schemaRepository.save(schema);
     return schema.getId();
