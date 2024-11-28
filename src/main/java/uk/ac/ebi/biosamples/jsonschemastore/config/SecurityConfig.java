@@ -19,7 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
@@ -39,15 +41,22 @@ public class SecurityConfig {
         RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter = requestHeaderAuthenticationFilter(authenticationManager);
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/v2/mongoJsonSchemas").hasAuthority("admin")
-                        .requestMatchers(HttpMethod.PUT, "/api/v2/mongoJsonSchemas").hasAuthority("admin")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v2/mongoJsonSchemas").hasAuthority("admin")
-                        .requestMatchers(HttpMethod.GET, "/api/v2/mongoJsonSchemas").hasAuthority("reader")
+                        .requestMatchers(HttpMethod.POST, "/api/v2/mongoJsonSchemas/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.PUT, "/api/v2/mongoJsonSchemas/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v2/mongoJsonSchemas/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.GET, "/api/v2/mongoJsonSchemas/**").hasAuthority("reader")
+                        .requestMatchers(HttpMethod.POST, "/api/v2/fields/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.PUT, "/api/v2/fields/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v2/fields/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.GET, "/api/v2/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v2/mongoJsonSchemas/**").hasAuthority("reader")
+                        .requestMatchers(HttpMethod.GET, "/exporter/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/registry/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            logger.warn("Unauthorized access attempt: " + authException.getMessage());
+                        .authenticationEntryPoint((request, response, authenticationException) -> {
+                            logger.warn("Unauthorized access attempt: " + authenticationException.getMessage());
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                         })
                 )
@@ -60,13 +69,20 @@ public class SecurityConfig {
     }
 
     private RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter(AuthenticationManager authenticationManager) {
-        RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter = new RequestHeaderAuthenticationFilter();
-        requestHeaderAuthenticationFilter.setPrincipalRequestHeader("Authorization");
-        requestHeaderAuthenticationFilter.setAuthenticationManager(authenticationManager);
-        requestHeaderAuthenticationFilter.setCheckForPrincipalChanges(true);
-        requestHeaderAuthenticationFilter.setAuthenticationSuccessHandler(
+        RequestHeaderAuthenticationFilter filter = new RequestHeaderAuthenticationFilter();
+        filter.setPrincipalRequestHeader("Authorization");
+        filter.setAuthenticationManager(authenticationManager);
+        filter.setCheckForPrincipalChanges(true);
+        filter.setExceptionIfHeaderMissing(false);
+        filter.setAuthenticationSuccessHandler(
                 (request, response, authentication) -> userService.updateUser((UserDetails) authentication.getPrincipal()));
-        return requestHeaderAuthenticationFilter;
+        filter.setAuthenticationFailureHandler(
+                (request, response, authenticationException) -> {
+                    logger.warn("Unauthorized access attempt: " + authenticationException.getMessage());
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: "+authenticationException.getMessage());
+                });
+
+        return filter;
     }
 
 

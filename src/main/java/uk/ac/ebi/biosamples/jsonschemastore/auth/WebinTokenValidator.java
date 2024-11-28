@@ -47,7 +47,6 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
                     new URI(validationUrl), HttpMethod.GET, requestEntity, String.class
             );
             if (authResponse.getStatusCode().is2xxSuccessful()) {
-
                 JsonNode accountInfo = objectMapper.readTree(authResponse.getBody());
                 String submissionAccountId = accountInfo.get("submissionAccountId").asText();
                 Collection<? extends GrantedAuthority> authorities = getGrantedAuthorities(submissionAccountId);
@@ -63,7 +62,7 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
                 throw new BadCredentialsException("Invalid token. auth response status: " + authResponse.getStatusCode());
             }
         } catch (Exception ex) {
-            throw new BadCredentialsException("Invalid token. Error during validation", ex);
+            throw new BadCredentialsException("Invalid token. Error during validation: " + ex.getMessage(), ex);
         }
     }
 

@@ -15,7 +15,7 @@ management:
         include: "*"
 auth:
   api:
-    url: https://wwwdev.ebi.ac.uk/ena/submit/webin/auth
+    url: https://www.ebi.ac.uk/ena/submit/webin/auth
 logging:
   level:
     org:

@@ -1,5 +1,6 @@
 package uk.ac.ebi.biosamples.jsonschemastore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,11 @@ public class User implements UserDetails {
   private String id;
   @Indexed(unique = true)
   private String username;
+
+  /**
+   * hide in rest api responses
+   */
+  @JsonIgnore
   private String password;
   private  boolean accountNonExpired = true;
 

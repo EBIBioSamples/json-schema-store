@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 
@@ -55,6 +52,10 @@ public class Field
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
     private boolean latest;
+    @CreatedBy
+    private String createdBy;
+
+
 
     public static Field fromProperty(Property property) {
         JsonNode typeAsJson = SchemaTemplateGenerator.getJson(property.type());
