@@ -15,6 +15,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
 
@@ -43,6 +44,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
         schema.setAuthority(Authority.BIOSAMPLES.name());
         schema.makeEditable();
         schema.makeLatest();
+        constructTextSearchField(schema);
     }
 
     /**
@@ -109,6 +111,14 @@ public class MongoJsonSchemaRepositoryEventHandler {
         newSchemaVersion.setId(newSchemaVersion.getAccession()+":"+newSchemaVersion.getVersion());
         newSchemaVersion.makeEditable();
         newSchemaVersion.makeLatest();
+        constructTextSearchField(newSchemaVersion);
     }
 
+    private void constructTextSearchField(MongoJsonSchema schema) {
+        String searchable = Stream.of(schema.getAccession(), schema.getDescription(), schema.getTitle(),schema.getName(), schema.getGroup())
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(Collectors.joining(" "));
+        schema.setSearchable(searchable);
+
+    }
 }

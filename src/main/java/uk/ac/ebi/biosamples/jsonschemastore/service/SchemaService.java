@@ -144,7 +144,7 @@ public class SchemaService {
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withIgnoreNullValues()
                 .withIgnorePaths("schemaFieldAssociations")
-                .withMatcher("l", new ExampleMatcher.GenericPropertyMatcher());
+                .withMatcher("searchable", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
         Example<MongoJsonSchema> example = Example.of(exampleSchema, matcher);
         return schemaRepository.findAll(example, pageable);
     }
