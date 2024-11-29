@@ -1,11 +1,9 @@
 package uk.ac.ebi.biosamples.jsonschemastore.config;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.data.rest.RepositoryRestProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,52 +13,55 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import uk.ac.ebi.biosamples.jsonschemastore.service.UserService;
-
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    private final RepositoryRestProperties repositoryRestProperties;
     private final UserService userService;
+    private final Log logger = LogFactory.getLog(getClass());
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-        RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter = requestHeaderAuthenticationFilter(authenticationManager);
+        String basePath = repositoryRestProperties.getBasePath();
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/v2/mongoJsonSchemas/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.PUT, "/api/v2/mongoJsonSchemas/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v2/mongoJsonSchemas/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.GET, "/api/v2/mongoJsonSchemas/**").hasAuthority("reader")
-                        .requestMatchers(HttpMethod.POST, "/api/v2/fields/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.PUT, "/api/v2/fields/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v2/fields/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.GET, "/api/v2/users/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v2/mongoJsonSchemas/**").hasAuthority("reader")
+                        // checklists
+                        .requestMatchers(HttpMethod.POST, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.PUT, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.DELETE, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
+
+                        // TODO: does this need auth?
+                        .requestMatchers(HttpMethod.GET, basePath + "/mongoJsonSchemas/**").hasAuthority("reader")
+
+                        // fields
+                        .requestMatchers(HttpMethod.POST, basePath + "/fields/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.PUT, basePath + "/fields/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.DELETE, basePath + "/fields/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.GET, basePath + "/fields/**").hasAuthority("editor")
+
+                        // export chceklists
                         .requestMatchers(HttpMethod.GET, "/exporter/**").permitAll()
+
+                        // checklist registry
                         .requestMatchers(HttpMethod.GET, "/registry/**").permitAll()
+
+                        // admin
+                        .requestMatchers(HttpMethod.GET, basePath + "/users/search/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, basePath + "/users/search").authenticated()
+                        .requestMatchers(HttpMethod.GET, basePath + "/users/**").hasAuthority("editor")
+
                         .anyRequest().permitAll()
                 )
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, authenticationException) -> {
-                            logger.warn("Unauthorized access attempt: " + authenticationException.getMessage());
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                        })
-                )
-                .addFilter(requestHeaderAuthenticationFilter)
+                .addFilter(requestHeaderAuthenticationFilter(authenticationManager))
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
@@ -76,16 +77,8 @@ public class SecurityConfig {
         filter.setExceptionIfHeaderMissing(false);
         filter.setAuthenticationSuccessHandler(
                 (request, response, authentication) -> userService.updateUser((UserDetails) authentication.getPrincipal()));
-        filter.setAuthenticationFailureHandler(
-                (request, response, authenticationException) -> {
-                    logger.warn("Unauthorized access attempt: " + authenticationException.getMessage());
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: "+authenticationException.getMessage());
-                });
-
         return filter;
     }
-
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth,

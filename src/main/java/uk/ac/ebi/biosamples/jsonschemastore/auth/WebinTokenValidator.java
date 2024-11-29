@@ -35,11 +35,13 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
     final UserService userService;
 
 
-    UserDetails validateTokenAndGetUserDetails(String token) {
+    @Override
+    public UserDetails loadUserDetails(PreAuthenticatedAuthenticationToken token) throws UsernameNotFoundException {
+        String tokenString = (String) token.getPrincipal();
         try {
             // Send the token to the third-party API for validation
             HttpHeaders headers = new HttpHeaders();
-            headers.set(HttpHeaders.AUTHORIZATION, token);
+            headers.set(HttpHeaders.AUTHORIZATION, tokenString);
             HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
             String validationUrl = schemaStoreProperties.getAuthApiUrl() + "/admin/submission-account";
 
@@ -66,6 +68,8 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
         }
     }
 
+
+    // TODO: this belongs in UserService
     private Collection<? extends GrantedAuthority> getGrantedAuthorities(String submissionAccountId) {
         UserDetails userDetails = null;
         Collection<? extends GrantedAuthority> defaultAuthorities = null;
@@ -75,12 +79,7 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
             defaultAuthorities = List.of(new SimpleGrantedAuthority("reader"));
         }
 
-        return Optional.ofNullable(userDetails).map(UserDetails::getAuthorities).orElse(defaultAuthorities);
-    }
-
-
-    @Override
-    public UserDetails loadUserDetails(PreAuthenticatedAuthenticationToken token) throws UsernameNotFoundException {
-        return validateTokenAndGetUserDetails((String) token.getPrincipal());
+        return Optional.ofNullable(userDetails).map(UserDetails::getAuthorities)
+                .orElse(defaultAuthorities);
     }
 }

@@ -9,6 +9,10 @@ public class CurrentUserResourceImpl implements CurrentUserResource {
     @Override
     public User findCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (User) authentication.getPrincipal();
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            return (User) authentication.getPrincipal();
+        }
+
+        throw new IllegalStateException("No authenticated user found.");
     }
 }
