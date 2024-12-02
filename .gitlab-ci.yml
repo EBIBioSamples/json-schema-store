@@ -31,10 +31,11 @@ build:
       - target/json-schema-store-0.0.2.jar
 
 build_docker_image:
+  stage: publish
   image: docker:27
+  tags: ["dind"]
   services:
     - docker:27-dind
-  stage: publish
   script:
     - docker --version
     - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
@@ -86,7 +87,10 @@ deploy_prod:
 
 .kube_deploy_script:
   stage: deploy
-  image: dtzar/helm-kubectl
+  image: dtzar/helm-kubectl:3.16
+  tags: ["dind"]
+  services:
+    - docker:27-dind
   variables:
     K8S_NAMESPACE: ${K8S_NAMESPACE_PREFIX}-${ENVIRONMENT_NAME}
   script:
