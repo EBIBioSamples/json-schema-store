@@ -39,14 +39,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.DELETE, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
 
-                        // TODO: does this need auth?
-                        .requestMatchers(HttpMethod.GET, basePath + "/mongoJsonSchemas/**").hasAuthority("reader")
+
 
                         // fields
                         .requestMatchers(HttpMethod.POST, basePath + "/fields/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.PUT, basePath + "/fields/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.DELETE, basePath + "/fields/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.GET, basePath + "/fields/**").hasAuthority("reader")
+
 
                         // export chceklists
                         .requestMatchers(HttpMethod.GET, "/exporter/**").permitAll()
@@ -55,13 +54,21 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/registry/**").permitAll()
 
                         // admin
+                        .requestMatchers(HttpMethod.GET, "/checklist/converter/**").authenticated()
                         .requestMatchers(HttpMethod.GET, basePath + "/users/search/me").authenticated()
                         .requestMatchers(HttpMethod.GET, basePath + "/users/search").authenticated()
                         .requestMatchers(HttpMethod.GET, basePath + "/users/**").hasAuthority("admin")
                         .requestMatchers(HttpMethod.POST, basePath + "/users/**").hasAuthority("admin")
                         .requestMatchers(HttpMethod.PUT, basePath + "/users/**").hasAuthority("admin")
 
-                        .anyRequest().permitAll()
+                        // TODO: does read only this need auth?
+                        .requestMatchers(HttpMethod.GET, basePath + "/mongoJsonSchemas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, basePath + "/fields/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/exporter/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/actuator/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  basePath).permitAll()
+
+                        .anyRequest().authenticated()
                 )
                 .addFilter(requestHeaderAuthenticationFilter(authenticationManager))
                 .httpBasic(Customizer.withDefaults())
