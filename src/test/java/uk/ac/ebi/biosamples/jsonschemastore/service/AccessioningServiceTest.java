@@ -43,7 +43,7 @@ class AccessioningServiceTest {
     public void setup() {
         when(schemaRepository.findFirstByOrderByAccessionDesc()).thenReturn(Optional.of(getSchema()));
         when(schemaRepository.insert(any(MongoJsonSchema.class))).thenReturn(getSchema());
-        when(properties.getDefaultAuthority()).thenReturn("BIOSAMPLES");
+        when(properties.getDefaultAuthority()).thenReturn("ENA");
     }
 
     @Test
