@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Data
 @Document(collection = "schemas")
@@ -69,5 +71,13 @@ public class MongoJsonSchema {
 
     public void makeLatest() {
         this.latest = true;
+    }
+
+    public void constructTextSearchField() {
+        String searchable = Stream.of(this.getAccession(), this.getDescription(), this.getTitle(),this.getName(), this.getGroup())
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(Collectors.joining(" "));
+        this.setSearchable(searchable);
+
     }
 }

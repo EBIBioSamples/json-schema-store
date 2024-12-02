@@ -112,7 +112,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
 
     private void populateSearchAndSchemaFields(MongoJsonSchema schema) {
         schema.setSchema(jsonSchemaExporter.generateJsonSchemaFromChecklistFields(schema));
-        constructTextSearchField(schema);
+        schema.constructTextSearchField();
     }
 
     private void processAndSaveCurrentVersionAsNonLatest(String schemaId) {
@@ -123,11 +123,5 @@ public class MongoJsonSchemaRepositoryEventHandler {
         schemaRepository.save(mongoSchema);
     }
 
-    private void constructTextSearchField(MongoJsonSchema schema) {
-        String searchable = Stream.of(schema.getAccession(), schema.getDescription(), schema.getTitle(),schema.getName(), schema.getGroup())
-                .filter(value -> value != null && !value.isEmpty())
-                .collect(Collectors.joining(" "));
-        schema.setSearchable(searchable);
 
-    }
 }
