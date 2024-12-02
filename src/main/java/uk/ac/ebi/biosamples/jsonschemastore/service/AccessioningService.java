@@ -35,7 +35,7 @@ public class AccessioningService {
     private String createNewAccession(String schemaId, int retries) {
         String latestAccession = schemaRepository.findFirstByAuthorityOrderByAccessionDesc(properties.getDefaultAuthority())
                 .map(MongoJsonSchema::getAccession)
-                .orElse("BSDC00000");
+                .orElse("ERC00000");
         String accession = incrementAccession(latestAccession);
         MongoJsonSchema mongoJsonSchema = new MongoJsonSchema();
         mongoJsonSchema.setAccession(accession);
@@ -60,7 +60,7 @@ public class AccessioningService {
     }
 
     private String incrementAccession(String accession) {
-        int accessionNumber = Integer.parseInt(accession.split("BSDC")[1]);
-        return "BSDC" + String.format("%05d", ++accessionNumber);
+        int accessionNumber = Integer.parseInt(accession.split("ERC")[1]);
+        return "ERC" + String.format("%06d", ++accessionNumber);
     }
 }

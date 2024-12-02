@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SchemaStoreProperties {
 
-    @Value("${schemastore.authority:BIOSAMPLES}")
+    @Value("${schemastore.authority:ENA}")
     private String defaultAuthority;
 
     @Value("${schemastore.validator.url:http://localhost:3020/validate}")
