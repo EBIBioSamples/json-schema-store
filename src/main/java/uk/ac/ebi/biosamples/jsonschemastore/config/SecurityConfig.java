@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, basePath + "/fields/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.PUT, basePath + "/fields/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.DELETE, basePath + "/fields/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.GET, basePath + "/fields/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.GET, basePath + "/fields/**").hasAuthority("reader")
 
                         // export chceklists
                         .requestMatchers(HttpMethod.GET, "/exporter/**").permitAll()
@@ -57,7 +57,9 @@ public class SecurityConfig {
                         // admin
                         .requestMatchers(HttpMethod.GET, basePath + "/users/search/me").authenticated()
                         .requestMatchers(HttpMethod.GET, basePath + "/users/search").authenticated()
-                        .requestMatchers(HttpMethod.GET, basePath + "/users/**").hasAuthority("editor")
+                        .requestMatchers(HttpMethod.GET, basePath + "/users/**").hasAuthority("admin")
+                        .requestMatchers(HttpMethod.POST, basePath + "/users/**").hasAuthority("admin")
+                        .requestMatchers(HttpMethod.PUT, basePath + "/users/**").hasAuthority("admin")
 
                         .anyRequest().permitAll()
                 )

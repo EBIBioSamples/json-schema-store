@@ -2,6 +2,8 @@ package uk.ac.ebi.biosamples.jsonschemastore.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -50,6 +52,12 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
             );
             if (authResponse.getStatusCode().is2xxSuccessful()) {
                 JsonNode accountInfo = objectMapper.readTree(authResponse.getBody());
+                DocumentContext accountJsonDoc = JsonPath.parse(authResponse.getBody());
+                List<String> firstName = accountJsonDoc
+                        .read("$.submissionContacts[?(@.mainContact==true)].firstName");
+                List<String> lastName = accountJsonDoc
+                        .read("$.submissionContacts[?(@.mainContact==true)].surname");
+
                 String submissionAccountId = accountInfo.get("submissionAccountId").asText();
                 Collection<? extends GrantedAuthority> authorities = getGrantedAuthorities(submissionAccountId);
                 return User.builder()
@@ -59,6 +67,8 @@ public class WebinTokenValidator implements AuthenticationUserDetailsService<Pre
                         .accountNonLocked("N".equals(accountInfo.get("suspended").asText()))
                         .accountNonExpired("N".equals(accountInfo.get("suspended").asText()))
                         .authorities(authorities)
+                        .firstName(firstName.get(0))
+                        .lastName(lastName.get(0))
                         .build();
             } else {
                 throw new BadCredentialsException("Invalid token. auth response status: " + authResponse.getStatusCode());
