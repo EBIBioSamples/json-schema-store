@@ -28,6 +28,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
     private final FieldRepository fieldRepository;
     private final SchemaRepository schemaRepository;
     private final AccessioningService accessioningService;
+    private final JsonSchemaExporter jsonSchemaExporter;
 
     /**
      * Called when a new checklist is created. Initialises the version, id, and name
@@ -37,14 +38,10 @@ public class MongoJsonSchemaRepositoryEventHandler {
     public void handleBeforeCreate(MongoJsonSchema schema) {
         logger.info("Before creating MongoJsonSchema: {}", schema.getId());
         schema.setName(toVariableName(schema.getTitle()));
-        schema.setVersion(DEFAULT_SCHEMA_VERSION);
         schema.setAccession(accessioningService.getSchemaAccession(schema.getId()));
-
-        schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
-        schema.setAuthority(Authority.BIOSAMPLES.name());
-        schema.makeEditable();
-        schema.makeLatest();
-        constructTextSearchField(schema);
+        schema.setAuthority(Authority.ENA.name());
+        setVersionAndMarkAsLatest(schema, DEFAULT_SCHEMA_VERSION);
+        populateSearchAndSchemaFields(schema);
     }
 
     /**
@@ -55,7 +52,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
     @HandleAfterSave
     @HandleAfterCreate
     public void handleAfterCreateOrSave(MongoJsonSchema schema) {
-        logger.info("handleAfterCreateOrSave for schema " + schema.getId());
+      logger.info("handleAfterCreateOrSave for schema {}", schema.getId());
         updateFieldToSchemaRefs(schema);
     }
 
@@ -88,30 +85,42 @@ public class MongoJsonSchemaRepositoryEventHandler {
     /**
      * called before a checklist is updated.
      * makes it uneditable, increments version
-     * @param newSchemaVersion
+     * @param schema
      */
     @HandleBeforeSave
-    public void handleBeforeSave(MongoJsonSchema newSchemaVersion) {
-        logger.info("Before saving MongoJsonSchema: {}", newSchemaVersion.getId());
-        if(!newSchemaVersion.getLatest()) {
+    public void handleBeforeSave(MongoJsonSchema schema) {
+        logger.info("Before saving MongoJsonSchema: {}", schema.getId());
+        if (!schema.getLatest()) {
             throw new OperationNotAllowedException("Non latest versions are not updatable");
         }
-        schemaRepository.findById(newSchemaVersion.getId())
-                .ifPresent(currentSchemaVersion-> {
-                            currentSchemaVersion.makeNonEditable();
-                            currentSchemaVersion.makeNonLatest();
-                            schemaRepository.save(currentSchemaVersion);
-                        });
+        processAndSaveCurrentVersionAsNonLatest(schema.getId());
 
         // this will generate a new checklist instance with an incremented version
         // TODO: reuse SchemaId
-        String incrementedVersion = VersionIncrementer.incrementMinorVersion(newSchemaVersion.getVersion());
+        String incrementedVersion = VersionIncrementer.incrementMinorVersion(schema.getVersion());
+        setVersionAndMarkAsLatest(schema, incrementedVersion);
+        populateSearchAndSchemaFields(schema);
         logger.info("incrementedVersion: {}", incrementedVersion);
-        newSchemaVersion.setVersion(incrementedVersion);
-        newSchemaVersion.setId(newSchemaVersion.getAccession()+":"+newSchemaVersion.getVersion());
-        newSchemaVersion.makeEditable();
-        newSchemaVersion.makeLatest();
-        constructTextSearchField(newSchemaVersion);
+    }
+
+    private void setVersionAndMarkAsLatest(MongoJsonSchema schema, String incrementedVersion) {
+        schema.setVersion(incrementedVersion);
+        schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
+        schema.makeEditable();
+        schema.makeLatest();
+    }
+
+    private void populateSearchAndSchemaFields(MongoJsonSchema schema) {
+        schema.setSchema(jsonSchemaExporter.generateJsonSchemaFromChecklistFields(schema));
+        constructTextSearchField(schema);
+    }
+
+    private void processAndSaveCurrentVersionAsNonLatest(String schemaId) {
+        MongoJsonSchema mongoSchema = schemaRepository.findById(schemaId)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid checklistId: " + schemaId));
+        mongoSchema.makeNonEditable();
+        mongoSchema.makeNonLatest();
+        schemaRepository.save(mongoSchema);
     }
 
     private void constructTextSearchField(MongoJsonSchema schema) {

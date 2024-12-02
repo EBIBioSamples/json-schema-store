@@ -26,7 +26,7 @@ Vanilla schema endpoints can be used to retrieve schema without wrappping metada
 
 | Action                                    | Endpoint                                  |
 |-------------------------------------------|-------------------------------------------|
-| Get latest vanilla schema by id           | `/registry/schemas?id=<$id>`              |
+| Get latest vanilla schema by id           | `/registry/schemas/{$id}`                 |
 | Get latest vanilla schema by accession    | `/registry/schemas/{accession}`           |
 | Get versioned vanilla schema by accession | `/registry/schemas/{accession}/{version}` | 
 

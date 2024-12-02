@@ -17,7 +17,6 @@ import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 class SchemaServiceTest {
@@ -54,13 +54,21 @@ class SchemaServiceTest {
     }
 
     @Test
+    void getSchemaByIdOrLatestByAccessionShouldReturnLatestIfAccessionIsProvided() {
+        when(schemaRepository.findFirstByAccessionOrderByVersionDesc("BSDC00002"))
+            .thenReturn(Optional.of(SchemaHelper.getMongoJsonSchema_test_2()));
+        Optional<JsonSchema> schema = schemaService.getSchemaByIdOrLatestByAccession("BSDC00002");
+        assertThat(schema).isPresent();
+    }
+
+    @Test
     void getSchemaByNameAndVersion() {
         Optional<JsonSchema> schema = schemaService.getSchemaByNameAndVersion("test_schema_2", "0.0.1");
         assertTrue(schema.isPresent());
     }
 
     @Test
-    void getSchemaByNameAndVersion_schema_not_present() {
+    void getSchemaByNameAndVersionShouldReturnEmptyIfNameVersionPairIsNotPresent() {
         Optional<JsonSchema> schema = schemaService.getSchemaByNameAndVersion("test_schema_fake", "0.0.1");
         assertTrue(schema.isEmpty());
     }

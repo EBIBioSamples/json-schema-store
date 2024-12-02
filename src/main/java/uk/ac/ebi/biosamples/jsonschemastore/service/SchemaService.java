@@ -29,9 +29,13 @@ public class SchemaService {
     private final FieldRepository fieldRepository;
     private final MongoModelConverter modelConverter;
 
-    public Optional<JsonSchema> getSchemaByNameAndVersion(@NonNull String schemaName, String version) {
-        Optional<MongoJsonSchema> optionalSchema = schemaRepository.findFirstByNameAndVersionOrderByVersionDesc(schemaName, version);
+    public Optional<JsonSchema> getSchemaById(@NonNull String id) {
+        Optional<MongoJsonSchema> optionalSchema = schemaRepository.findById(id);
         return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);
+    }
+
+    public Optional<JsonSchema> getSchemaByIdOrLatestByAccession(@NonNull String idOrAccession) {
+        return idOrAccession.contains(":") ? getSchemaById(idOrAccession) : getLatestSchemaByAccession(idOrAccession);
     }
 
     public Optional<JsonSchema> getLatestSchemaByAccession(@NonNull String accession) {
@@ -44,11 +48,6 @@ public class SchemaService {
         return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);
     }
 
-    public Optional<JsonSchema> getSchemaById(@NonNull String id) {
-        Optional<MongoJsonSchema> optionalSchema = schemaRepository.findById(id);
-        return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);
-    }
-
     public Page<SchemaOutline> getAllVersionsByAccession(@NonNull String accession, int page, int size) {
         Page<MongoJsonSchema> mongoSchemas = schemaRepository.findByAccessionOrderByVersionDesc(accession, PageRequest.of(page, size));
 
@@ -56,6 +55,11 @@ public class SchemaService {
                 .map(modelConverter::mongoJsonSchemaToSchemaOutline)
                 .collect(Collectors.toList());
         return new PageImpl<>(schemas, PageRequest.of(page, size), mongoSchemas.getTotalElements());
+    }
+
+    public Optional<JsonSchema> getSchemaByNameAndVersion(@NonNull String schemaName, String version) {
+        Optional<MongoJsonSchema> optionalSchema = schemaRepository.findFirstByNameAndVersionOrderByVersionDesc(schemaName, version);
+        return optionalSchema.map(modelConverter::mongoJsonSchemaToJsonSchema);
     }
 
     public Page<JsonSchema> getSchemaPage(String text, int page, int size) {
