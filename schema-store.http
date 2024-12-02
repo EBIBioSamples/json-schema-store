@@ -24,3 +24,4 @@ Authorization: Bearer {{token}}
 
 ### convert a single xml checklist
 GET {{schema_store_url}}/checklist/converter/ERC000011
+Authorization: Bearer {{token}}

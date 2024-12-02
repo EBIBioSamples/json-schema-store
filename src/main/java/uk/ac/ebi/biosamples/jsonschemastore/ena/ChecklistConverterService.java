@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.ApplicationStateException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.*;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.Multiplicity;
@@ -28,9 +29,10 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 @RequiredArgsConstructor
 public class ChecklistConverterService {
     // TODO: get ena url from config
-    private static final String enaGetAllChecklistUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists?type=sample&format=json";
-    private static final String enaChecklistBaseUrl = "https://www.ebi.ac.uk/ena/submit/report/checklists/xml/${checklistId}?type=sample";
+    private static final String enaGetAllChecklistQueryString = "?type=sample&format=json";
+    private static final String enaChecklistBaseUrlSuffix = "/xml/${checklistId}?type=sample";
 
+    private final SchemaStoreProperties schemaStoreProperties;
     private final SchemaService schemaService;
     private final SchemaObjectPopulator populator;
     private final SchemaTemplateGenerator schemaTemplateGenerator;
@@ -164,18 +166,18 @@ public class ChecklistConverterService {
     private EnaChecklist getEnaChecklist(String checklistId) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new EnaErrorHandler());
-        URI uri = URI.create(enaChecklistBaseUrl.replace("${checklistId}", checklistId));
+        URI uri = URI.create(schemaStoreProperties.getEnaChecklistsUrl()+enaChecklistBaseUrlSuffix.replace("${checklistId}", checklistId));
         EnaChecklist enaChecklist = restTemplate.getForObject(uri, EnaChecklist.class);
         Objects.requireNonNull(enaChecklist, "Failed to retrieve ENA checklist" + checklistId);
 
         return enaChecklist;
     }
 
-    private static List<String> getEnaChecklists() {
+    private List<String> getEnaChecklists() {
         List<String> enaChecklists = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new EnaErrorHandler());
-        URI uri = URI.create(enaGetAllChecklistUrl);
+        URI uri = URI.create(schemaStoreProperties.getEnaChecklistsUrl()+ enaGetAllChecklistQueryString);
         JsonNode allChecklistsJson = restTemplate.getForObject(uri, JsonNode.class);
         Objects.requireNonNull(allChecklistsJson, "Failed to retrieve ENA checklist");
 

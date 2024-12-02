@@ -16,6 +16,13 @@ management:
 auth:
   api:
     url: https://www.ebi.ac.uk/ena/submit/webin/auth
+ena:
+  checklists:
+    url: https://www.ebi.ac.uk/ena/submit/report/checklists
+  checklist:
+    groups:
+      url: https://www.ebi.ac.uk/ena/submit/report/checklist-groups
+
 logging:
   level:
     org:

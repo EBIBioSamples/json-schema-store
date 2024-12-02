@@ -1,14 +1,11 @@
 package uk.ac.ebi.biosamples.jsonschemastore.model;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.rest.core.annotation.RestResource;
-import org.springframework.hateoas.server.core.Relation;
 
 
 import java.util.List;

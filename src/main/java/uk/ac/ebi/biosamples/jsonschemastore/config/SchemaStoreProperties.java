@@ -22,4 +22,10 @@ public class SchemaStoreProperties {
 
     @Value("${auth.api.url}")
     private String authApiUrl;
+
+    @Value("${ena.checklist.groups.url}")
+    private String enaChecklistGroupsUrl;
+
+    @Value("${ena.checklists.url}")
+    private String enaChecklistsUrl;
 }
