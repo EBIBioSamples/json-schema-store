@@ -10,7 +10,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/exporter/schemas", produces = {"application/json"})
+@RequestMapping(value = "/registry/schemas", produces = {"application/json"})
 @RequiredArgsConstructor
 public class SchemaExporterController {
   private final JsonSchemaExporter jsonSchemaExporter;
