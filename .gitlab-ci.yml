@@ -31,15 +31,15 @@ build:
       - target/json-schema-store-0.0.2.jar
 
 build_docker_image:
-  image: docker:latest
+  image: docker:27
   services:
-    - docker:dind
+    - docker:27-dind
   stage: publish
   script:
-    - echo "$CI_DEPLOY_PASSWORD" | docker login $CI_REGISTRY -u $CI_DEPLOY_USER --password-stdin
-    - echo $DOCKER_IMAGE_NAME
+    - docker --version
+    - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker build -t $DOCKER_IMAGE_NAME .
-    - docker push $DOCKER_IMAGE_NAME
+    - docker push --quiet $DOCKER_IMAGE_NAME
   after_script:
     - docker logout ${CI_REGISTRY}
 
@@ -66,7 +66,7 @@ deploy_test:
     url: https://wwwdev.ebi.ac.uk/biosamples/schema-store/api/v2
   only:
     - dev
-    - main
+    - master
   extends: .kube_deploy_script
   when: manual
 
@@ -80,7 +80,7 @@ deploy_prod:
     url: https://www.ebi.ac.uk/biosamples/schema-store/api/v2
   only:
     - dev
-    - main
+    - master
   extends: .kube_deploy_script
   when: manual
 
