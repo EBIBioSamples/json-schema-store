@@ -37,6 +37,7 @@ class FieldRepositoryEventHandlerTest {
     field.setVersion("1.0");
     field.setId("handleBeforeSaveField:1.0");
     field.setUsedBySchemas(Set.of("BSDC00001:1.0", "BSDC00002:1.0"));
+    field.setLatest(true);
     return field;
   }
 

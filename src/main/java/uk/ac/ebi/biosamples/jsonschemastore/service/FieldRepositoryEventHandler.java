@@ -4,6 +4,7 @@ package uk.ac.ebi.biosamples.jsonschemastore.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
@@ -64,16 +65,27 @@ public class FieldRepositoryEventHandler {
     field.setUsedBySchemas(updatedSchemaIds);
   }
 
+  @HandleAfterSave
+  public void handleAfterSave(Field field) {
+    Set<String> schemaIds = field.getUsedBySchemas();
+    for (String schemaId : schemaIds) {
+      MongoJsonSchema schema = schemaRepository.findById(schemaId)
+          .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
+      schema.setSchema(jsonSchemaExporter.generateJsonSchemaFromChecklistFields(schema));
+      schemaRepository.save(schema);
+    }
+  }
+
   private Set<String> updateUsedBySchemas(Set<String> schemas, Field field, String oldFieldId) {
     Set<String> updatedSchemaIds = new HashSet<>();
     for (String schemaId : schemas) {
-      String updatedSchemaId = updateSchemaAndIncrementVersion(field, oldFieldId, schemaId);
+      String updatedSchemaId = updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId);
       updatedSchemaIds.add(updatedSchemaId);
     }
     return updatedSchemaIds;
   }
 
-  private String updateSchemaAndIncrementVersion(Field field, String oldFieldId, String schemaId) {
+  private String updateSchemaFieldAssociationAndIncrementVersion(Field field, String oldFieldId, String schemaId) {
     log.info("Updating field: {} in schema: {}", field.getId(), schemaId);
     MongoJsonSchema schema = schemaRepository.findById(schemaId)
         .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
@@ -85,9 +97,9 @@ public class FieldRepositoryEventHandler {
     fieldAssociation.setFieldId(field.getId());
     schema.setVersion(VersionIncrementer.incrementMinorVersion(schema.getVersion()));
     schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
-    schema.setSchema(jsonSchemaExporter.generateJsonSchemaFromChecklistFields(schema));
     log.info("Updating schema: {} and incrementing version to: {}", schemaId, schema.getVersion());
     schemaRepository.save(schema);
     return schema.getId();
   }
+
 }
