@@ -65,6 +65,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, basePath + "/mongoJsonSchemas/**").permitAll()
                         .requestMatchers(HttpMethod.GET, basePath + "/fields/**").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/registry/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/v2/schemas/list").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/actuator/**").permitAll()
                         .requestMatchers(HttpMethod.GET,  basePath).permitAll()
 
