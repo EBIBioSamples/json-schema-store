@@ -1,6 +1,7 @@
 package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.biosamples.jsonschemastore.FieldGeneratorHelper;
 import uk.ac.ebi.biosamples.jsonschemastore.SchemaHelper;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
+import uk.ac.ebi.biosamples.jsonschemastore.model.FieldGroup;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
@@ -17,6 +19,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -91,5 +94,36 @@ class SchemaServiceTest {
         JsonSchema schema = SchemaHelper.getJsonSchema_test_2();
         schemaService.saveSchemaWithAccession(schema, Set.of(unitModifiedField));
         Assertions.assertThat(field.getUnits().contains("m")).isTrue();
+    }
+
+    @Test
+    void extractFieldGroupsShouldExtractAllGroupsCorrectly() {
+        Set<Field> fields = getTestFields();
+        Set<FieldGroup> groups = schemaService.extractFieldGroups(fields);
+        assertThat(groups.size()).isEqualTo(2);
+    }
+
+    @Test
+    void extractFieldGroupsShouldPopulateFieldsInGroups() {
+        Set<Field> fields = getTestFields();
+        Set<FieldGroup> groups = schemaService.extractFieldGroups(fields);
+        assertThat(
+            groups.stream().findFirst().orElseThrow().getFields()
+                .stream().findFirst().orElseThrow()).contains("test_field");
+    }
+
+    private static @NotNull Set<Field> getTestFields() {
+        Set<Field> fields = new HashSet<>();
+        Field field = new Field();
+        field.setId("test_field_1");
+        field.setLabel("test_field_1");
+        field.setGroup("Group 1");
+        fields.add(field);
+        field = new Field();
+        field.setId("test_field_2");
+        field.setLabel("test_field_2");
+        field.setGroup("Group 2");
+        fields.add(field);
+        return fields;
     }
 }

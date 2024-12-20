@@ -7,17 +7,17 @@ import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
+import uk.ac.ebi.biosamples.jsonschemastore.model.FieldGroup;
 import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldGroupRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,6 +28,7 @@ public class SchemaService {
     private final SchemaRepository schemaRepository;
     private final FieldRepository fieldRepository;
     private final MongoModelConverter modelConverter;
+    private final FieldGroupRepository fieldGroupRepository;
 
     public Optional<JsonSchema> getSchemaById(@NonNull String id) {
         Optional<MongoJsonSchema> optionalSchema = schemaRepository.findById(id);
@@ -118,6 +119,15 @@ public class SchemaService {
                     field.getUsedBySchemas().add(jsonSchema.getId());
                     fieldRepository.save(field);
                 });
+
+        Set<FieldGroup> groups = extractFieldGroups(importedFields);
+        Set<FieldGroup> updatedGroups = new HashSet<>();
+        groups.forEach(group -> {
+            FieldGroup savedGroup = fieldGroupRepository.findByName(group.getName()).orElse(group);
+            savedGroup.getFields().addAll(group.getFields());
+            updatedGroups.add(savedGroup);
+        });
+        fieldGroupRepository.saveAll(updatedGroups);
     }
 
     public void deleteSchema(@NonNull String schemaId) {
@@ -156,5 +166,16 @@ public class SchemaService {
 
     public List<SchemaRepository.AttributeResult> findAttributeValues(String attributeName){
         return schemaRepository.findAttributeValues(attributeName);
+    }
+
+    protected Set<FieldGroup> extractFieldGroups(Set<Field> fields) {
+        Map<String, FieldGroup> groupMap = new HashMap<>();
+        for (Field field : fields) {
+            String groupName = field.getGroup().trim();
+            FieldGroup group = groupMap.getOrDefault(groupName, new FieldGroup(groupName));
+            group.getFields().add(field.getLabel());
+            groupMap.putIfAbsent(groupName, group);
+        }
+        return new HashSet<>(groupMap.values());
     }
 }

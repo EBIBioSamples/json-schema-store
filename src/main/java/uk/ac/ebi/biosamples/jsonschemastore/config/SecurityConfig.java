@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/registry/**").permitAll()
 
                         // admin
-                        .requestMatchers(HttpMethod.GET, "/checklist/converter/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/checklist/converter/**").permitAll()
                         .requestMatchers(HttpMethod.GET, basePath + "/users/search/me").authenticated()
                         .requestMatchers(HttpMethod.GET, basePath + "/users/search").authenticated()
                         .requestMatchers(HttpMethod.GET, basePath + "/users/**").hasAuthority("admin")
@@ -64,6 +64,7 @@ public class SecurityConfig {
                         // TODO: does read only this need auth?
                         .requestMatchers(HttpMethod.GET, basePath + "/mongoJsonSchemas/**").permitAll()
                         .requestMatchers(HttpMethod.GET, basePath + "/fields/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, basePath + "/fieldGroups/**").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/registry/**").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/api/v2/schemas/list").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/actuator/**").permitAll()
