@@ -74,4 +74,28 @@ class FieldRepositoryEventHandlerTest {
     assertThat(field.getId()).isEqualTo("handleBeforeSaveField:1.1");
     assertThat(field.getUsedBySchemas().stream().findFirst().orElseThrow()).contains(":1.1");
   }
+
+  @Test
+  void minorVersionIncrementFieldChangedShouldReturnFalseIfChnageMinorOnlyInGroupField() {
+    Field oldField = new Field();
+    oldField.setName("The Test Field");
+    oldField.setGroup("old group");
+    Field newField = new Field();
+    oldField.setName("The Test Field");
+    oldField.setGroup("new group");
+    boolean result = fieldRepositoryEventHandler.minorVersionIncrementFieldChanged(oldField, newField);
+    assertThat(result).isFalse();
+  }
+
+  @Test
+  void minorVersionIncrementFieldChangedShouldReturnTrueIfNameChanged() {
+    Field oldField = new Field();
+    oldField.setName("The old Field");
+    oldField.setGroup("the group");
+    Field newField = new Field();
+    oldField.setName("The new Field");
+    oldField.setGroup("the group");
+    boolean result = fieldRepositoryEventHandler.minorVersionIncrementFieldChanged(oldField, newField);
+    assertThat(result).isTrue();
+  }
 }

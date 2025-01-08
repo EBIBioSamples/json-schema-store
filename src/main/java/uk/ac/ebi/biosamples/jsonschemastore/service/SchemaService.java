@@ -106,10 +106,22 @@ public class SchemaService {
         }
         MongoJsonSchema mongoJsonSchema = modelConverter.jsonSchemaToMongoJsonSchema(jsonSchema);
         MongoJsonSchema mongoJsonSchemaResult = schemaRepository.save(mongoJsonSchema);
+
+        // populate field groups
+        Set<FieldGroup> groups = extractFieldGroups(importedFields);
+        Map<String, FieldGroup> updatedGroups = new HashMap<>();
+        groups.forEach(group -> {
+            FieldGroup savedGroup = fieldGroupRepository.findByName(group.getName()).orElse(group);
+            savedGroup.getFields().addAll(group.getFields());
+            updatedGroups.put(savedGroup.getName(), savedGroup);
+        });
+        fieldGroupRepository.saveAll(updatedGroups.values());
+
+        // populate fields
         importedFields.stream()
                 .map(importedField -> {
                     Field fieldFromDb = fieldRepository.findById(importedField.getId()).orElse(importedField);
-                    fieldFromDb.setGroup(importedField.getGroup());
+                    fieldFromDb.setGroup(updatedGroups.get(importedField.getGroup()).getId());
                     fieldFromDb.setType(importedField.getType());
                     fieldFromDb.setUnits(importedField.getUnits());
                     fieldFromDb.setLastModifiedDate(LocalDateTime.now());
@@ -119,15 +131,6 @@ public class SchemaService {
                     field.getUsedBySchemas().add(jsonSchema.getId());
                     fieldRepository.save(field);
                 });
-
-        Set<FieldGroup> groups = extractFieldGroups(importedFields);
-        Set<FieldGroup> updatedGroups = new HashSet<>();
-        groups.forEach(group -> {
-            FieldGroup savedGroup = fieldGroupRepository.findByName(group.getName()).orElse(group);
-            savedGroup.getFields().addAll(group.getFields());
-            updatedGroups.add(savedGroup);
-        });
-        fieldGroupRepository.saveAll(updatedGroups);
     }
 
     public void deleteSchema(@NonNull String schemaId) {

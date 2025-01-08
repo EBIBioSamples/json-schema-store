@@ -34,6 +34,7 @@ public class SecurityConfig {
         String basePath = repositoryRestProperties.getBasePath();
         http
                 .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers(HttpMethod.GET).permitAll()
                         // checklists
                         .requestMatchers(HttpMethod.POST, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.PUT, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")

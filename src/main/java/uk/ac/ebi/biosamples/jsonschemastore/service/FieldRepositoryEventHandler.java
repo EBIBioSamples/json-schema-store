@@ -11,10 +11,12 @@ import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.OperationNotAllowedException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
+import uk.ac.ebi.biosamples.jsonschemastore.model.FieldGroup;
 import uk.ac.ebi.biosamples.jsonschemastore.model.FieldId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
+import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldGroupRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 
@@ -31,6 +33,7 @@ public class FieldRepositoryEventHandler {
   private final SchemaRepository schemaRepository;
   private final FieldRepository fieldRepository;
   private final JsonSchemaExporter jsonSchemaExporter;
+  private final FieldGroupRepository fieldGroupRepository;
 
   @HandleBeforeCreate
   public void handleBeforeCreate(Field field) {
@@ -51,18 +54,22 @@ public class FieldRepositoryEventHandler {
     if (!oldField.getLabel().equals(field.getLabel())) {
       throw new DataIntegrityViolationException("Attribute `label` could not be edited once created. Please create a new field instead.");
     }
-    oldField.setLatest(false);
-    fieldRepository.save(oldField);
 
-    String incrementedVersion = VersionIncrementer.incrementMinorVersion(field.getVersion());
-    field.setVersion(incrementedVersion);
-    field.setId(new FieldId(field.getName(), field.getVersion()).asString());
-    field.setLatest(true);
-    log.info("Updating field: {} and incrementing version to: {}", oldFieldId, incrementedVersion);
+    if (minorVersionIncrementFieldChanged(oldField, field)) {
+      oldField.setLatest(false);
+      fieldRepository.save(oldField);
 
-    Set<String> schemaIds = field.getUsedBySchemas();
-    Set<String> updatedSchemaIds = updateUsedBySchemas(schemaIds, field, oldFieldId);
-    field.setUsedBySchemas(updatedSchemaIds);
+      String incrementedVersion = VersionIncrementer.incrementMinorVersion(field.getVersion());
+      field.setVersion(incrementedVersion);
+      field.setId(new FieldId(field.getName(), field.getVersion()).asString());
+      field.setLatest(true);
+      log.info("Updating field: {} and incrementing version to: {}", oldFieldId, incrementedVersion);
+
+      Set<String> schemaIds = field.getUsedBySchemas();
+      Set<String> updatedSchemaIds = updateUsedBySchemas(schemaIds, field, oldFieldId);
+      field.setUsedBySchemas(updatedSchemaIds);
+    }
+    updateGroups(field.getLabel(), oldField.getGroup(), field.getGroup());
   }
 
   @HandleAfterSave
@@ -102,4 +109,37 @@ public class FieldRepositoryEventHandler {
     return schema.getId();
   }
 
+  protected void updateGroups(String fieldLabel, String oldGroupId, String newGroupId) {
+    if (oldGroupId.equals(newGroupId)) {
+      return;
+    }
+
+    removeFieldFromGroup(fieldLabel, oldGroupId);
+    addFieldToGroup(fieldLabel, newGroupId);
+  }
+
+  private FieldGroup removeFieldFromGroup(String fieldName, String oldGroupId) {
+    FieldGroup oldGroup = fieldGroupRepository.findById(oldGroupId)
+        .orElseThrow(() -> new DataIntegrityViolationException("Invalid group id: " + oldGroupId));
+    oldGroup.getFields().remove(fieldName);
+    fieldGroupRepository.save(oldGroup);
+    return oldGroup;
+  }
+
+  private void addFieldToGroup(String fieldName, String newGroupId) {
+    FieldGroup newGroup = fieldGroupRepository.findById(newGroupId)
+        .orElseThrow(() -> new DataIntegrityViolationException("Invalid group id: " + newGroupId));
+    newGroup.getFields().add(fieldName);
+    fieldGroupRepository.save(newGroup);
+  }
+
+  protected boolean minorVersionIncrementFieldChanged(Field oldField, Field newField) {
+    return !oldField.getName().equals(newField.getName()) ||
+        !oldField.getVersion().equals(newField.getVersion()) ||
+        !oldField.getLabel().equals(newField.getLabel()) ||
+        !oldField.getDescription().equals(newField.getDescription()) ||
+        !oldField.getUsedBySchemas().equals(newField.getUsedBySchemas()) ||
+        !oldField.getType().equals(newField.getType()) ||
+        !oldField.getUnits().equals(newField.getUnits());
+  }
 }
