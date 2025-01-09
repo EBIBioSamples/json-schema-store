@@ -39,10 +39,4 @@ public class FieldGroupController {
     return pagedResourcesAssembler.toModel(fieldPage);
   }
 
-  @GetMapping("/fieldGroups/search/findAllByIdIn")
-  @ResponseBody
-  public ResponseEntity<List<FieldGroup>> findByExample(@RequestParam List<String> ids) {
-    List<FieldGroup> fieldGroups = fieldGroupRepository.findAllById(ids);
-    return ResponseEntity.ok(fieldGroups);
-  }
 }
