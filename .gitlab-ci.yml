@@ -115,8 +115,6 @@ deploy_prod_fallback:
     - envsubst < k8s/configmap.yaml > k8s.$$/configmap.yaml
     - envsubst < k8s/deployment.yaml > k8s.$$/deployment.yaml
     - envsubst < k8s/service.yaml > k8s.$$/service.yaml
-    - envsubst < k8s/ingress.yaml > k8s.$$/ingress.yaml
-    - cat k8s.$$/ingress.yaml
     - kubectl apply -f k8s.$$/
     - kubectl rollout restart deployments json-schema-store
 
