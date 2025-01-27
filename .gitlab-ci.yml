@@ -41,16 +41,6 @@ build_docker_image:
   after_script:
     - docker logout ${CI_REGISTRY}
 
-deploy_dev_hx:
-  variables:
-    HOST: wwwint.ebi.ac.uk
-    VALIDATOR_URL: https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate
-  environment:
-    name: primary_hx_dev
-    url: https://wwwint.ebi.ac.uk/biosamples/schema-store/api/v2
-  extends: .kube_deploy_script
-  when: manual
-
 deploy_dev_primary:
   variables:
     HOST: wwwint.ebi.ac.uk
