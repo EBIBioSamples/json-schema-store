@@ -5,7 +5,6 @@ variables:
   DOCKER_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$DOCKER_TAG
   DOCKER_PULL_SECRET: docker-registry-secret
-  K8S_NAMESPACE_PREFIX: biosamples
   APP_NAME: $CI_PROJECT_NAME
 
 cache:
@@ -22,8 +21,6 @@ stages:
 build:
   image: maven:3.8.3-openjdk-17
   stage: build
-  variables:
-    MONGO_URL: $DEV_MONGO_URL
   script:
     - mvn $MAVEN_CLI_OPTS clean package
   artifacts:
@@ -44,40 +41,55 @@ build_docker_image:
   after_script:
     - docker logout ${CI_REGISTRY}
 
-deploy_dev:
+deploy_dev_primary:
   variables:
-    ENVIRONMENT_NAME: dev
     HOST: wwwint.ebi.ac.uk
     VALIDATOR_URL: https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
-    name: dev
+    name: primary_hl_dev
     url: https://wwwint.ebi.ac.uk/biosamples/schema-store/api/v2
-  only:
-    - dev
   extends: .kube_deploy_script
   when: manual
 
-deploy_test:
+deploy_test_primary:
   variables:
-    ENVIRONMENT_NAME: test
     HOST: wwwdev.ebi.ac.uk
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
-    name: test
+    name: primary_hl_test
     url: https://wwwdev.ebi.ac.uk/biosamples/schema-store/api/v2
+  extends: .kube_deploy_script
+  when: manual
+
+deploy_test_fallback:
+  variables:
+    HOST: wwwdev.ebi.ac.uk
+    VALIDATOR_URL: https://wwwdev.ebi.ac.uk/biosamples/biovalidator/validate
+  environment:
+    name: fallback_hx_test
+    url: https://wwwdev.ebi.ac.uk/biosamples/schema-store/api/v2
+  extends: .kube_deploy_script
+  when: manual
+
+deploy_prod_primary:
+  variables:
+    HOST: www.ebi.ac.uk
+    VALIDATOR_URL: https://www.ebi.ac.uk/biosamples/biovalidator/validate
+  environment:
+    name: primary_hl_prod
+    url: https://www.ebi.ac.uk/biosamples/schema-store/api/v2
   only:
     - dev
     - master
   extends: .kube_deploy_script
   when: manual
 
-deploy_prod:
+deploy_prod_fallback:
   variables:
-    ENVIRONMENT_NAME: prod
     HOST: www.ebi.ac.uk
     VALIDATOR_URL: https://www.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
-    name: prod
+    name: fallback_hx_prod
     url: https://www.ebi.ac.uk/biosamples/schema-store/api/v2
   only:
     - dev
@@ -91,10 +103,9 @@ deploy_prod:
   tags: ["dind"]
   services:
     - docker:27-dind
-  variables:
-    K8S_NAMESPACE: ${K8S_NAMESPACE_PREFIX}-${ENVIRONMENT_NAME}
   script:
     - kubectl create namespace ${K8S_NAMESPACE} || true
+    - echo ${K8S_NAMESPACE}
     - kubectl config set-context --current --namespace=${K8S_NAMESPACE}
     - kubectl delete secret $DOCKER_PULL_SECRET || true
     - kubectl create secret docker-registry $DOCKER_PULL_SECRET --docker-server=$CI_REGISTRY --docker-username=$CI_DEPLOY_USER --docker-password=$CI_DEPLOY_PASSWORD
@@ -102,7 +113,6 @@ deploy_prod:
     - envsubst < k8s/configmap.yaml > k8s.$$/configmap.yaml
     - envsubst < k8s/deployment.yaml > k8s.$$/deployment.yaml
     - envsubst < k8s/service.yaml > k8s.$$/service.yaml
-    - envsubst < k8s/ingress.yaml > k8s.$$/ingress.yaml
     - kubectl apply -f k8s.$$/
     - kubectl rollout restart deployments json-schema-store
 

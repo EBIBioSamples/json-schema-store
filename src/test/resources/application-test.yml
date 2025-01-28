@@ -1,11 +1,7 @@
 # MongoDB conf
 spring:
-  data:
-    mongodb:
-      host: localhost
-      database: schemastore
-      repositories:
-        type: auto
+  rest:
+    basePath: /api/v2
 # Elixir Validator
 schemastore:
   validator:
