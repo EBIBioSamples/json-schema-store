@@ -69,7 +69,7 @@ public class JsonSchemaExporter {
     for (SchemaFieldAssociation fieldAssociation : schema.getSchemaFieldAssociations()) {
       Field field = fieldRepository.findById(fieldAssociation.getFieldId())
           .orElseThrow(() -> new ApplicationStateException("Invalid schema state. Field can not be found: " + fieldAssociation.getFieldId()));
-      Property property = new Property(field.getName(), Collections.emptyList(), field.getDescription(),
+      Property property = new Property(field.getLabel(), Collections.emptyList(), field.getDescription(),
           getTypedTemplate(field), new ArrayList<>(field.getUnits()), fieldAssociation.getRequirementType(), convertToPropertyMuliplicity(fieldAssociation.getMultiplicity()), "");
       properties.add(property);
     }
