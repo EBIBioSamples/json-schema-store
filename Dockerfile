@@ -1,4 +1,4 @@
-FROM maven:3.9.9-amazoncorretto-21 as builder
+FROM maven:3.9.9-amazoncorretto-21 AS builder
 # Set working directory
 WORKDIR /app
 
