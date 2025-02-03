@@ -3,14 +3,13 @@ package uk.ac.ebi.biosamples.jsonschemastore.service;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
-import uk.ac.ebi.biosamples.jsonschemastore.model.FieldGroup;
-import uk.ac.ebi.biosamples.jsonschemastore.model.JsonSchema;
-import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaOutline;
+import uk.ac.ebi.biosamples.jsonschemastore.model.*;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldGroupRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
@@ -180,5 +179,26 @@ public class SchemaService {
             groupMap.putIfAbsent(groupName, group);
         }
         return new HashSet<>(groupMap.values());
+    }
+
+    public String updateSchemaFieldAssociationAndIncrementVersion(Field field, String oldFieldId, String schemaId) {
+        log.info("Updating field: {} in schema: {}", field.getId(), schemaId);
+        MongoJsonSchema schema = schemaRepository.findById(schemaId)
+                .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
+        SchemaFieldAssociation fieldAssociation = schema.getSchemaFieldAssociations().stream()
+                .filter(f -> f.getFieldId().equals(oldFieldId))
+                .findFirst()
+                .orElseThrow(() -> new DataIntegrityViolationException(
+                        "Expected field: " + oldFieldId + " could not be found in schema: " + schemaId));
+        fieldAssociation.setFieldId(field.getId());
+        incrementMinorVersion(schemaId, schema);
+        schemaRepository.save(schema);
+        return schema.getId();
+    }
+
+    private static void incrementMinorVersion(String schemaId, MongoJsonSchema schema) {
+        schema.setVersion(VersionIncrementer.incrementMinorVersion(schema.getVersion()));
+        schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
+        log.info("Updating schema: {} and incrementing version to: {}", schemaId, schema.getVersion());
     }
 }
