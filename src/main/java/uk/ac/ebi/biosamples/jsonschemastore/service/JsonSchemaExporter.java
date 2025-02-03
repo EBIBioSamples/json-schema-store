@@ -15,6 +15,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -69,8 +70,14 @@ public class JsonSchemaExporter {
     for (SchemaFieldAssociation fieldAssociation : schema.getSchemaFieldAssociations()) {
       Field field = fieldRepository.findById(fieldAssociation.getFieldId())
           .orElseThrow(() -> new ApplicationStateException("Invalid schema state. Field can not be found: " + fieldAssociation.getFieldId()));
-      Property property = new Property(field.getLabel(), Collections.emptyList(), field.getDescription(),
-          getTypedTemplate(field), new ArrayList<>(field.getUnits()), fieldAssociation.getRequirementType(), convertToPropertyMuliplicity(fieldAssociation.getMultiplicity()), "");
+      Property property = new Property(field.getLabel(),
+              Collections.emptyList(),
+              field.getDescription(),
+              getTypedTemplate(field),
+              Optional.ofNullable(field.getUnits()).map(ArrayList::new).orElse(new ArrayList<>()),
+              fieldAssociation.getRequirementType(),
+              convertToPropertyMuliplicity(fieldAssociation.getMultiplicity()),
+              "");
       properties.add(property);
     }
     return properties;
