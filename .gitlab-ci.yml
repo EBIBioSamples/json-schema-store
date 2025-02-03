@@ -14,21 +14,10 @@ cache:
 
 stages:
   - build
-#  - test
-  - publish
   - deploy
 
-build:
-  image: maven:3.9.9-amazoncorretto-21
-  stage: build
-  script:
-    - mvn $MAVEN_CLI_OPTS clean package
-  artifacts:
-    paths:
-      - target/json-schema-store-0.0.2.jar
-
 build_docker_image:
-  stage: publish
+  stage: build
   image: docker:27
   tags: ["dind"]
   services:
