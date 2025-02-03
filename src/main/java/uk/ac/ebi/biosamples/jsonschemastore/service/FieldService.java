@@ -79,7 +79,7 @@ public class FieldService {
     public void updateUsedBySchemas(Field field, String oldFieldId) {
         Set<String> schemas = field.getUsedBySchemas();
         Set<String> updatedSchemaIds = schemas.stream()
-                .map((String schemaId) -> schemaService.updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId))
+                .<String>map((String schemaId) -> schemaService.updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId))
                 .collect(Collectors.toSet());
         field.setUsedBySchemas(updatedSchemaIds);
         fieldRepository.save(field);
