@@ -79,7 +79,7 @@ public class FieldService {
     public void updateUsedBySchemas(Field field, String oldFieldId) {
         Set<String> schemas = field.getUsedBySchemas();
         Set<String> updatedSchemaIds = schemas.stream()
-                .map(schemaId -> schemaService.updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId))
+                .map((String schemaId) -> schemaService.updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId))
                 .collect(Collectors.toSet());
         field.setUsedBySchemas(updatedSchemaIds);
         fieldRepository.save(field);
@@ -94,7 +94,6 @@ public class FieldService {
           .withIgnoreNullValues()
           .withIgnorePaths("usedBySchemas")
           .withMatcher("searchIndex", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
-      ;
       Example<Field> example = Example.of(field, matcher);
 
         return fieldRepository.findAll(example, pageable);
