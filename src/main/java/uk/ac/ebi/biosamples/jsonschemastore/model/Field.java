@@ -13,6 +13,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.ena.SchemaTemplateGenerator;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
@@ -54,8 +55,10 @@ public class Field
     private boolean latest;
     @CreatedBy
     private String createdBy;
+    @LastModifiedBy
+    private String lastModifiedBy;
 
-
+    private String searchIndex;
 
     public static Field fromProperty(Property property) {
         JsonNode typeAsJson = SchemaTemplateGenerator.getJson(property.type());
@@ -93,6 +96,20 @@ public class Field
                 .group(property.groupName())
                 .build();
 
+    }
+
+    public void markNotLatest() {
+        latest = false;
+    }
+    public void markLatest() {
+        latest = true;
+    }
+
+    public void constructTextSearchField() {
+        String searchIndex = Stream.of(this.getLabel(), this.getDescription(), this.getName(), this.getGroup())
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(Collectors.joining(" "));
+        this.setSearchIndex(searchIndex);
     }
 }
 
