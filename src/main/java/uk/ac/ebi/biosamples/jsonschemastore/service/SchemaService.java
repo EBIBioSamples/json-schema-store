@@ -191,6 +191,8 @@ public class SchemaService {
                 .orElseThrow(() -> new DataIntegrityViolationException(
                         "Expected field: " + oldFieldId + " could not be found in schema: " + schemaId));
         fieldAssociation.setFieldId(field.getId());
+        processAndSaveCurrentVersionAsNonLatest(schema.getId());
+
         incrementMinorVersion(schemaId, schema);
         schemaRepository.save(schema);
         return schema.getId();
@@ -200,5 +202,13 @@ public class SchemaService {
         schema.setVersion(VersionIncrementer.incrementMinorVersion(schema.getVersion()));
         schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
         log.info("Updating schema: {} and incrementing version to: {}", schemaId, schema.getVersion());
+    }
+
+    public void processAndSaveCurrentVersionAsNonLatest(String schemaId) {
+        MongoJsonSchema mongoSchema = schemaRepository.findById(schemaId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid checklistId: " + schemaId));
+        mongoSchema.makeNonEditable();
+        mongoSchema.makeNonLatest();
+        schemaRepository.save(mongoSchema);
     }
 }

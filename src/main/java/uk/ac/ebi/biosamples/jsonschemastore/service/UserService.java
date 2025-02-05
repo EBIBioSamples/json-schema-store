@@ -54,4 +54,8 @@ public class UserService implements UserDetailsManager {
   public boolean userExists(String username) {
     return userRepository.findByUsername(username).isPresent();
   }
+
+  public User findCurrentUser() {
+    return userRepository.findCurrentUser();
+  }
 }

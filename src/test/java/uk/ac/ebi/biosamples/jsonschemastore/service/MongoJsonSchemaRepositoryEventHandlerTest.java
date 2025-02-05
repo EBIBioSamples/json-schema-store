@@ -17,6 +17,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class MongoJsonSchemaRepositoryEventHandlerTest {
@@ -24,22 +25,25 @@ class MongoJsonSchemaRepositoryEventHandlerTest {
     private FieldRepository fieldRepository;
     @Mock
     private SchemaRepository schemaRepository;
-
-    @Mock AccessioningService accessioningService;
+    @Mock JsonSchemaExporter jsonSchemaExporter;
+    @Mock
+    AccessioningService accessioningService;
     @InjectMocks
-    private MongoJsonSchemaRepositoryEventHandler eventHandler; // The event handler you're testing
+    private MongoJsonSchemaRepositoryEventHandler eventHandler;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this); // Initialize mocks
         when(schemaRepository.count()).thenReturn(15L);
+        when(accessioningService.getSchemaAccession(any())).thenReturn("TEST0001");
     }
     @Test
     void handleBeforeSave() {
         // Given
         MongoJsonSchema schema = new MongoJsonSchema();
-        schema.setVersion("1.0");
+        schema.setTitle("Test 01");
         schema.setName("test_01");
+        schema.setId("test_01:1.0");
 
         // When
         eventHandler.handleBeforeSave(schema);  // Trigger the event
