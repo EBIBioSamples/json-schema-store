@@ -8,138 +8,78 @@ import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import uk.ac.ebi.biosamples.jsonschemastore.exception.OperationNotAllowedException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
-import uk.ac.ebi.biosamples.jsonschemastore.model.FieldGroup;
-import uk.ac.ebi.biosamples.jsonschemastore.model.FieldId;
-import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
-import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
-import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldGroupRepository;
-import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
 
 @Component
 @RepositoryEventHandler(Field.class)
 @Slf4j
 @RequiredArgsConstructor
 public class FieldRepositoryEventHandler {
-  private final SchemaRepository schemaRepository;
-  private final FieldRepository fieldRepository;
-  private final JsonSchemaExporter jsonSchemaExporter;
-  private final FieldGroupRepository fieldGroupRepository;
+    private final SchemaRepository schemaRepository;
+    private final JsonSchemaExporter jsonSchemaExporter;
+    private final FieldService fieldService;
+    private final FieldGroupService fieldGroupService;
 
-  @HandleBeforeCreate
-  public void handleBeforeCreate(Field field) {
-    field.setVersion("1.0");
-    field.setName(toVariableName(field.getLabel()));
-    field.setId(new FieldId(field.getName(), field.getVersion()).asString());
-    field.setLatest(true);
-  }
 
-  @HandleBeforeSave
-  public void handleBeforeSave(Field field) {
-    String oldFieldId = field.getId();
-    Field oldField = fieldRepository.findById(field.getId())
-        .orElseThrow(() -> new DataIntegrityViolationException("Could not find the field: " + oldFieldId));
-    if(!oldField.isLatest()) {
-      throw new OperationNotAllowedException("Non latest versions are not updatable");
-    }
-    if (!oldField.getLabel().equals(field.getLabel())) {
-      throw new DataIntegrityViolationException("Attribute `label` could not be edited once created. Please create a new field instead.");
+    @HandleBeforeCreate
+    public void handleBeforeCreate(Field field) {
+        if(field.getGroup() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "group cannot be null");
+        };
+        fieldService.initNewField(field);
     }
 
-    if (minorVersionIncrementFieldChanged(oldField, field)) {
-      oldField.setLatest(false);
-      fieldRepository.save(oldField);
+    @HandleBeforeSave
+    public void handleBeforeSave(Field field) {
+        String oldFieldId = field.getId();
+        Field oldField = fieldService.safeGetFieldById(field);
+        if (!fieldService.isUpdateAllowed(oldField)) {
+            throw new OperationNotAllowedException("Non latest versions are not updatable");
+        }
+        // if only group changed - save and don't increment version
+        if (fieldService.isGroupOnlyModification(oldField, field)) {
+            // in case only the group changed, no version increment is required
+            fieldGroupService.updateGroups(field.getLabel(), oldField.getGroup(), field.getGroup());
+            fieldService.save(field);
+        } else { // additional fields but the group are modified
+            oldField.markNotLatest();
+            fieldService.save(oldField);
 
-      String incrementedVersion = VersionIncrementer.incrementMinorVersion(field.getVersion());
-      field.setVersion(incrementedVersion);
-      field.setId(new FieldId(field.getName(), field.getVersion()).asString());
-      field.setLatest(true);
-      log.info("Updating field: {} and incrementing version to: {}", oldFieldId, incrementedVersion);
+            if (fieldService.isLabelChange(field, oldField)) {
+                // in case of a label change, a new field is created
+                fieldService.initNewField(field);
+                oldField.setDescription(oldField.getDescription() + ". renamed to " + field.getId());
+                fieldService.saveAll(List.of(oldField, field));
+                log.info("Changing field label: from {} to {}", oldField.getLabel(), field.getLabel());
+            } else {
+                // in case the label stays the same, a new version of the field is created
+                String incrementedVersion = VersionIncrementer.incrementMinorVersion(field.getVersion());
+                fieldService.initNewField(field, incrementedVersion);
+                log.info("Updating field: {} and incrementing version to: {}", oldFieldId, incrementedVersion);
 
-      Set<String> schemaIds = field.getUsedBySchemas();
-      Set<String> updatedSchemaIds = updateUsedBySchemas(schemaIds, field, oldFieldId);
-      field.setUsedBySchemas(updatedSchemaIds);
-    }
-    updateGroups(field.getLabel(), oldField.getGroup(), field.getGroup());
-  }
-
-  @HandleAfterSave
-  public void handleAfterSave(Field field) {
-    Set<String> schemaIds = field.getUsedBySchemas();
-    for (String schemaId : schemaIds) {
-      MongoJsonSchema schema = schemaRepository.findById(schemaId)
-          .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
-      schema.setSchema(jsonSchemaExporter.generateJsonSchemaFromChecklistFields(schema));
-      schemaRepository.save(schema);
-    }
-  }
-
-  private Set<String> updateUsedBySchemas(Set<String> schemas, Field field, String oldFieldId) {
-    Set<String> updatedSchemaIds = new HashSet<>();
-    for (String schemaId : schemas) {
-      String updatedSchemaId = updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId);
-      updatedSchemaIds.add(updatedSchemaId);
-    }
-    return updatedSchemaIds;
-  }
-
-  private String updateSchemaFieldAssociationAndIncrementVersion(Field field, String oldFieldId, String schemaId) {
-    log.info("Updating field: {} in schema: {}", field.getId(), schemaId);
-    MongoJsonSchema schema = schemaRepository.findById(schemaId)
-        .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
-    SchemaFieldAssociation fieldAssociation = schema.getSchemaFieldAssociations().stream()
-        .filter(f -> f.getFieldId().equals(oldFieldId))
-        .findFirst()
-        .orElseThrow(() -> new DataIntegrityViolationException(
-            "Expected field: " + oldFieldId + " could not be found in schema: " + schemaId));
-    fieldAssociation.setFieldId(field.getId());
-    schema.setVersion(VersionIncrementer.incrementMinorVersion(schema.getVersion()));
-    schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
-    log.info("Updating schema: {} and incrementing version to: {}", schemaId, schema.getVersion());
-    schemaRepository.save(schema);
-    return schema.getId();
-  }
-
-  protected void updateGroups(String fieldLabel, String oldGroupId, String newGroupId) {
-    if (oldGroupId.equals(newGroupId)) {
-      return;
+                fieldGroupService.updateGroups(field.getLabel(), oldField.getGroup(), field.getGroup());
+            }
+            fieldService.updateUsedBySchemas(field, oldFieldId);
+        }
     }
 
-    removeFieldFromGroup(fieldLabel, oldGroupId);
-    addFieldToGroup(fieldLabel, newGroupId);
-  }
-
-  private FieldGroup removeFieldFromGroup(String fieldName, String oldGroupId) {
-    FieldGroup oldGroup = fieldGroupRepository.findById(oldGroupId)
-        .orElseThrow(() -> new DataIntegrityViolationException("Invalid group id: " + oldGroupId));
-    oldGroup.getFields().remove(fieldName);
-    fieldGroupRepository.save(oldGroup);
-    return oldGroup;
-  }
-
-  private void addFieldToGroup(String fieldName, String newGroupId) {
-    FieldGroup newGroup = fieldGroupRepository.findById(newGroupId)
-        .orElseThrow(() -> new DataIntegrityViolationException("Invalid group id: " + newGroupId));
-    newGroup.getFields().add(fieldName);
-    fieldGroupRepository.save(newGroup);
-  }
-
-  protected boolean minorVersionIncrementFieldChanged(Field oldField, Field newField) {
-    return !oldField.getName().equals(newField.getName()) ||
-        !oldField.getVersion().equals(newField.getVersion()) ||
-        !oldField.getLabel().equals(newField.getLabel()) ||
-        !oldField.getDescription().equals(newField.getDescription()) ||
-        !oldField.getUsedBySchemas().equals(newField.getUsedBySchemas()) ||
-        !oldField.getType().equals(newField.getType()) ||
-        !oldField.getUnits().equals(newField.getUnits());
-  }
+    @HandleAfterSave
+    public void handleAfterSave(Field field) {
+        Set<String> schemaIds = field.getUsedBySchemas();
+        for (String schemaId : schemaIds) {
+            MongoJsonSchema schema = schemaRepository.findById(schemaId)
+                    .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
+            schema.setSchema(jsonSchemaExporter.generateJsonSchemaFromChecklistFields(schema));
+            schemaRepository.save(schema);
+        }
+    }
 }

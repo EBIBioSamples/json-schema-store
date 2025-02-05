@@ -7,13 +7,15 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.biosamples.jsonschemastore.model.FieldGroup;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldGroupRepository;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Component
 public class FieldGroupService {
     private final FieldGroupRepository fieldGroupRepository;
 
     public void updateGroups(String fieldLabel, String oldGroupId, String newGroupId) {
-        if (oldGroupId.equals(newGroupId)) {
+        if (oldGroupId != null && oldGroupId.equals(newGroupId)) {
             return;
         }
 
@@ -21,12 +23,11 @@ public class FieldGroupService {
         addFieldToGroup(fieldLabel, newGroupId);
     }
 
-    private FieldGroup removeFieldFromGroup(String fieldName, String oldGroupId) {
+    private void removeFieldFromGroup(String fieldName, String oldGroupId) {
         FieldGroup oldGroup = fieldGroupRepository.findById(oldGroupId)
                 .orElseThrow(() -> new DataIntegrityViolationException("Invalid group id: " + oldGroupId));
         oldGroup.getFields().remove(fieldName);
         fieldGroupRepository.save(oldGroup);
-        return oldGroup;
     }
 
     private void addFieldToGroup(String fieldName, String newGroupId) {

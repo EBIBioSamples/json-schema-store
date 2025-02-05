@@ -1,9 +1,7 @@
 package uk.ac.ebi.biosamples.jsonschemastore.model.mongo;
 
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.TextIndexed;
@@ -44,9 +42,12 @@ public class MongoJsonSchema {
     private List<SchemaFieldAssociation> schemaFieldAssociations = new ArrayList<>();
     @CreatedDate
     private LocalDateTime createdDate;
-
+    @CreatedBy
+    private String createdBy;
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+    @LastModifiedBy
+    private String lastModifiedBy;
 
     private Boolean editable;
     private Boolean latest;
