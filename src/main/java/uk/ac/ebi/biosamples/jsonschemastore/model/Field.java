@@ -3,7 +3,6 @@ package uk.ac.ebi.biosamples.jsonschemastore.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JsonNode;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -47,7 +46,6 @@ public class Field
     protected String description;
     protected Set<String> usedBySchemas = new HashSet<>();
     protected String type;
-    @NotBlank
     protected String group;
     protected Set<String> units;
     @CreatedDate
