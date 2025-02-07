@@ -2,19 +2,20 @@ package uk.ac.ebi.biosamples.jsonschemastore.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biosamples.jsonschemastore.model.FieldGroup;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldGroupRepository;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
+@Slf4j
 @Component
 public class FieldGroupService {
     private final FieldGroupRepository fieldGroupRepository;
 
     public void updateGroups(String fieldLabel, String oldGroupId, String newGroupId) {
+        log.info("updating group of field {} from {} to {}", fieldLabel, oldGroupId, newGroupId);
         if (oldGroupId != null && oldGroupId.equals(newGroupId)) {
             return;
         }
