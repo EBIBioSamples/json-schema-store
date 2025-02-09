@@ -16,11 +16,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Field;
 import uk.ac.ebi.biosamples.jsonschemastore.model.FieldId;
+import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
+import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -85,42 +86,21 @@ public class FieldService {
     }
 
     public void updateUsedBySchemas(Field field, String oldFieldId) {
+        // get list of checklists the field points to
+        // TODO: maybe safer to get from db
         Set<String> schemas = field.getUsedBySchemas();
-        Set<String> updatedSchemaIds = schemas.stream()
-                .map((String id) -> id.split(":"))
-                .collect(Collectors.toMap(
-                        arr -> arr[0], // accession part
-                        arr -> arr[1], //  version part
-                        (v1, v2) -> compareVersions(v1, v2) > 0 ? v1 : v2
-                ))
-                .entrySet().stream()
-                .map(e->e.getKey()+":"+e.getValue())
-                .<String>map((String schemaId) -> schemaService.updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId))
-                .collect(Collectors.toSet());
-        field.setUsedBySchemas(updatedSchemaIds);
-        fieldRepository.save(field);
-    }
-
-    private static int compareVersions(String v1, String v2) {
-        String[] parts1 = v1.split("\\.");
-        String[] parts2 = v2.split("\\.");
-
-        for (int i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-            int num1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
-            int num2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
-            if (num1 != num2) {
-                return Integer.compare(num1, num2);
-            }
-        }
-        return 0;
+        schemaService.getLatestChecklistIdsPerAccession(schemas)
+                .map(schemaId -> schemaService.updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId))
+                .forEach(schema -> {
+                    log.info("adding schema refs for field {} -> schema {}", field.getId(), schema.getId());
+                    field.getUsedBySchemas().add(schema.getId());
+                    save(field);
+                    updateFieldToSchemaRefs(schema);
+                });
     }
 
     public Field save(Field field) {
         return fieldRepository.save(field);
-    }
-
-    public List<Field> saveAll(Iterable<Field> fields) {
-        return fieldRepository.saveAll(fields);
     }
 
     public Page<Field> findByExample(Field field, Pageable pageable) {
@@ -131,5 +111,36 @@ public class FieldService {
         Example<Field> example = Example.of(field, matcher);
 
         return fieldRepository.findAll(example, pageable);
+    }
+
+    /**
+     * @param schema
+     */
+    public void updateFieldToSchemaRefs(MongoJsonSchema schema) {
+        log.info("updating field to schema refs for schema:{} ", schema.getId());
+        // 1. add the schema to all its fields' lists
+        Set<String> associatedFieldIds = schema.getSchemaFieldAssociations()
+                .stream()
+                .map(SchemaFieldAssociation::getFieldId)
+                .collect(Collectors.toSet());
+        associatedFieldIds.stream()
+                .map(fieldRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(field-> {
+                    log.info("adding schema refs for field {} -> schema {}", field.getId(), schema.getId());
+                    field.getUsedBySchemas().add(schema.getId());
+                    save(field);
+                });
+
+        // 2. remove this schema from fields not in its list
+        fieldRepository.findByUsedBySchemas(schema.getId())
+                .stream()
+                .filter(field -> !associatedFieldIds.contains(field.getId()))
+                .forEach(field -> {
+                    log.info("removing schema refs for field {} -x-> schema {}", field.getId(), schema.getId());
+                    field.getUsedBySchemas().remove(schema.getId());
+                    save(field);
+                });
     }
 }

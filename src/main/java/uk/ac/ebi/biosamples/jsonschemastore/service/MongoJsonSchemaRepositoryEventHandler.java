@@ -8,14 +8,9 @@ import uk.ac.ebi.biosamples.jsonschemastore.exception.OperationNotAllowedExcepti
 import uk.ac.ebi.biosamples.jsonschemastore.model.Authority;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema;
-import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
 import uk.ac.ebi.biosamples.jsonschemastore.repository.FieldRepository;
-import uk.ac.ebi.biosamples.jsonschemastore.repository.SchemaRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter.toVariableName;
 
@@ -25,11 +20,11 @@ import static uk.ac.ebi.biosamples.jsonschemastore.service.VariableNameFormatter
 public class MongoJsonSchemaRepositoryEventHandler {
     private static final Logger logger = LoggerFactory.getLogger(MongoJsonSchemaRepositoryEventHandler.class);
     public static final String DEFAULT_SCHEMA_VERSION = "1.0";
-    private final FieldRepository fieldRepository;
     private final SchemaService schemaService;
     private final AccessioningService accessioningService;
     private final JsonSchemaExporter jsonSchemaExporter;
     private final UserService userService;
+    private final FieldService fieldService;
 
     /**
      * Called when a new checklist is created. Initialises the version, id, and name
@@ -60,32 +55,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
     @HandleAfterCreate
     public void handleAfterCreateOrSave(MongoJsonSchema schema) {
       logger.info("handleAfterCreateOrSave for schema {}", schema.getId());
-      updateFieldToSchemaRefs(schema);
-    }
-
-    private void updateFieldToSchemaRefs(MongoJsonSchema schema) {
-        // 1. add the schema to all its fields' lists
-        Set<String> schemaFieldIds = schema.getSchemaFieldAssociations()
-                .stream()
-                .map(SchemaFieldAssociation::getFieldId)
-                .collect(Collectors.toSet());
-        schemaFieldIds.stream()
-                .map(fieldRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .forEach(field-> {
-                    field.getUsedBySchemas().add(schema.getId());
-                    fieldRepository.save(field);
-                });
-
-        // 2. remove this schema from fields not in its list
-        fieldRepository.findByUsedBySchemas(schema.getId())
-                .stream()
-                .filter(field -> !schemaFieldIds.contains(field.getId()))
-                .forEach(field -> {
-                    field.getUsedBySchemas().remove(schema.getId());
-                    fieldRepository.save(field);
-                });
+      fieldService.updateFieldToSchemaRefs(schema);
     }
 
 
@@ -103,7 +73,6 @@ public class MongoJsonSchemaRepositoryEventHandler {
         schemaService.processAndSaveCurrentVersionAsNonLatest(schema.getId());
 
         // this will generate a new checklist instance with an incremented version
-        // TODO: reuse SchemaId
         String incrementedVersion = VersionIncrementer.incrementMinorVersion(schema.getVersion());
         setVersionAndMarkAsLatest(schema, incrementedVersion);
         populateSearchAndSchemaFields(schema);

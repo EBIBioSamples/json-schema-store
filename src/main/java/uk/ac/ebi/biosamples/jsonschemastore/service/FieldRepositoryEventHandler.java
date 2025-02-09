@@ -28,6 +28,7 @@ public class FieldRepositoryEventHandler {
     private final JsonSchemaExporter jsonSchemaExporter;
     private final FieldService fieldService;
     private final FieldGroupService fieldGroupService;
+    private final SchemaService schemaService;
 
 
     @HandleBeforeCreate
@@ -57,8 +58,6 @@ public class FieldRepositoryEventHandler {
             if (fieldService.isLabelChange(field, oldField)) {
                 // in case of a label change, a new field is created
                 fieldService.initNewField(field);
-                oldField.setDescription(oldField.getDescription() + ". renamed to " + field.getId());
-                fieldService.saveAll(List.of(oldField, field));
                 log.info("Changing field label: from {} to {}", oldField.getLabel(), field.getLabel());
             } else {
                 // in case the label stays the same, a new version of the field is created

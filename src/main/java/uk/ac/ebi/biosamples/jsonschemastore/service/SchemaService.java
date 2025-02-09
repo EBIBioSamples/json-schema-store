@@ -18,6 +18,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.util.MongoModelConverter;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -28,6 +29,18 @@ public class SchemaService {
     private final FieldRepository fieldRepository;
     private final MongoModelConverter modelConverter;
     private final FieldGroupRepository fieldGroupRepository;
+    private final UserService userService;
+    public Stream<String> getLatestChecklistIdsPerAccession(Set<String> schemaIds) {
+        return schemaIds.stream()
+                .map(SchemaId::split)
+                .collect(Collectors.toMap(
+                        arr -> arr[0], // accession part
+                        arr -> arr[1], // version part
+                        (v1, v2) -> SchemaId.compareVersions(v1, v2) > 0 ? v1 : v2
+                ))
+                .entrySet().stream()
+                .map(e -> e.getKey() + SchemaId.DELIMITER + e.getValue());
+    }
 
     public Optional<JsonSchema> getSchemaById(@NonNull String id) {
         Optional<MongoJsonSchema> optionalSchema = schemaRepository.findById(id);
@@ -181,27 +194,45 @@ public class SchemaService {
         return new HashSet<>(groupMap.values());
     }
 
-    public String updateSchemaFieldAssociationAndIncrementVersion(Field field, String oldFieldId, String schemaId) {
-        log.info("Updating field: {} in schema: {}", field.getId(), schemaId);
-        MongoJsonSchema schema = schemaRepository.findById(schemaId)
-                .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
-        SchemaFieldAssociation fieldAssociation = schema.getSchemaFieldAssociations().stream()
+    /**
+     * updates the shcema's field assocatiation from pointing to the olf field to
+     * point to the id of the updated one.
+     *
+     * @param field      updated field
+     * @param oldFieldId id of old field
+     * @param schemaId   id of schema to upgrade
+     * @return schema id of new schema version
+     */
+    public MongoJsonSchema updateSchemaFieldAssociationAndIncrementVersion(Field field, String oldFieldId, String schemaId) {
+        log.info("Updating field association: {} in schema: {}", field.getId(), schemaId);
+        MongoJsonSchema schema = safeGetSchema(schemaId);
+        log.info("original schema version: {}", schema.getVersion());
+        processAndSaveCurrentVersionAsNonLatest(schema.getId());
+        incrementMinorVersion(schemaId, schema);
+        log.info("updated schema {} to version: {}", schemaId, schema.getVersion());
+        SchemaFieldAssociation fieldAssociation = findFieldAssociationForFieldId(oldFieldId, schema);
+        fieldAssociation.setFieldId(field.getId());
+        schemaRepository.save(schema);
+        field.getUsedBySchemas().add(schema.getId());
+        return schema;
+    }
+
+    private static SchemaFieldAssociation findFieldAssociationForFieldId(String oldFieldId, MongoJsonSchema schema) {
+        return schema.getSchemaFieldAssociations().stream()
                 .filter(f -> f.getFieldId().equals(oldFieldId))
                 .findFirst()
                 .orElseThrow(() -> new DataIntegrityViolationException(
-                        "Expected field: " + oldFieldId + " could not be found in schema: " + schemaId));
-        fieldAssociation.setFieldId(field.getId());
-        processAndSaveCurrentVersionAsNonLatest(schema.getId());
+                        "Expected field: " + oldFieldId + " could not be found in schema: " + schema.getId()));
+    }
 
-        incrementMinorVersion(schemaId, schema);
-        schemaRepository.save(schema);
-        return schema.getId();
+    public MongoJsonSchema safeGetSchema(String schemaId) {
+        return schemaRepository.findById(schemaId)
+                .orElseThrow(() -> new DataIntegrityViolationException("Invalid schema reference: " + schemaId));
     }
 
     private static void incrementMinorVersion(String schemaId, MongoJsonSchema schema) {
         schema.setVersion(VersionIncrementer.incrementMinorVersion(schema.getVersion()));
         schema.setId(new SchemaId(schema.getAccession(), schema.getVersion()).asString());
-        log.info("Updating schema: {} and incrementing version to: {}", schemaId, schema.getVersion());
     }
 
     public void processAndSaveCurrentVersionAsNonLatest(String schemaId) {
@@ -209,6 +240,9 @@ public class SchemaService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid checklistId: " + schemaId));
         mongoSchema.makeNonEditable();
         mongoSchema.makeNonLatest();
+        String username = userService.findCurrentUser().getUsername();
+        mongoSchema.setCreatedBy(username);
+        mongoSchema.setLastModifiedBy(username);
         schemaRepository.save(mongoSchema);
     }
 }
