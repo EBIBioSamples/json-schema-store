@@ -22,7 +22,10 @@ public interface FieldRepository extends MongoRepository<Field, String> {
      * @param schemaId in name:version format
      * @return
      */
+    @RestResource(exported = false)
     List<Field> findByUsedBySchemas(String schemaId);
+
+    Page<Field> findByUsedBySchemas(String schemaId, Pageable pageable);
 
     @Override
     List<Field> findAllById(Iterable<String> ids);

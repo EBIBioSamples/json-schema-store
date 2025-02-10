@@ -34,7 +34,6 @@ public class SchemaController {
     private final SchemaValidationService schemaValidationService;
     private final SchemaResourceAssembler schemaResourceAssembler;
     private final SchemaObjectPopulator schemaObjectPopulator;
-    private final PagedResourcesAssembler pagedResourcesAssembler;
 
     @GetMapping
     public ResponseEntity<JsonSchema> getSchema(@RequestParam("id") String id) {
@@ -141,7 +140,7 @@ public class SchemaController {
         findByExample(@ModelAttribute MongoJsonSchema exampleSchema,
                       Pageable pageable) {
         Page<MongoJsonSchema> entityPage = schemaService.findBySchema(exampleSchema, pageable);
-        return pagedResourcesAssembler.toModel(entityPage);
+        return schemaResourceAssembler.buildMongoJsonSchemaPage(entityPage);
 
     }
 
