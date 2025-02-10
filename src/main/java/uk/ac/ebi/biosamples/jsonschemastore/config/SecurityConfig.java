@@ -73,7 +73,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilter(requestHeaderAuthenticationFilter(authenticationManager))
-                .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
         ;
