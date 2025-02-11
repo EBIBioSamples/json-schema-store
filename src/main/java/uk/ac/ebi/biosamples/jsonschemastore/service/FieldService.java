@@ -46,6 +46,7 @@ public class FieldService {
                 .orElseThrow(() -> new DataIntegrityViolationException("Could not find the field: " + field.getId()));
     }
 
+
     public void initNewField(Field field, String version) {
         field.setVersion(version);
         field.setName(toVariableName(field.getLabel()));
@@ -86,13 +87,16 @@ public class FieldService {
     }
 
     public void updateUsedBySchemas(Field field, String oldFieldId) {
-        // get list of checklists the field points to
-        // TODO: maybe safer to get from db
         Set<String> schemas = field.getUsedBySchemas();
         schemaService.getLatestChecklistIdsPerAccession(schemas)
                 .map(schemaId -> schemaService.updateSchemaFieldAssociationAndIncrementVersion(field, oldFieldId, schemaId))
                 .forEach(schema -> {
                     log.info("adding schema refs for field {} -> schema {}", field.getId(), schema.getId());
+                    field.getUsedBySchemas()
+                            .removeIf(schemaId -> schemaService.safeGetSchema(schemaId)
+                                    .getSchemaFieldAssociations().stream()
+                                    .map(SchemaFieldAssociation::getFieldId)
+                                    .noneMatch(fieldId -> fieldId.equals(field.getId())));
                     field.getUsedBySchemas().add(schema.getId());
                     save(field);
                     updateFieldToSchemaRefs(schema);
@@ -127,7 +131,7 @@ public class FieldService {
                 .map(fieldRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(field-> {
+                .forEach(field -> {
                     log.info("adding schema refs for field {} -> schema {}", field.getId(), schema.getId());
                     field.getUsedBySchemas().add(schema.getId());
                     save(field);
@@ -142,5 +146,8 @@ public class FieldService {
                     field.getUsedBySchemas().remove(schema.getId());
                     save(field);
                 });
+
+        // 3. remove usedBy links that don't point to this field
+
     }
 }
