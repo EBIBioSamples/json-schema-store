@@ -35,7 +35,7 @@ deploy_int:
     HOST: wwwint.ebi.ac.uk
     VALIDATOR_URL: https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
-    name: primary_hl_int
+    name: primary_hl_dev
     url: https://wwwint.ebi.ac.uk/biosamples/schema-store/api/v2
   extends: .kube_deploy_script
   when: manual
@@ -45,7 +45,7 @@ deploy_dev_primary:
     HOST: wwwdev.ebi.ac.uk
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
-    name: primary_hl_dev
+    name: primary_hl_test
     url: https://wwwdev.ebi.ac.uk/biosamples/schema-store/api/v2
   extends: .kube_deploy_script
   when: manual
@@ -55,7 +55,7 @@ deploy_dev_fallback:
     HOST: wwwdev.ebi.ac.uk
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
-    name: fallback_hx_dev
+    name: fallback_hx_test
     url: https://wwwdev.ebi.ac.uk/biosamples/schema-store/api/v2
   extends: .kube_deploy_script
   when: manual
