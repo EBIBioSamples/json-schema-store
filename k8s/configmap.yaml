@@ -5,4 +5,3 @@ metadata:
 data:
   schemastore.validator.url: "https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate"
   server.servlet.context-path: "/biosamples/schema-store"
-  schemastore.external.url: "$CI_ENVIRONMENT_URL"

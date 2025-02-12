@@ -17,9 +17,6 @@ public class SchemaObjectPopulator {
     private final SchemaStoreProperties properties;
     private final ChecklistGroupService checklistGroupService;
 
-    @Value("${schemastore.external.url:http://localhost:8080}")
-    private String externalRootUrl;
-
     public void populateSchema(Schema schema) {
         SchemaId schemaId = toSchemaId(schema);
         populateWithSchemaId(schema, schemaId);
@@ -34,8 +31,7 @@ public class SchemaObjectPopulator {
     }
 
     public String getSchemaResourceURL(SchemaId schemaId) {
-        ServletUriComponentsBuilder servletUriComponentsBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri();
-        return servletUriComponentsBuilder
+        return ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .replacePath("/registry/schemas")
                 .pathSegment(schemaId.asString())
                 .build()

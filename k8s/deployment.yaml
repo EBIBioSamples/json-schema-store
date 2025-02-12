@@ -38,11 +38,6 @@ spec:
                 configMapKeyRef:
                   name: json-schema-store-config
                   key: server.servlet.context-path
-            - name: SCHEMASTORE_EXTERNAL_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: json-schema-store-config
-                  key: schemastore.external.url
           livenessProbe:
             httpGet:
               path: /actuator/health

@@ -22,8 +22,12 @@ build_docker_image:
   tags: ["dind"]
   services:
     - docker:27-dind
-  script:
+  before_script:
     - docker --version
+    - echo "DOCKER_HOST $DOCKER_HOST"
+    - docker info
+
+  script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker build -t $DOCKER_IMAGE_NAME .
     - docker push --quiet $DOCKER_IMAGE_NAME
