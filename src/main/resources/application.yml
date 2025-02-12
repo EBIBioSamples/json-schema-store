@@ -5,6 +5,8 @@ spring:
   data:
     rest:
       basePath: /api/v2
+server:
+  forward-headers-strategy: framework
 
 management:
   endpoints:
