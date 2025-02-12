@@ -7,11 +7,6 @@ variables:
   DOCKER_PULL_SECRET: docker-registry-secret
   APP_NAME: $CI_PROJECT_NAME
 
-cache:
-  paths:
-    - .m2/repository/
-    - target/
-
 stages:
   - build
   - deploy
