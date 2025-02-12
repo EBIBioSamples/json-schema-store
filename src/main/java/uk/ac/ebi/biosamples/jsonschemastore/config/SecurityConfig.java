@@ -28,7 +28,6 @@ public class SecurityConfig {
 
     private final RepositoryRestProperties repositoryRestProperties;
     private final UserService userService;
-    private final Log logger = LogFactory.getLog(getClass());
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         String basePath = repositoryRestProperties.getBasePath();
