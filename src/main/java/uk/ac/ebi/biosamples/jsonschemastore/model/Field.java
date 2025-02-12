@@ -85,7 +85,7 @@ public class Field
         } else {
             throw new IllegalArgumentException("cannot import XML property " + property.name() + ". It has unsupported type: " + property.type());
         }
-        return builder.name(toVariableName(property.name()))
+        Field newField = builder.name(toVariableName(property.name()))
                 .description(property.description())
                 .version("1.0")
                 .id(new FieldId(toVariableName(property.name()), "1.0").asString())
@@ -95,6 +95,8 @@ public class Field
                 .latest(true)
                 .group(property.groupName())
                 .build();
+        newField.constructTextSearchField();
+        return newField;
 
     }
 

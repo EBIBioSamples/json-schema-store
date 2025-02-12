@@ -37,6 +37,7 @@ public class MongoModelConverter {
         mongoJsonSchema.setEditable(jsonSchema.getEditable());
         mongoJsonSchema.setLatest(jsonSchema.getLatest());
         mongoJsonSchema.setGroup(jsonSchema.getGroup());
+        mongoJsonSchema.constructTextSearchField();
         return mongoJsonSchema;
     }
 
