@@ -38,13 +38,3 @@ spec:
                 configMapKeyRef:
                   name: json-schema-store-config
                   key: server.servlet.context-path
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 3
-            successThreshold: 1
-
