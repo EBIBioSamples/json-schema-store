@@ -20,7 +20,10 @@ build_docker_image:
   before_script:
     - docker --version
     - echo "DOCKER_HOST $DOCKER_HOST"
-    - docker info
+    - nslookup docker
+    - docker info || { echo "Docker is not accessible"; exit 1; }
+    - docker version
+    - echo "Docker is working, proceeding with the build."
 
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
