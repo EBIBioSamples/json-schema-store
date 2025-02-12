@@ -30,7 +30,6 @@ public class ChecklistConverterController {
   @GetMapping("/convert/all")
   public ResponseEntity<String> convertAndSaveAllEnaChecklists() {
     String enaChecklists = checklistConverterService.persistEnaChecklists();
-
     return new ResponseEntity<>(enaChecklists, HttpStatus.CREATED);
   }
 }

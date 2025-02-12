@@ -39,13 +39,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.DELETE, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
 
-
-
                         // fields
                         .requestMatchers(HttpMethod.POST, basePath + "/fields/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.PUT, basePath + "/fields/**").hasAuthority("editor")
                         .requestMatchers(HttpMethod.DELETE, basePath + "/fields/**").hasAuthority("editor")
-
 
                         // export chceklists
                         .requestMatchers(HttpMethod.GET, "/exporter/**").permitAll()
@@ -65,10 +62,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, basePath + "/mongoJsonSchemas/**").permitAll()
                         .requestMatchers(HttpMethod.GET, basePath + "/fields/**").permitAll()
                         .requestMatchers(HttpMethod.GET, basePath + "/fieldGroups/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/registry/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/api/v2/schemas/list").permitAll()
+
+                        .requestMatchers(HttpMethod.GET,"/api/v2/schemas/list").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/actuator/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,  basePath).permitAll()
+
+                        // api root url
+                        .requestMatchers(HttpMethod.GET, basePath).permitAll()
+
+                        // root url should be open
+                        .requestMatchers(HttpMethod.GET, "/").permitAll()
 
                         .anyRequest().authenticated()
                 )

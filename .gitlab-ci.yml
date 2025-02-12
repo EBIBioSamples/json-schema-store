@@ -36,7 +36,7 @@ deploy_int:
     VALIDATOR_URL: https://wwwint.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
     name: primary_hl_dev
-    url: https://wwwint.ebi.ac.uk/biosamples/schema-store/api/v2
+    url: https://wwwint.ebi.ac.uk/biosamples/schema-store
   extends: .kube_deploy_script
   when: manual
 
@@ -46,7 +46,7 @@ deploy_dev_primary:
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
     name: primary_hl_test
-    url: https://wwwdev.ebi.ac.uk/biosamples/schema-store/api/v2
+    url: https://wwwdev.ebi.ac.uk/biosamples/schema-store
   extends: .kube_deploy_script
   when: manual
 
@@ -56,7 +56,7 @@ deploy_dev_fallback:
     VALIDATOR_URL: https://wwwdev.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
     name: fallback_hx_test
-    url: https://wwwdev.ebi.ac.uk/biosamples/schema-store/api/v2
+    url: https://wwwdev.ebi.ac.uk/biosamples/schema-store
   extends: .kube_deploy_script
   when: manual
 
@@ -66,7 +66,7 @@ deploy_prod_primary:
     VALIDATOR_URL: https://www.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
     name: primary_hl_prod
-    url: https://www.ebi.ac.uk/biosamples/schema-store/api/v2
+    url: https://www.ebi.ac.uk/biosamples/schema-store
   only:
     - dev
     - master
@@ -79,7 +79,7 @@ deploy_prod_fallback:
     VALIDATOR_URL: https://www.ebi.ac.uk/biosamples/biovalidator/validate
   environment:
     name: fallback_hx_prod
-    url: https://www.ebi.ac.uk/biosamples/schema-store/api/v2
+    url: https://www.ebi.ac.uk/biosamples/schema-store
   only:
     - dev
     - master

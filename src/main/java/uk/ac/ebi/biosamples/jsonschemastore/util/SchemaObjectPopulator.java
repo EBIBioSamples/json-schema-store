@@ -3,6 +3,7 @@ package uk.ac.ebi.biosamples.jsonschemastore.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
@@ -16,6 +17,8 @@ public class SchemaObjectPopulator {
     private final SchemaStoreProperties properties;
     private final ChecklistGroupService checklistGroupService;
 
+    @Value("${schemastore.external.url:http://localhost:8080}")
+    private String externalRootUrl;
 
     public void populateSchema(Schema schema) {
         SchemaId schemaId = toSchemaId(schema);
@@ -31,7 +34,13 @@ public class SchemaObjectPopulator {
     }
 
     public String getSchemaResourceURL(SchemaId schemaId) {
-        return getSchemasRegistryResourceRoot() + "?id=" + schemaId.asString();
+        String s = ServletUriComponentsBuilder.fromUriString(externalRootUrl).toUriString();
+        ServletUriComponentsBuilder servletUriComponentsBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+        return servletUriComponentsBuilder
+                .replacePath("/registry/schemas")
+                .pathSegment(schemaId.asString())
+                .build()
+                .toUriString();
     }
 
     public void incrementAndPopulateSchema(Schema schema) {
@@ -40,13 +49,6 @@ public class SchemaObjectPopulator {
         populateWithSchemaId(schema, incrementedId);
         addSchemaUniqueId(schema, incrementedId);
         populateAuthority(schema);
-    }
-
-    private  String getSchemasRegistryResourceRoot() {
-        return ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath("/registry/schemas")
-                .build()
-                .toUriString();
     }
 
     private static SchemaId toSchemaId(Schema schema) {
