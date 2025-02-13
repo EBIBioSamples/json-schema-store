@@ -31,7 +31,7 @@ public class SchemaObjectPopulator {
     }
 
     public String getSchemaResourceURL(SchemaId schemaId) {
-        return ServletUriComponentsBuilder.fromCurrentRequestUri()
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .replacePath("/registry/schemas")
                 .pathSegment(schemaId.asString())
                 .build()
