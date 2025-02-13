@@ -38,11 +38,7 @@ public class MongoJsonSchemaRepositoryEventHandler {
         schema.setAuthority(Authority.ENA.name());
         setVersionAndMarkAsLatest(schema, DEFAULT_SCHEMA_VERSION);
         String username = userService.findCurrentUser().getUsername();
-        schema.setCreatedBy(username);
-        schema.setLastModifiedBy(username);
-        LocalDateTime now = LocalDateTime.now();
-        schema.setCreatedDate(now);
-        schema.setLastModifiedDate(now);
+        schemaService.updateAuditFields(schema);
         populateSearchAndSchemaFields(schema);
     }
 

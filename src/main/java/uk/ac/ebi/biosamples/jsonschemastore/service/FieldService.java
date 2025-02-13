@@ -51,13 +51,18 @@ public class FieldService {
         field.setVersion(version);
         field.setName(toVariableName(field.getLabel()));
         field.setId(new FieldId(field.getName(), field.getVersion()).asString());
-        LocalDateTime now = LocalDateTime.now();
-        field.setCreatedDate(now);
-        field.setLastModifiedDate(now);
+        recordAuditDetails(field);
+        field.markLatest();
+    }
+
+    public Field recordAuditDetails(Field field) {
         String username = userService.findCurrentUser().getUsername();
         field.setCreatedBy(username);
         field.setLastModifiedBy(username);
-        field.markLatest();
+        LocalDateTime now = LocalDateTime.now();
+        field.setCreatedDate(now);
+        field.setLastModifiedDate(now);
+        return field;
     }
 
     public boolean isUpdateAllowed(Field field) {
@@ -146,8 +151,5 @@ public class FieldService {
                     field.getUsedBySchemas().remove(schema.getId());
                     save(field);
                 });
-
-        // 3. remove usedBy links that don't point to this field
-
     }
 }

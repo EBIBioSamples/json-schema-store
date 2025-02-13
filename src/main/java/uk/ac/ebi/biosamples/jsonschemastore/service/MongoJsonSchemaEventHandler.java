@@ -14,24 +14,4 @@ public class MongoJsonSchemaEventHandler extends AbstractMongoEventListener<Mong
         log.info("onBeforeSave: " + event.getSource().getId());
         event.getSource().constructTextSearchField();
     }
-
-
-    @Override
-    public void onAfterLoad(AfterLoadEvent<MongoJsonSchema> event) {
-        super.onAfterLoad(event);
-    }
-
-
-    @Override
-    public void onApplicationEvent(MongoMappingEvent<?> event) {
-        log.info("onApplicationEvent: " + event.getClass().getSimpleName() + ": " + event.getCollectionName() + ": " + event.getSource());
-        super.onApplicationEvent(event);
-    }
-
-    @Override
-    public void onAfterSave(AfterSaveEvent<MongoJsonSchema> event) {
-        log.info("onBeforeSave: " + event.getSource().getId());
-        event.getSource().constructTextSearchField();
-    }
-
 }

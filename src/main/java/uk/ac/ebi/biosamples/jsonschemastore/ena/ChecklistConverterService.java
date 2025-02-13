@@ -14,6 +14,7 @@ import uk.ac.ebi.biosamples.jsonschemastore.exception.ApplicationStateException;
 import uk.ac.ebi.biosamples.jsonschemastore.model.*;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.Multiplicity;
 import uk.ac.ebi.biosamples.jsonschemastore.model.mongo.SchemaFieldAssociation;
+import uk.ac.ebi.biosamples.jsonschemastore.service.FieldService;
 import uk.ac.ebi.biosamples.jsonschemastore.service.SchemaService;
 import uk.ac.ebi.biosamples.jsonschemastore.util.SchemaObjectPopulator;
 
@@ -36,6 +37,7 @@ public class ChecklistConverterService {
     private final SchemaService schemaService;
     private final SchemaObjectPopulator populator;
     private final SchemaTemplateGenerator schemaTemplateGenerator;
+    private final FieldService fieldService;
 
     private static String getTypedTemplate(Field field) {
         String fieldTypeTemplate;
@@ -137,7 +139,9 @@ public class ChecklistConverterService {
 
         JsonSchema jsonSchema = fromJson(checklistId, importedChecklist);
         Set<uk.ac.ebi.biosamples.jsonschemastore.model.Field> fields = importedChecklist.getProperties()
-                .stream().map(uk.ac.ebi.biosamples.jsonschemastore.model.Field::fromProperty)
+                .stream()
+                .map(uk.ac.ebi.biosamples.jsonschemastore.model.Field::fromProperty)
+                .map(fieldService::recordAuditDetails)
                 .collect(Collectors.toSet());
 
         schemaService.saveSchemaWithAccession(jsonSchema, fields);

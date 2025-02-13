@@ -85,6 +85,7 @@ public class Field
         } else {
             throw new IllegalArgumentException("cannot import XML property " + property.name() + ". It has unsupported type: " + property.type());
         }
+        LocalDateTime now = LocalDateTime.now();
         Field newField = builder.name(toVariableName(property.name()))
                 .description(property.description())
                 .version("1.0")
@@ -94,6 +95,8 @@ public class Field
                 .usedBySchemas(new HashSet<>(1))
                 .latest(true)
                 .group(property.groupName())
+                .lastModifiedDate(now)
+                .createdDate(now)
                 .build();
         newField.constructTextSearchField();
         return newField;

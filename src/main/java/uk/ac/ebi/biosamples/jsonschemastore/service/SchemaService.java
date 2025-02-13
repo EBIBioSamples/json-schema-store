@@ -117,7 +117,8 @@ public class SchemaService {
             jsonSchema.setAccession(accession);
         }
         MongoJsonSchema mongoJsonSchema = modelConverter.jsonSchemaToMongoJsonSchema(jsonSchema);
-        MongoJsonSchema mongoJsonSchemaResult = schemaRepository.save(mongoJsonSchema);
+        updateAuditFields(mongoJsonSchema);
+        schemaRepository.save(mongoJsonSchema);
 
         // populate field groups
         Set<FieldGroup> groups = extractFieldGroups(importedFields);
@@ -128,6 +129,7 @@ public class SchemaService {
             updatedGroups.put(savedGroup.getName(), savedGroup);
         });
         fieldGroupRepository.saveAll(updatedGroups.values());
+
 
         // populate fields
         importedFields.stream()
@@ -240,9 +242,16 @@ public class SchemaService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid checklistId: " + schemaId));
         mongoSchema.makeNonEditable();
         mongoSchema.makeNonLatest();
+        updateAuditFields(mongoSchema);
+        schemaRepository.save(mongoSchema);
+    }
+
+    public void updateAuditFields(MongoJsonSchema mongoSchema) {
         String username = userService.findCurrentUser().getUsername();
         mongoSchema.setCreatedBy(username);
         mongoSchema.setLastModifiedBy(username);
-        schemaRepository.save(mongoSchema);
+        LocalDateTime now = LocalDateTime.now();
+        mongoSchema.setCreatedDate(now);
+        mongoSchema.setLastModifiedDate(now);
     }
 }
