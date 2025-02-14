@@ -1,0 +1,2078 @@
+{
+	"info": {
+		"_postman_id": "3c9bb735-65a3-4b1c-9f66-4651abe8cec3",
+		"name": "biosamples-validation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17583635"
+	},
+	"item": [
+		{
+			"name": "biovalidator",
+			"item": [
+				{
+					"name": "validate-bsd-minimal",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schema\": {\n        \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n        \"$id\": \"https://www.ebi.ac.uk/biosamples/schemas/biosamples-minimal/1.0.0\",\n        \"additionalProperties\": true,\n        \"definitions\": {\n            \"nonEmptyString\": {\n                \"type\": \"string\",\n                \"minLength\": 1\n            }\n        },\n        \"required\": [\n            \"name\",\n            \"characteristics\"\n        ],\n        \"title\": \"sample\",\n        \"type\": \"object\",\n        \"properties\": {\n            \"name\": {\n                \"type\": \"string\"\n            },\n            \"accession\": {\n                \"type\": \"string\"\n            },\n            \"characteristics\": {\n                \"type\": \"object\",\n                \"anyOf\": [\n                    {\n                        \"required\": [\n                            \"organism\"\n                        ]\n                    },\n                    {\n                        \"required\": [\n                            \"Organism\"\n                        ]\n                    },\n                    {\n                        \"required\": [\n                            \"species\"\n                        ]\n                    },\n                    {\n                        \"required\": [\n                            \"Species\"\n                        ]\n                    }\n                ],\n                \"properties\": {\n                    \"organism\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"properties\": {\n                                \"text\": {\n                                    \"$ref\": \"#/definitions/nonEmptyString\"\n                                }\n                            },\n                            \"required\": [\n                                \"text\"\n                            ]\n                        }\n                    },\n                    \"Organism\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"properties\": {\n                                \"text\": {\n                                    \"$ref\": \"#/definitions/nonEmptyString\"\n                                }\n                            },\n                            \"required\": [\n                                \"text\"\n                            ]\n                        }\n                    },\n                    \"Species\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"properties\": {\n                                \"text\": {\n                                    \"$ref\": \"#/definitions/nonEmptyString\"\n                                }\n                            },\n                            \"required\": [\n                                \"text\"\n                            ]\n                        }\n                    },\n                    \"species\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"properties\": {\n                                \"text\": {\n                                    \"$ref\": \"#/definitions/nonEmptyString\"\n                                }\n                            },\n                            \"required\": [\n                                \"text\"\n                            ]\n                        }\n                    }\n                }\n            }\n        }\n    },\n    \"data\": {\n        \"name\": \"FakeSample1\",\n        \"update\": \"2012-03-19T13:56:40.720567Z\",\n        \"release\": \"2020-03-10T13:56:40.720559Z\",\n        \"webinSubmissionAccountId\": \"Webin-59287\",\n        \"characteristics\": {\n            \"description\": [\n                {\n                    \"text\": \"fake sample\"\n                }\n            ],\n            \"organism\": [\n                {\n                    \"text\": \"Homo sapiens\",\n                    \"ontologyTerms\": [\n                        \"http://purl.obolibrary.org/obo/NCBITaxon_9606\"\n                    ]\n                }\n            ]\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{biovalidator}}/validate",
+							"host": [
+								"{{biovalidator}}"
+							],
+							"path": [
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validate-bsd-minimal-error",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schema\": {\n        \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n        \"$id\": \"https://www.ebi.ac.uk/biosamples/schemas/biosamples-minimal/1.0.0\",\n        \"additionalProperties\": true,\n        \"definitions\": {\n            \"nonEmptyString\": {\n                \"type\": \"string\",\n                \"minLength\": 1\n            }\n        },\n        \"required\": [\n            \"name\",\n            \"characteristics\"\n        ],\n        \"title\": \"sample\",\n        \"type\": \"object\",\n        \"properties\": {\n            \"name\": {\n                \"type\": \"string\"\n            },\n            \"accession\": {\n                \"type\": \"string\"\n            },\n            \"characteristics\": {\n                \"type\": \"object\",\n                \"anyOf\": [\n                    {\n                        \"required\": [\n                            \"organism\"\n                        ]\n                    },\n                    {\n                        \"required\": [\n                            \"Organism\"\n                        ]\n                    },\n                    {\n                        \"required\": [\n                            \"species\"\n                        ]\n                    },\n                    {\n                        \"required\": [\n                            \"Species\"\n                        ]\n                    }\n                ],\n                \"properties\": {\n                    \"organism\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"properties\": {\n                                \"text\": {\n                                    \"$ref\": \"#/definitions/nonEmptyString\"\n                                }\n                            },\n                            \"required\": [\n                                \"text\"\n                            ]\n                        }\n                    },\n                    \"Organism\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"properties\": {\n                                \"text\": {\n                                    \"$ref\": \"#/definitions/nonEmptyString\"\n                                }\n                            },\n                            \"required\": [\n                                \"text\"\n                            ]\n                        }\n                    },\n                    \"Species\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"properties\": {\n                                \"text\": {\n                                    \"$ref\": \"#/definitions/nonEmptyString\"\n                                }\n                            },\n                            \"required\": [\n                                \"text\"\n                            ]\n                        }\n                    },\n                    \"species\": {\n                        \"type\": \"array\",\n                        \"items\": {\n                            \"properties\": {\n                                \"text\": {\n                                    \"$ref\": \"#/definitions/nonEmptyString\"\n                                }\n                            },\n                            \"required\": [\n                                \"text\"\n                            ]\n                        }\n                    }\n                }\n            }\n        }\n    },\n    \"data\": {\n        \"name\": \"FakeSample1\",\n        \"update\": \"2012-03-19T13:56:40.720567Z\",\n        \"release\": \"2020-03-10T13:56:40.720559Z\",\n        \"webinSubmissionAccountId\": \"Webin-59287\",\n        \"characteristics\": {\n            \"description\": [\n                {\n                    \"text\": \"fake sample\"\n                }\n            ]\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{biovalidator}}/validate",
+							"host": [
+								"{{biovalidator}}"
+							],
+							"path": [
+								"validate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "schema-store",
+			"item": [
+				{
+					"name": "get-checklist",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{schema-store}}/api/v2/mongoJsonSchemas/ERC000011:1.0",
+							"host": [
+								"{{schema-store}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"mongoJsonSchemas",
+								"ERC000011:1.0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-checklist-json-schema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{schema-store}}/registry/schemas/ERC000026",
+							"host": [
+								"{{schema-store}}"
+							],
+							"path": [
+								"registry",
+								"schemas",
+								"ERC000026"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-checklist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"var accession = jsonData.accession;",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"API test checklist\",\n  \"description\": \"Checklist created for API testing\",\n  \"metaSchema\": \"https://schemablocks.org/metaschemas/json-schema-draft-07/1.0.1\",\n  \"name\": \"API test checklist {{$randomUUID}}\",\n  \"authority\": \"ENA\",\n  \"schemaFieldAssociations\": [\n    {\n      \"fieldId\": \"cell_type:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"dev_stage:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"germline:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"tissue_lib:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"tissue_type:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"isolation_source:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"lat_lon:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"collected_by:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"collection_date:1.0\",\n      \"requirementType\": \"MANDATORY\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"geographic_location_country_andor_sea:1.0\",\n      \"requirementType\": \"MANDATORY\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"geographic_location_region_and_locality:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"identified_by:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"environmental_sample:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"mating_type:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"sex:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"lab_host:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"host_scientific_name:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"bio_material:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"culture_collection:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"specimen_voucher:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"cultivar:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"ecotype:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"isolate:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"sub_species:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"variety:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"sub_strain:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"cell_line:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"serotype:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"serovar:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    },\n    {\n      \"fieldId\": \"xylene:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    }\n  ],\n  \"lastModifiedDate\": \"2024-12-02T19:58:37.853\",\n  \"group\": \"Other Checklists\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema-store}}/api/v2/mongoJsonSchemas",
+							"host": [
+								"{{schema-store}}"
+							],
+							"path": [
+								"api",
+								"v2",
+								"mongoJsonSchemas"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "biosamples",
+			"item": [
+				{
+					"name": "submit-sample",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"FakeSample1\",\n    \"update\": \"2012-03-19T13:56:40.720567Z\",\n    \"release\": \"2020-03-10T13:56:40.720559Z\",\n    \"webinSubmissionAccountId\": \"{{WEBIN_USER}}\",\n    \"characteristics\": {\n        \"description\": [\n            {\n                \"text\": \"fake sample\"\n            }\n        ],\n        \"checklist\": [\n            {\n                \"text\": \"ERC000011\"\n            }\n        ],\n        \"collection_date\": [\n            {\n                \"text\": \"not provided\"\n            }\n        ],\n        \"geographic location (country and/or sea)\": [\n            {\n                \"text\": \"Thailand\"\n            }\n        ],\n        \"organism\": [\n            {\n                \"text\": \"Homo sapiens\",\n                \"ontologyTerms\": [\n                    \"http://purl.obolibrary.org/obo/NCBITaxon_9606\"\n                ]\n            }\n        ]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{biosamples}}/samples",
+							"host": [
+								"{{biosamples}}"
+							],
+							"path": [
+								"samples"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "submit-sample invalid",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"FakeSample1\",\n    \"update\": \"2012-03-19T13:56:40.720567Z\",\n    \"release\": \"2020-03-10T13:56:40.720559Z\",\n    \"webinSubmissionAccountId\": \"{{WEBIN_USER}}\",\n    \"characteristics\": {\n        \"description\": [\n            {\n                \"text\": \"fake sample\"\n            }\n        ],\n        \"checklist\": [\n            {\n                \"text\": \"ERC000011\"\n            }\n        ],\n        \"organism\": [\n            {\n                \"text\": \"Homo sapiens\",\n                \"ontologyTerms\": [\n                    \"http://purl.obolibrary.org/obo/NCBITaxon_9606\"\n                ]\n            }\n        ]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{biosamples}}/samples",
+							"host": [
+								"{{biosamples}}"
+							],
+							"path": [
+								"samples"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "webin",
+			"item": [
+				{
+					"name": "get-auth-token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = responseBody;",
+									"postman.setEnvironmentVariable(\"JWT\", response);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"authRealms\":[\"ENA\"],\n  \"password\":\"{{WEBIN_PASS}}\",\n  \"username\":\"{{WEBIN_USER}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{webin}}/ena/submit/webin/auth/token",
+							"host": [
+								"{{webin}}"
+							],
+							"path": [
+								"ena",
+								"submit",
+								"webin",
+								"auth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "scenarios",
+			"item": [
+				{
+					"name": "submit-sample",
+					"item": [
+						{
+							"name": "get-auth-token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var response = responseBody;",
+											"postman.setEnvironmentVariable(\"JWT\", response);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"authRealms\":[\"ENA\"],\n  \"password\":\"{{WEBIN_PASS}}\",\n  \"username\":\"{{WEBIN_USER}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{webin}}/ena/submit/webin/auth/token",
+									"host": [
+										"{{webin}}"
+									],
+									"path": [
+										"ena",
+										"submit",
+										"webin",
+										"auth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "submit-sample",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Sample description is fake sample\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.characteristics.description[0].text).to.eql(\"fake sample\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"FakeSample1\",\n    \"update\": \"2012-03-19T13:56:40.720567Z\",\n    \"release\": \"2020-03-10T13:56:40.720559Z\",\n    \"webinSubmissionAccountId\": \"{{WEBIN_USER}}\",\n    \"characteristics\": {\n        \"description\": [\n            {\n                \"text\": \"fake sample\"\n            }\n        ],\n        \"checklist\": [\n            {\n                \"text\": \"ERC000011\"\n            }\n        ],\n        \"collection_date\": [\n            {\n                \"text\": \"not provided\"\n            }\n        ],\n        \"geographic location (country and/or sea)\": [\n            {\n                \"text\": \"Thailand\"\n            }\n        ],\n        \"organism\": [\n            {\n                \"text\": \"Homo sapiens\",\n                \"ontologyTerms\": [\n                    \"http://purl.obolibrary.org/obo/NCBITaxon_9606\"\n                ]\n            }\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{biosamples}}/samples",
+									"host": [
+										"{{biosamples}}"
+									],
+									"path": [
+										"samples"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "edit-field-and-checklist",
+					"item": [
+						{
+							"name": "server root",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// set a unique run id to be used in the scenario",
+											"let moment = require('moment');",
+											"",
+											"let formattedDate = moment().format('YYMMDD_HHmmss');",
+											"pm.collectionVariables.set('run_id', formattedDate);",
+											"console.info(pm.collectionVariables.replaceIn('run id: {{run_id}}'));",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Forwarded-Host",
+										"value": " 127.0.0.1",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "X-Forwarded-Port",
+										"value": " 8080",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{schemaStore}}",
+									"host": [
+										"{{schemaStore}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "api root",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// set a unique run id to be used in the scenario",
+											"let moment = require('moment');",
+											"",
+											"let formattedDate = moment().format('YYMMDD_HHmmss');",
+											"pm.collectionVariables.set('run_id', formattedDate);",
+											"console.info(pm.collectionVariables.replaceIn('run id: {{run_id}}'));",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Forwarded-Host",
+										"value": " 127.0.0.1",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "X-Forwarded-Port",
+										"value": " 8080",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{schemaStore}}/api/v2",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get-auth-token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.collectionVariables.set(\"JWT\", pm.response.text());",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"packages": {},
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"authRealms\":[\"ENA\"],\n  \"password\": \"{{vault:webin.password}}\",\n  \"username\": \"{{webin.username}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ebiUrl}}/ena/submit/webin/auth/token",
+									"host": [
+										"{{ebiUrl}}"
+									],
+									"path": [
+										"ena",
+										"submit",
+										"webin",
+										"auth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get user details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"has username\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.username).to.eql(pm.variables.replaceIn('{{webin.username}}'));",
+											"});",
+											"",
+											"pm.test(\"user has editor role\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.authorities.map(a=>a.authority)).to.include('editor');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/users/search/me",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"users",
+										"search",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var hal_response = pm.response.json();",
+											"var fieldGroupId = hal_response._embedded.fieldGroups[0].id;",
+											"pm.collectionVariables.set('fieldGroupId', fieldGroupId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fieldGroups",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fieldGroups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create-field 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"field name ok\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.name).to.eql(pm.variables.replaceIn('test_field_1_{{run_id}}'));",
+											"});",
+											"",
+											"pm.test(\"field lastModifiedBy ok\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.lastModifiedBy).to.eql(pm.variables.replaceIn('{{webin.username}}'));",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"label\": \"test field 1 {{run_id}}\",\n    \"description\": \"api test field created in test {{run_id}}\",\n    \"group\": \"{{fieldGroupId}}\",\n    \"type\": \"text\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create-checklist with field 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"has accession\", function () {",
+											"    var checklist = pm.response.json();",
+											"    var accession = checklist.accession;",
+											"    pm.expect(accession).to.match(/ERC00/);;",
+											"    pm.collectionVariables.set(\"checklist_accession\", accession);",
+											"    pm.collectionVariables.set(\"checklist\", checklist);",
+											"});",
+											"",
+											"",
+											"pm.test(\"version is 1.0\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.version).to.equal('1.0');",
+											"",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"API test checklist {{run_id}}\",\n  \"description\": \"Checklist created for API testing on run {{run_id}}\",\n  \"schemaFieldAssociations\": [\n    {\n      \"fieldId\": \"test_field_1_{{run_id}}:1.0\",\n      \"requirementType\": \"OPTIONAL\",\n      \"multiplicity\": \"Single\"\n    }\n  ],\n  \"group\": \"Other Checklists\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/mongoJsonSchemas",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"mongoJsonSchemas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check: field 1 points to checklist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"has 1 checklist\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.usedBySchemas.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test(\"field points to checklist v1.0\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.usedBySchemas).to.include(pm.variables.replaceIn('{{checklist_accession}}:1.0'));",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields/test_field_1_{{run_id}}:1.0",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields",
+										"test_field_1_{{run_id}}:1.0"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create-field 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"field name ok\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.name).to.eql(pm.variables.replaceIn('test_field_2_{{run_id}}'));",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"label\": \"test field 2 {{run_id}}\",\n    \"description\": \"api test field created in test {{run_id}}\",\n    \"group\": \"{{fieldGroupId}}\",\n    \"type\": \"text\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update checklist: add field 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"checklist has 2 fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.schemaFieldAssociations).to.have.lengthOf(2);",
+											"});",
+											"pm.test(\"Check JSON attribute value contains a string\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.schemaFieldAssociations[1].fieldId).to.equal(pm.variables.replaceIn('test_field_2_{{run_id}}:1.0'));",
+											"});",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"checklist is latest\", function () {",
+											"    pm.expect(jsonData.latest).to.equal(true);",
+											"});",
+											"",
+											"pm.test(\"checklist editable\", function () {",
+											"    pm.expect(jsonData.editable).to.equal(true);",
+											"});",
+											"pm.test(\"version is 1.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.version).to.equal('1.1');",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var checklist = pm.collectionVariables.get('checklist');",
+											"var field2 =  {",
+											"      \"fieldId\": pm.variables.replaceIn('test_field_2_{{run_id}}:1.0'),",
+											"      \"requirementType\": \"MANDATORY\",",
+											"      \"multiplicity\": \"Single\"",
+											"    };",
+											"",
+											"checklist.schemaFieldAssociations.push(field2)",
+											"pm.collectionVariables.set('modified_checklist', JSON.stringify(checklist));"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{modified_checklist}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/mongoJsonSchemas/{{checklist_accession}}:1.0",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"mongoJsonSchemas",
+										"{{checklist_accession}}:1.0"
+									]
+								},
+								"description": "adds field 2 to the check list\n\ncheck that the field is added and the version is incremented"
+							},
+							"response": []
+						},
+						{
+							"name": "check checklist 1.0",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"checklist not latest\", function () {",
+											"    pm.expect(jsonData.latest).to.equal(false);",
+											"});",
+											"",
+											"pm.test(\"checklist not editable\", function () {",
+											"    pm.expect(jsonData.editable).to.equal(false);",
+											"});",
+											"console.log(jsonData.schemaFieldAssociations)",
+											"pm.test(\"has 1 fields\", function () {",
+											"    pm.expect(jsonData.schemaFieldAssociations.length).to.equal(1);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "",
+										"variables": ""
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/mongoJsonSchemas/{{checklist_accession}}:1.0",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"mongoJsonSchemas",
+										"{{checklist_accession}}:1.0"
+									]
+								},
+								"description": "checklist v1.0 should only have field 1"
+							},
+							"response": []
+						},
+						{
+							"name": "check: field 1 v1.0 pointers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"has 2 checklists\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.usedBySchemas.length).to.eql(2);",
+											"});",
+											"",
+											"pm.test(\"field points to both checklist versions\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    console.log(jsonData.usedBySchemas)",
+											"    pm.expect(jsonData.usedBySchemas).to.have.members(",
+											"        [",
+											"            pm.variables.replaceIn('{{checklist_accession}}:1.1'),",
+											"            pm.variables.replaceIn('{{checklist_accession}}:1.0')",
+											"        ]",
+											"    );",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields/test_field_1_{{run_id}}:1.0",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields",
+										"test_field_1_{{run_id}}:1.0"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check: field 2 points to checklist v1.1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"has 1 checklist\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.usedBySchemas.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test(\"field points to checklist v1.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    console.log(jsonData.usedBySchemas)",
+											"    pm.expect(jsonData.usedBySchemas).to.include(pm.variables.replaceIn('{{checklist_accession}}:1.1'));",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields/test_field_2_{{run_id}}:1.0",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields",
+										"test_field_2_{{run_id}}:1.0"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update-field: change description of field 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"version is 1.1\", function () {",
+											"    pm.expect(pm.response.json().version).to.eql(\"1.1\");",
+											"});",
+											"pm.test(\"field points to 1 checklist\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    console.log(jsonData.usedBySchemas)",
+											"    pm.expect(jsonData.usedBySchemas.length).to.equal(1);",
+											"});",
+											"pm.test(\"field points to checklist v1.2\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    console.log(jsonData.usedBySchemas)",
+											"    pm.expect(jsonData.usedBySchemas[0]).to.equal(pm.variables.replaceIn('{{checklist_accession}}:1.2'));",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"test_field_1_{{run_id}}:1.0\",\n    \"label\": \"test field 1 {{run_id}}\",\n    \"description\": \"api test field updated - {{$randomCatchPhraseNoun}}\",\n    \"group\": \"{{fieldGroupId}}\",\n    \"type\": \"text\",\n    \"version\": \"1.0\",\n    \"usedBySchemas\": [\"{{checklist_accession}}:1.1\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields/test_field_1_{{run_id}}:1.0",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields",
+										"test_field_1_{{run_id}}:1.0"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "checklist 1.1 made non latest",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"checklist not latest\", function () {",
+											"    pm.expect(jsonData.latest).to.equal(false);",
+											"});",
+											"",
+											"pm.test(\"checklist not editable\", function () {",
+											"    pm.expect(jsonData.editable).to.equal(false);",
+											"});",
+											"console.log(jsonData.schemaFieldAssociations)",
+											"pm.test(\"has 2 fields\", function () {",
+											"    pm.expect(jsonData.schemaFieldAssociations.length).to.equal(2);",
+											"});",
+											"pm.test(\"has field1 v1.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.schemaFieldAssociations[0].fieldId).to.equal(pm.variables.replaceIn('test_field_1_{{run_id}}:1.0'));",
+											"});",
+											"",
+											"pm.test(\"has field2 v1.0\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.schemaFieldAssociations[1].fieldId).to.equal(pm.variables.replaceIn('test_field_2_{{run_id}}:1.0'));",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/mongoJsonSchemas/{{checklist_accession}}:1.1",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"mongoJsonSchemas",
+										"{{checklist_accession}}:1.1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "checklist 1.2 has updated field",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"checklist latest\", function () {",
+											"    pm.expect(jsonData.latest).to.equal(true);",
+											"});",
+											"",
+											"pm.test(\"checklist editable\", function () {",
+											"    pm.expect(jsonData.editable).to.equal(true);",
+											"});",
+											"console.log(jsonData.schemaFieldAssociations)",
+											"pm.test(\"has 2 fields\", function () {",
+											"    pm.expect(jsonData.schemaFieldAssociations.length).to.equal(2);",
+											"});",
+											"",
+											"pm.test(\"has field1 v1.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.schemaFieldAssociations[0].fieldId).to.equal(pm.variables.replaceIn('test_field_1_{{run_id}}:1.1'));",
+											"});",
+											"",
+											"pm.test(\"has field2 v1.0\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.schemaFieldAssociations[1].fieldId).to.equal(pm.variables.replaceIn('test_field_2_{{run_id}}:1.0'));",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/mongoJsonSchemas/{{checklist_accession}}:1.2",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"mongoJsonSchemas",
+										"{{checklist_accession}}:1.2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check: field 1 v1.1 points to checklist v1.2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"has 1 checklist\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.usedBySchemas.length).to.eql(1);",
+											"});",
+											"",
+											"pm.test(\"field points to checklist v1.2\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    console.log(jsonData.usedBySchemas)",
+											"    pm.expect(jsonData.usedBySchemas).to.include(pm.variables.replaceIn('{{checklist_accession}}:1.2'));",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields/test_field_1_{{run_id}}:1.1",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields",
+										"test_field_1_{{run_id}}:1.1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check: field 2 v1.0 points to checklist v1.2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"has 2 checklists\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.usedBySchemas.length).to.eql(2);",
+											"});",
+											"pm.test(\"field points to checklist v1.2\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    console.log(jsonData.usedBySchemas)",
+											"    pm.expect(jsonData.usedBySchemas).to.include(pm.variables.replaceIn('{{checklist_accession}}:1.2'));",
+											"});",
+											"pm.test(\"field points to checklist v1.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    console.log(jsonData.usedBySchemas)",
+											"    pm.expect(jsonData.usedBySchemas).to.include(pm.variables.replaceIn('{{checklist_accession}}:1.1'));",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields/test_field_2_{{run_id}}:1.0",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields",
+										"test_field_2_{{run_id}}:1.0"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get-checklist json schema",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"get checklist with correct version\", function () {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.$id)",
+											"        .to.include(pm.variables.replaceIn(\"{{checklist_accession}}:1.2\"));",
+											"});",
+											"",
+											"pm.test(\"$id contains external server url\", function () {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.$id)",
+											"        .to.include(pm.variables.replaceIn(\"{{schemaStore}}\"));",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/registry/schemas/{{checklist_accession}}",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"registry",
+										"schemas",
+										"{{checklist_accession}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update-field: rename field 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"version is 1.0\", function () {",
+											"    pm.expect(pm.response.json().version).to.eql(\"1.0\");",
+											"});",
+											"pm.test(\"field points only to 1 checklist \", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.usedBySchemas.length).to.equal(1);",
+											"});",
+											"pm.test(\"field points to checklist v1.3\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.usedBySchemas[0]).to.equal(pm.variables.replaceIn('{{checklist_accession}}:1.3'));",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"test_field_2_{{run_id}}:1.0\",\n    \"label\": \"test field 2 {{run_id}} RENAMED\",\n    \"description\": \"api test field updated - {{$randomCatchPhraseNoun}} - RENAMED\",\n    \"group\": \"{{fieldGroupId}}\",\n    \"type\": \"text\",\n    \"version\": \"1.0\",\n    \"usedBySchemas\": [\"{{checklist_accession}}:1.1\", \"{{checklist_accession}}:1.2\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/fields/test_field_2_{{run_id}}:1.0",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"fields",
+										"test_field_2_{{run_id}}:1.0"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "checklist 1.2 has original field",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"checklist latest\", function () {",
+											"    pm.expect(jsonData.latest).to.equal(false);",
+											"});",
+											"",
+											"pm.test(\"checklist editable\", function () {",
+											"    pm.expect(jsonData.editable).to.equal(false);",
+											"});",
+											"console.log(jsonData.schemaFieldAssociations)",
+											"pm.test(\"has 2 fields\", function () {",
+											"    pm.expect(jsonData.schemaFieldAssociations.length).to.equal(2);",
+											"});",
+											"",
+											"pm.test(\"has field1 v1.1\", function () {",
+											"    pm.expect(jsonData.schemaFieldAssociations[0].fieldId).to.equal(pm.variables.replaceIn('test_field_1_{{run_id}}:1.1'));",
+											"});",
+											"",
+											"pm.test(\"has field2 v1.0\", function () {",
+											"    pm.expect(jsonData.schemaFieldAssociations[1].fieldId).to.equal(pm.variables.replaceIn('test_field_2_{{run_id}}:1.0'));",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/mongoJsonSchemas/{{checklist_accession}}:1.2",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"mongoJsonSchemas",
+										"{{checklist_accession}}:1.2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "checklist 1.3 has updated field",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(\"checklist latest\", function () {",
+											"    pm.expect(jsonData.latest).to.equal(true);",
+											"});",
+											"",
+											"pm.test(\"checklist editable\", function () {",
+											"    pm.expect(jsonData.editable).to.equal(true);",
+											"});",
+											"console.log(jsonData.schemaFieldAssociations)",
+											"pm.test(\"has 2 fields\", function () {",
+											"    pm.expect(jsonData.schemaFieldAssociations.length).to.equal(2);",
+											"});",
+											"",
+											"pm.test(\"has field1 v1.1\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.schemaFieldAssociations[0].fieldId).to.equal(pm.variables.replaceIn('test_field_1_{{run_id}}:1.1'));",
+											"});",
+											"",
+											"pm.test(\"has field2 renamed v1.0\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.schemaFieldAssociations[1].fieldId).to.equal(pm.variables.replaceIn('test_field_2_{{run_id}}_renamed:1.0'));",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{schemaStore}}/api/v2/mongoJsonSchemas/{{checklist_accession}}:1.3",
+									"host": [
+										"{{schemaStore}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"mongoJsonSchemas",
+										"{{checklist_accession}}:1.3"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "JWT",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "WEBIN_USER",
+			"value": "Webin-0000",
+			"type": "string"
+		},
+		{
+			"key": "WEBIN_PASS",
+			"value": "password",
+			"type": "string"
+		},
+		{
+			"key": "fieldName",
+			"value": ""
+		},
+		{
+			"key": "run_id",
+			"value": ""
+		},
+		{
+			"key": "fieldId",
+			"value": ""
+		},
+		{
+			"key": "fieldLabel",
+			"value": ""
+		},
+		{
+			"key": "checklist_accession",
+			"value": ""
+		},
+		{
+			"key": "checklist",
+			"value": ""
+		},
+		{
+			"key": "modified_checklist",
+			"value": ""
+		},
+		{
+			"key": "fieldGroupId",
+			"value": ""
+		}
+	]
+}
