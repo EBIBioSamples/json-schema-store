@@ -3,10 +3,10 @@ package uk.ac.ebi.biosamples.jsonschemastore.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import uk.ac.ebi.biosamples.jsonschemastore.config.SchemaStoreProperties;
+import uk.ac.ebi.biosamples.jsonschemastore.controller.SchemaExporterController;
 import uk.ac.ebi.biosamples.jsonschemastore.model.Schema;
 import uk.ac.ebi.biosamples.jsonschemastore.model.SchemaId;
 import uk.ac.ebi.biosamples.jsonschemastore.service.ChecklistGroupService;
@@ -25,16 +25,16 @@ public class SchemaObjectPopulator {
         schema.setGroup(checklistGroupService.findGroupForAccession(schemaId.getAccession()));
     }
 
-    public  void addSchemaUniqueId(Schema schema, SchemaId schemaId) {
+    public void addSchemaUniqueId(Schema schema, SchemaId schemaId) {
         String schemaRestResource = getSchemaResourceURL(schemaId);
         ((ObjectNode) schema.getSchema()).put("$id", schemaRestResource);
     }
 
     public String getSchemaResourceURL(SchemaId schemaId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .replacePath("/registry/schemas")
-                .pathSegment(schemaId.asString())
-                .build()
+        return MvcUriComponentsBuilder
+                .fromMethodCall(MvcUriComponentsBuilder
+                        .on(SchemaExporterController.class)
+                        .getSchemaLatestByAccessionOrById(schemaId.asString()))
                 .toUriString();
     }
 
