@@ -7,7 +7,7 @@ spring:
       basePath: /api/v2
 
 server:
-  forward-headers-strategy: framework
+  forward-headers-strategy: native
   tomcat:
     remoteip:
       host-header: Host
