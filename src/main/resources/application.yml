@@ -5,8 +5,9 @@ spring:
   data:
     rest:
       basePath: /api/v2
+
 server:
-  forward-headers-strategy: framework
+  forward-headers-strategy: native
 #  servlet:
 #    context-path: /biosamples/schema-store
 
