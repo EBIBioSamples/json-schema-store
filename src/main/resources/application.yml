@@ -7,9 +7,10 @@ spring:
       basePath: /api/v2
 
 server:
-  forward-headers-strategy: native
-#  servlet:
-#    context-path: /biosamples/schema-store
+  forward-headers-strategy: framework
+  tomcat:
+    remoteip:
+      host-header: Host
 
 management:
   endpoints:
