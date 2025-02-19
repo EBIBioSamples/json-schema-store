@@ -1,6 +1,6 @@
 [
   {
-    "id" : "https://www.ebi.ac.uk/biosamples/schemas/biosamples-minimal/1.0.0",
+    "id" : "BSDC00001:1.0.0",
     "accession" : "BSDC00001",
     "name" : "biosamples-minimal",
     "version" : "1.0.0",
@@ -13,7 +13,7 @@
     "_class" : "uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema"
   },
   {
-    "id" : "https://www.ebi.ac.uk/biosamples/schemas/plant-miappe/1.2.0",
+    "id" : "BSDC00002:1.0.0",
     "accession" : "BSDC00002",
     "name" : "plant-miappe",
     "version" : "1.2.0",
@@ -26,7 +26,7 @@
     "_class" : "uk.ac.ebi.biosamples.jsonschemastore.model.mongo.MongoJsonSchema"
   },
   {
-    "id" : "https://www.ebi.ac.uk/biosamples/schemas/pha4ge-sars-cov-2/1.0.0",
+    "id" : "BSDC00003:1.0.0",
     "accession" : "BSDC00003",
     "name" : "pha4ge-sars-cov-2",
     "version" : "1.0.0",
