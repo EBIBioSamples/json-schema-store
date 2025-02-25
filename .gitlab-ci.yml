@@ -1,5 +1,4 @@
 variables:
-  MAVEN_CLI_OPTS: "-DskipTests"
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
   DOCKER_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
@@ -14,7 +13,7 @@ stages:
 build_docker_image:
   stage: build
   image: docker:27
-  tags: ["dind"]
+  tags: ["dind", "docker"]
   services:
     - docker:27-dind
   before_script:
@@ -90,7 +89,7 @@ deploy_prod_fallback:
 .kube_deploy_script:
   stage: deploy
   image: dtzar/helm-kubectl:3.16
-  tags: ["dind"]
+  tags: ["dind", "docker"]
   services:
     - docker:27-dind
   script:
