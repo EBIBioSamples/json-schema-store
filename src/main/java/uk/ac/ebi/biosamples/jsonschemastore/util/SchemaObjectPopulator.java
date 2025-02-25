@@ -30,6 +30,9 @@ public class SchemaObjectPopulator {
         ((ObjectNode) schema.getSchema()).put("$id", schemaRestResource);
     }
 
+    public String getSchemaResourceURL(String schemaIdStr) {
+        return getSchemaResourceURL(SchemaId.fromString(schemaIdStr));
+    }
     public String getSchemaResourceURL(SchemaId schemaId) {
         return MvcUriComponentsBuilder
                 .fromMethodCall(MvcUriComponentsBuilder

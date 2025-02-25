@@ -1,12 +1,13 @@
 package uk.ac.ebi.biosamples.jsonschemastore.util;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.EntityLinks;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biosamples.jsonschemastore.controller.MetaSchemaController;
 import uk.ac.ebi.biosamples.jsonschemastore.controller.SchemaController;
@@ -21,12 +22,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class SchemaResourceAssembler {
     private final PagedResourcesAssembler<JsonSchema> pagedResourcesAssembler;
     private final PagedResourcesAssembler<MongoJsonSchema> mongoJsonSchemaResourcesAssembler;
     private final PagedResourcesAssembler<MetaSchema> pagedResourcesAssemblerForMetaSchema;
     private final PagedResourcesAssembler<SchemaOutline> pagedResourcesAssemblerForSchemaOutline;
     private final EntityLinks entityLinks;
+    private final SchemaObjectPopulator schemaObjectPopulator;
 
     public JsonSchema populateResources(JsonSchema schema) {
         return (JsonSchema) schema.add(linkTo(methodOn(SchemaController.class).getSchema(schema.getId())).withSelfRel());
@@ -57,13 +60,21 @@ public class SchemaResourceAssembler {
 
     public PagedModel<EntityModel<MongoJsonSchema>> buildMongoJsonSchemaPage(Page<MongoJsonSchema> entityPage) {
         return mongoJsonSchemaResourcesAssembler.toModel(entityPage, schema -> {
-            return EntityModel.of(schema)
-                    .add(WebMvcLinkBuilder
-                            .linkTo(WebMvcLinkBuilder.methodOn(SchemaExporterController.class)
-                                    .getSchemaLatestByAccessionOrById(schema.getId()))
-                            .withRel("json-schema"))
+            EntityModel<MongoJsonSchema> schemaEntityModel = EntityModel.of(schema)
                     .add(entityLinks.linkToItemResource(MongoJsonSchema.class, schema.getId()).withSelfRel());
+            try {
+                Link schemaEntityModelWithJsonSchemaLink = buildJsonSchemaLink(schema);
+                schemaEntityModel.add(schemaEntityModelWithJsonSchemaLink);
+            } catch (Exception e) {
+                log.error("cannot add json-schema link to schema {}", schema.getId(), e);
+            }
+            return schemaEntityModel;
         });
+    }
+
+    private Link buildJsonSchemaLink(MongoJsonSchema schema) {
+        return Link.of(schemaObjectPopulator.getSchemaResourceURL(schema.getId()))
+                        .withRel("json-schema");
     }
 
 }
