@@ -38,6 +38,7 @@ public class ChecklistConverterService {
     private final SchemaObjectPopulator populator;
     private final SchemaTemplateGenerator schemaTemplateGenerator;
     private final FieldService fieldService;
+    private final BioSamplesChecklistImporter bioSamplesChecklistImporter;
 
     private static String getTypedTemplate(Field field) {
         String fieldTypeTemplate;
@@ -133,6 +134,10 @@ public class ChecklistConverterService {
             checklists.add(persistEnaChecklist(accession));
         }
         return checklists.toString();
+    }
+
+    public void importBiosamplesSchema() {
+        bioSamplesChecklistImporter.importBioSamplesSchemaFromFileToDb();
     }
 
     public String saveSchema(String checklistId, ImportedChecklist importedChecklist) {

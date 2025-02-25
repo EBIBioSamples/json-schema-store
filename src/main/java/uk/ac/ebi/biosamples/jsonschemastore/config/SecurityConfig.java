@@ -1,8 +1,6 @@
 package uk.ac.ebi.biosamples.jsonschemastore.config;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,77 +24,79 @@ import uk.ac.ebi.biosamples.jsonschemastore.service.UserService;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final RepositoryRestProperties repositoryRestProperties;
-    private final UserService userService;
-    @Bean
-    protected SecurityFilterChain configure(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-        String basePath = repositoryRestProperties.getBasePath();
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        // checklists
-                        .requestMatchers(HttpMethod.POST, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.PUT, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.DELETE, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
+  private final RepositoryRestProperties repositoryRestProperties;
+  private final UserService userService;
 
-                        // fields
-                        .requestMatchers(HttpMethod.POST, basePath + "/fields/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.PUT, basePath + "/fields/**").hasAuthority("editor")
-                        .requestMatchers(HttpMethod.DELETE, basePath + "/fields/**").hasAuthority("editor")
+  @Bean
+  protected SecurityFilterChain configure(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    String basePath = repositoryRestProperties.getBasePath();
+    http
+        .authorizeHttpRequests(authorize -> authorize
+            // checklists
+            .requestMatchers(HttpMethod.POST, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
+            .requestMatchers(HttpMethod.PUT, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
+            .requestMatchers(HttpMethod.DELETE, basePath + "/mongoJsonSchemas/**").hasAuthority("editor")
 
-                        // export chceklists
-                        .requestMatchers(HttpMethod.GET, "/exporter/**").permitAll()
+            // fields
+            .requestMatchers(HttpMethod.POST, basePath + "/fields/**").hasAuthority("editor")
+            .requestMatchers(HttpMethod.PUT, basePath + "/fields/**").hasAuthority("editor")
+            .requestMatchers(HttpMethod.DELETE, basePath + "/fields/**").hasAuthority("editor")
 
-                        // checklist registry
-                        .requestMatchers(HttpMethod.GET, "/registry/**").permitAll()
+            // export chceklists
+            .requestMatchers(HttpMethod.GET, "/exporter/**").permitAll()
 
-                        // admin
-                        .requestMatchers(HttpMethod.GET, "/checklist/converter/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, basePath + "/users/search/me").authenticated()
-                        .requestMatchers(HttpMethod.GET, basePath + "/users/search").authenticated()
-                        .requestMatchers(HttpMethod.GET, basePath + "/users/**").hasAuthority("admin")
-                        .requestMatchers(HttpMethod.POST, basePath + "/users/**").hasAuthority("admin")
-                        .requestMatchers(HttpMethod.PUT, basePath + "/users/**").hasAuthority("admin")
+            // checklist registry
+            .requestMatchers(HttpMethod.GET, "/registry/**").permitAll()
 
-                        // TODO: does read only this need auth?
-                        .requestMatchers(HttpMethod.GET, basePath + "/mongoJsonSchemas/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, basePath + "/fields/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, basePath + "/fieldGroups/**").permitAll()
+            // admin
+            .requestMatchers(HttpMethod.GET, "/checklist/converter/**").hasAuthority("editor")
+            .requestMatchers(HttpMethod.GET, basePath + "/users/search/me").authenticated()
+            .requestMatchers(HttpMethod.GET, basePath + "/users/search").authenticated()
+            .requestMatchers(HttpMethod.GET, basePath + "/users/**").hasAuthority("admin")
+            .requestMatchers(HttpMethod.POST, basePath + "/users/**").hasAuthority("admin")
+            .requestMatchers(HttpMethod.PUT, basePath + "/users/**").hasAuthority("admin")
 
-                        .requestMatchers(HttpMethod.GET,"/api/v2/schemas/list").permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/actuator/**").permitAll()
+            // TODO: does read only this need auth?
+            .requestMatchers(HttpMethod.GET, basePath + "/mongoJsonSchemas/**").permitAll()
+            .requestMatchers(HttpMethod.GET, basePath + "/fields/**").permitAll()
+            .requestMatchers(HttpMethod.GET, basePath + "/fieldGroups/**").permitAll()
+            .requestMatchers(HttpMethod.GET, basePath + "/schemas/search/findByExample/**").permitAll()
 
-                        // api root url
-                        .requestMatchers(HttpMethod.GET, basePath).permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v2/schemas/list").permitAll()
+            .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
 
-                        // root url should be open
-                        .requestMatchers(HttpMethod.GET, "/").permitAll()
+            // api root url
+            .requestMatchers(HttpMethod.GET, basePath).permitAll()
 
-                        .anyRequest().authenticated()
-                )
-                .addFilter(requestHeaderAuthenticationFilter(authenticationManager))
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-        ;
-        return http.build();
-    }
+            // root url should be open
+            .requestMatchers(HttpMethod.GET, "/").permitAll()
 
-    private RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter(AuthenticationManager authenticationManager) {
-        RequestHeaderAuthenticationFilter filter = new RequestHeaderAuthenticationFilter();
-        filter.setPrincipalRequestHeader("Authorization");
-        filter.setAuthenticationManager(authenticationManager);
-        filter.setCheckForPrincipalChanges(true);
-        filter.setExceptionIfHeaderMissing(false);
-        filter.setAuthenticationSuccessHandler(
-                (request, response, authentication) -> userService.updateUser((UserDetails) authentication.getPrincipal()));
-        return filter;
-    }
+            .anyRequest().authenticated()
+        )
+        .addFilter(requestHeaderAuthenticationFilter(authenticationManager))
+        .csrf(AbstractHttpConfigurer::disable)
+        .cors(Customizer.withDefaults())
+    ;
+    return http.build();
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth,
-                                                       AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> uds) {
-        PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
-        preAuthenticatedAuthenticationProvider.setPreAuthenticatedUserDetailsService(uds);
-        auth.authenticationProvider(preAuthenticatedAuthenticationProvider);
-        return auth.getOrBuild();
-    }
+  private RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter(AuthenticationManager authenticationManager) {
+    RequestHeaderAuthenticationFilter filter = new RequestHeaderAuthenticationFilter();
+    filter.setPrincipalRequestHeader("Authorization");
+    filter.setAuthenticationManager(authenticationManager);
+    filter.setCheckForPrincipalChanges(true);
+    filter.setExceptionIfHeaderMissing(false);
+    filter.setAuthenticationSuccessHandler(
+        (request, response, authentication) -> userService.updateUser((UserDetails) authentication.getPrincipal()));
+    return filter;
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth,
+                                                     AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> uds) {
+    PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
+    preAuthenticatedAuthenticationProvider.setPreAuthenticatedUserDetailsService(uds);
+    auth.authenticationProvider(preAuthenticatedAuthenticationProvider);
+    return auth.getOrBuild();
+  }
 }
