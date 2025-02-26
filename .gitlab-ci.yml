@@ -17,14 +17,10 @@ build_docker_image:
   services:
     - ${CI_REGISTRY_IMAGE}/docker:27-dind
   before_script:
-    - docker --version
-    - echo "DOCKER_HOST $DOCKER_HOST"
-    - docker info || { echo "Docker is not accessible"; exit 1; }
-    - docker version
-    - echo "Docker is working, proceeding with the build."
+    - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - grep FROM Dockerfile | awk '{print $2}' | xargs -t -n1 docker pull --quiet
 
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker build -t $DOCKER_IMAGE_NAME .
     - docker push --quiet $DOCKER_IMAGE_NAME
   after_script:
