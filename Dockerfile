@@ -1,4 +1,5 @@
-FROM maven:3.9.9-amazoncorretto-21 AS builder
+ARG DOCKER_REGISTRY=docker.io/library
+FROM ${DOCKER_REGISTRY}/maven:3.9.9-amazoncorretto-21 AS builder
 # Set working directory
 WORKDIR /app
 
@@ -13,7 +14,7 @@ ENV MAVEN_CLI_OPTS="-DskipTests"
 RUN mvn $MAVEN_CLI_OPTS clean package
 
 
-FROM amazoncorretto:21-alpine
+FROM a${DOCKER_REGISTRY}/mazoncorretto:21-alpine
 
 WORKDIR /app
 EXPOSE 27017
