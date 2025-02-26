@@ -12,13 +12,12 @@ stages:
 
 build_docker_image:
   stage: build
-  image: ${CI_REGISTRY_IMAGE}/docker:27
+  image: docker:27
   tags: ["dind", "docker"]
   services:
-    - ${CI_REGISTRY_IMAGE}/docker:27-dind
+    - docker:27-dind
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-    - grep FROM Dockerfile | awk '{print $2}' | xargs -t -I{} -n1 docker pull --quiet ${CI_REGISTRY_IMAGE}/{}
 
   script:
     - docker build -t $DOCKER_IMAGE_NAME .
@@ -84,10 +83,10 @@ deploy_prod_fallback:
 
 .kube_deploy_script:
   stage: deploy
-  image: ${CI_REGISTRY_IMAGE}/dtzar/helm-kubectl:3.16
+  image: dtzar/helm-kubectl:3.16
   tags: ["dind", "docker"]
   services:
-    - ${CI_REGISTRY_IMAGE}/docker:27-dind
+    - docker:27-dind
   script:
     - kubectl create namespace ${K8S_NAMESPACE} || true
     - echo ${K8S_NAMESPACE}
