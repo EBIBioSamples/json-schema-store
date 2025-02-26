@@ -12,10 +12,10 @@ stages:
 
 build_docker_image:
   stage: build
-  image: docker:27
+  image: ${CI_REGISTRY}/docker:27
   tags: ["dind", "docker"]
   services:
-    - docker:27-dind
+    - ${CI_REGISTRY}/docker:27-dind
   before_script:
     - docker --version
     - echo "DOCKER_HOST $DOCKER_HOST"
@@ -88,10 +88,10 @@ deploy_prod_fallback:
 
 .kube_deploy_script:
   stage: deploy
-  image: dtzar/helm-kubectl:3.16
+  image: ${CI_REGISTRY}/dtzar/helm-kubectl:3.16
   tags: ["dind", "docker"]
   services:
-    - docker:27-dind
+    - ${CI_REGISTRY}/docker:27-dind
   script:
     - kubectl create namespace ${K8S_NAMESPACE} || true
     - echo ${K8S_NAMESPACE}
