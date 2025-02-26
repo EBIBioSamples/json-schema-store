@@ -18,7 +18,7 @@ build_docker_image:
     - ${CI_REGISTRY_IMAGE}/docker:27-dind
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-    - grep FROM Dockerfile | awk '{print $2}' | xargs -t -n1 docker pull --quiet
+    - grep FROM Dockerfile | awk '{print $2}' | xargs -t -I{} -n1 docker pull --quiet ${CI_REGISTRY_IMAGE}/{}
 
   script:
     - docker build -t $DOCKER_IMAGE_NAME .
