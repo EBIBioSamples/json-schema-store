@@ -12,10 +12,10 @@ stages:
 
 build_docker_image:
   stage: build
-  image: ${CI_REGISTRY}/docker:27
+  image: ${CI_REGISTRY_IMAGE}/docker:27
   tags: ["dind", "docker"]
   services:
-    - ${CI_REGISTRY}/docker:27-dind
+    - ${CI_REGISTRY_IMAGE}/docker:27-dind
   before_script:
     - docker --version
     - echo "DOCKER_HOST $DOCKER_HOST"
@@ -28,7 +28,7 @@ build_docker_image:
     - docker build -t $DOCKER_IMAGE_NAME .
     - docker push --quiet $DOCKER_IMAGE_NAME
   after_script:
-    - docker logout ${CI_REGISTRY}
+    - docker logout ${CI_REGISTRY_IMAGE}
 
 deploy_int:
   variables:
@@ -88,10 +88,10 @@ deploy_prod_fallback:
 
 .kube_deploy_script:
   stage: deploy
-  image: ${CI_REGISTRY}/dtzar/helm-kubectl:3.16
+  image: ${CI_REGISTRY_IMAGE}/dtzar/helm-kubectl:3.16
   tags: ["dind", "docker"]
   services:
-    - ${CI_REGISTRY}/docker:27-dind
+    - ${CI_REGISTRY_IMAGE}/docker:27-dind
   script:
     - kubectl create namespace ${K8S_NAMESPACE} || true
     - echo ${K8S_NAMESPACE}
