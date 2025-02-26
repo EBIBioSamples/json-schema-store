@@ -14,7 +14,7 @@ ENV MAVEN_CLI_OPTS="-DskipTests"
 RUN mvn $MAVEN_CLI_OPTS clean package
 
 
-FROM a${DOCKER_REGISTRY}/mazoncorretto:21-alpine
+FROM ${DOCKER_REGISTRY}/mazoncorretto:21-alpine
 
 WORKDIR /app
 EXPOSE 27017
