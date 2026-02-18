@@ -31,11 +31,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * Required so that preflight OPTIONS requests get CORS headers and 200,
      * fixing "CORS Missing Allow Origin" for cross-origin calls (e.g. wwwdev → schema-store).
      */
+    /** Default origins when none configured: localhost + www + wwwdev so cross-environment (wwwdev→www) works. */
+    private static final List<String> DEFAULT_CORS_ORIGINS = List.of(
+            "http://localhost:4200", "http://localhost:3000", "http://localhost:8080",
+            "https://www.ebi.ac.uk", "https://wwwdev.ebi.ac.uk",
+            "http://www.ebi.ac.uk", "http://wwwdev.ebi.ac.uk");
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         List<String> allowedOrigins = schemaStoreProperties.getCorsAllowedOrigins();
         if (allowedOrigins == null || allowedOrigins.isEmpty()) {
-            allowedOrigins = List.of("http://localhost:4200");
+            allowedOrigins = DEFAULT_CORS_ORIGINS;
         }
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(allowedOrigins);
@@ -53,7 +59,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         List<String> allowedOrigins = schemaStoreProperties.getCorsAllowedOrigins();
         if (allowedOrigins == null || allowedOrigins.isEmpty()) {
-            allowedOrigins = List.of("http://localhost:4200");
+            allowedOrigins = DEFAULT_CORS_ORIGINS;
         }
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins.toArray(new String[0]))
