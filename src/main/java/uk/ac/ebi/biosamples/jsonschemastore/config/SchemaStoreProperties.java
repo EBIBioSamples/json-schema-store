@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class SchemaStoreProperties {
 
+    @Value("${schemastore.cors.allowed-origins:}")
+    private java.util.List<String> corsAllowedOrigins;
+
     @Value("${schemastore.authority:ENA}")
     private String defaultAuthority;
 

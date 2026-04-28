@@ -1,0 +1,11 @@
+# Production (www) CORS: must include wwwdev so pages on wwwdev.ebi.ac.uk can call schema-store on www.ebi.ac.uk
+schemastore:
+  cors:
+    allowed-origins:
+      - https://www.ebi.ac.uk
+      - https://wwwdev.ebi.ac.uk
+      - http://www.ebi.ac.uk
+      - http://wwwdev.ebi.ac.uk
+      - http://localhost:4200
+      - http://localhost:3000
+      - http://localhost:8080

@@ -71,6 +71,9 @@ public class SecurityConfig {
             // root url should be open
             .requestMatchers(HttpMethod.GET, "/").permitAll()
 
+            // CORS preflight (OPTIONS) must be permitted so browser gets Allow-Origin
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
             .anyRequest().authenticated()
         )
         .addFilter(requestHeaderAuthenticationFilter(authenticationManager))
