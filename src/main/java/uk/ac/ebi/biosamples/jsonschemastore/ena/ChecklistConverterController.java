@@ -33,4 +33,10 @@ public class ChecklistConverterController {
     String enaChecklists = checklistConverterService.persistEnaChecklists();
     return new ResponseEntity<>(enaChecklists, HttpStatus.CREATED);
   }
+
+  @GetMapping("/convert/biosamples")
+  public ResponseEntity<String> convertAndSaveBiosamplesChecklistsFromFile() {
+    checklistConverterService.importBiosamplesSchema();
+    return new ResponseEntity<>("BioSamples checklists imported from file", HttpStatus.CREATED);
+  }
 }

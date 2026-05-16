@@ -12,7 +12,7 @@ services:
     build: .
     image: biosamples/json-schema-store:latest
     ports:
-      - 8085:8085
+      - 8085:8080
     links:
       - mongodb
       - validator
